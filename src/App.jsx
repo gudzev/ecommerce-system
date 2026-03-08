@@ -10,12 +10,16 @@ import { useState, useEffect } from 'react';
 
 function App() 
 {
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState(() =>
+  {
+    return JSON.parse(localStorage.getItem("cart")) || [];
+  });
   const [searchText, setSearchText] = useState("");
 
   useEffect(() =>
   {
-      console.log(cart);
+    localStorage.setItem("cart", JSON.stringify(cart));
+    console.log(cart);
   }, [cart]);
 
   return (
