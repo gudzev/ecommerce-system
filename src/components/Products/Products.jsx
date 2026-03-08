@@ -4,10 +4,12 @@ import { Product } from "./Product";
 import { useState, useEffect } from "react";
 
 import axios from "axios";
+import { useLocation } from "react-router-dom";
 
 export function Products({searchText, cart, setCart})
 {
     const [products, setProducts] = useState([]);
+    const location = useLocation();
 
     useEffect(() =>
     {
@@ -35,7 +37,7 @@ export function Products({searchText, cart, setCart})
 
         }
         getProducts();
-    }, []);
+    }, [location]);
 
     return (
         <section className="products">
