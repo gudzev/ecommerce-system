@@ -53,7 +53,7 @@ export function Cart({setSearchText, cart, setCart})
 
                 <div className="cart-flex-container">
                     <CartPreview cartProducts={cartProducts} cart={cart} setCart={setCart}/>
-                    <CartCheckout cartProducts={cartProducts}/>
+                    <CartCheckout cartProducts={cartProducts} cart={cart}/>
                 </div>
 
             </div>

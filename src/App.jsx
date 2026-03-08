@@ -3,6 +3,7 @@ import './App.css'
 import { Home } from "./pages/Home/Home";
 import { Cart } from './pages/Cart/Cart';
 import { NotFound } from "./pages/NotFound/NotFound";
+import { Summary } from './pages/Summary/Summary';
 
 import { Route, Routes } from 'react-router-dom';
 
@@ -26,6 +27,7 @@ function App()
       <Routes>
         <Route path="/" element={<Home cart={cart} setCart={setCart} searchText={searchText} setSearchText={setSearchText}/>} />
         <Route path="/cart" element={<Cart cart={cart} setCart={setCart} setSearchText={setSearchText}/>} />
+        <Route path="/summary" element={<Summary setSearchText={setSearchText} cart={cart} />}/>
         <Route path="*" element={<NotFound />} />
       </Routes>
   )

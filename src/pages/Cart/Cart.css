@@ -285,6 +285,13 @@
         flex-direction: column;
         align-items: center;
     }
+
+    .cart-preview
+    {
+        display: grid;
+        width: 100%;
+        height: auto;
+    }
     
     .cart-preview-header, .cart-item
     {
@@ -371,13 +378,6 @@
         padding: 60px 7px;
     }
 
-    .cart-preview
-    {
-        width: 100%;
-        height: auto;
-        border-top: none;
-    }
-
     .cart-checkout
     {
         width: 100%;
@@ -397,5 +397,13 @@
         font-size: .9rem;
         height: 100%;
         padding-left: 3px;
+    }
+
+    
+    .preview-price-heading h2,
+    .preview-quantity-heading h2,
+    .preview-price-heading h2
+    {
+        font-size: .5rem;
     }
 }

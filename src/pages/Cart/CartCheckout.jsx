@@ -1,14 +1,17 @@
 import "./Cart.css";
 
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { calculateDelivery } from "../../utils/deliveryOptions";
 import { formatPrice } from "../../utils/formatPrice";
 
-export function CartCheckout({cartProducts})
+export function CartCheckout({cartProducts, cart})
 {
     const [orderPrice, setOrderPrice] = useState(0);
     const [shipmentPrice, setShipmentPrice] = useState(0);
+
+    const navigate = useNavigate();
 
     useEffect(() =>
     {
@@ -35,6 +38,14 @@ export function CartCheckout({cartProducts})
         calculateDeliveryTotal();
     }, [cartProducts]);
 
+    const proceedToSummary = () =>
+    {
+        if(cart.length > 0)
+        {
+            navigate("/summary");
+        }
+    }
+
     return <div className="cart-checkout">
         <div className="cart-checkout-heading">
             <h1>Pregled porudžbine</h1>
@@ -56,7 +67,7 @@ export function CartCheckout({cartProducts})
         </div>
 
         <div className="cart-checkout-summary-row">
-            <button className="checkout-btn">
+            <button className="checkout-btn" onClick={proceedToSummary}>
                 Nastavi ka plaćanju
             </button>
         </div>
