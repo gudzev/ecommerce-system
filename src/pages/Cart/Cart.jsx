@@ -17,7 +17,7 @@ export function Cart({setSearchText, cart, setCart})
     {
         const getCartProducts = async () =>
         {
-            const response = await axios.get("/data.json");
+            const response = await axios.get("/products.json");
             const products = response.data.products;
             const newProducts = [];
 

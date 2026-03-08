@@ -1,0 +1,37 @@
+{
+    "categories":
+    [
+        {
+            "id": 1,
+            "name": "Grafička karta"
+        },
+        {
+            "id": 2,
+            "name": "Procesor"
+        },
+        {
+            "id": 3,
+            "name": "Matična ploča"
+        },
+        {
+            "id": 4,
+            "name": "Memorija"
+        },
+        {
+            "id": 5,
+            "name": "SSD"
+        },
+        {
+            "id": 6,
+            "name": "HDD"
+        },
+        {
+            "id": 7,
+            "name": "Napajanje"
+        },
+        {
+            "id": 8,
+            "name": "Kućište"
+        }
+    ]
+}

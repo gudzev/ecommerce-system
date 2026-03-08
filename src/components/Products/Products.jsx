@@ -13,8 +13,26 @@ export function Products({searchText, cart, setCart})
     {
         const getProducts = async () =>
         {
-            const response = await axios.get("/data.json");
-            setProducts(response.data.products);
+            const searchParams = new URLSearchParams(document.location.search);
+            const response = await axios.get("/products.json");
+
+            if(searchParams.size > 0)
+            {
+                const eligibleProducts = [];
+                response.data.products.forEach((product) =>
+                {
+                    if(searchParams.get("category") == product.category_id)
+                    {
+                        eligibleProducts.push(product);
+                    }
+                });
+                setProducts(eligibleProducts);
+            }
+            else
+            {
+                setProducts(response.data.products);
+            }
+
         }
         getProducts();
     }, []);

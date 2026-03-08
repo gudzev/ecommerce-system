@@ -9,14 +9,13 @@ import { useState } from "react";
 export function Header({setSearchText, cart})
 {
     const [inputText, setInputText] = useState("");
-
     const navigate = useNavigate();
 
     const searchProducts = (inputText) =>
     {
         setSearchText(inputText);
 
-        if(window.location.pathname == "/cart")
+        if(window.location.pathname != "/")
         {
             navigate("/");
         }
@@ -76,14 +75,14 @@ export function Header({setSearchText, cart})
             <div className="header-pages">
                 <ul className="ul-links">
                     <li><Link to="/"><FontAwesomeIcon icon={faHouse} className="fa-icon-1x" /></Link></li>
-                    <li><a href="#">Grafičke karte</a></li>
-                    <li><a href="#">Procesori</a></li>
-                    <li><a href="#">Matične ploče</a></li>
-                    <li><a href="#">Memorija</a></li>
-                    <li><a href="#">SSD</a></li>
-                    <li><a href="#">HDD</a></li>
-                    <li><a href="#">Napajanja</a></li>
-                    <li><a href="#">Kućišta</a></li>
+                    <li><Link to="/?category=1">Grafičke karte</Link></li>
+                    <li><Link to="/?category=2">Procesori</Link></li>
+                    <li><Link to="/?category=3">Matične ploče</Link></li>
+                    <li><Link to="/?category=4">Memorija</Link></li>
+                    <li><Link to="/?category=5">SSD</Link></li>
+                    <li><Link to="/?category=6">HDD</Link></li>
+                    <li><Link to="/?category=7">Napajanja</Link></li>
+                    <li><Link to="/?category=8">Kućišta</Link></li>
                 </ul>
 
                 <ul className="ul-contact">

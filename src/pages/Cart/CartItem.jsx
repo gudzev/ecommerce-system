@@ -23,7 +23,7 @@ export function CartItem({cartItem, cart, setCart})
 
     const handleQtyInput = async (event) =>
     {
-        const quantityInputValue = event.target.value;
+        const quantityInputValue = Number(event.target.value);
 
         if(quantityInputValue <= 0 || quantityInputValue > 10)
         {
@@ -32,7 +32,7 @@ export function CartItem({cartItem, cart, setCart})
 
         const newCart = [...cart];
         const existingCartItem = newCart.find((cartProduct) => cartItem.id == cartProduct.productId);
-        existingCartItem.quantity = Number(quantityInputValue);
+        existingCartItem.quantity = quantityInputValue;
 
         setQuantity(Number(event.target.value));
         setCart(newCart);
@@ -42,7 +42,7 @@ export function CartItem({cartItem, cart, setCart})
         <img src={cartItem.image_url} alt={cartItem.name + ' ' + "Image"} className="cart-item-img"/>
         <h2 className="cart-item-name">{cartItem.name}</h2>
         <div className="cart-item-qty">
-            <input type="number" min="1" max="10" step="1" onChange={handleQtyInput} value={quantity} className="cart-item-qty-input"/>
+            <input type="number" min="1" max="10" step="1" onChange={handleQtyInput} defaultValue={quantity} className="cart-item-qty-input"/>
         </div>
         <p className="cart-item-price">
             {formatPrice(cartItem.price_rsd * quantity) + ' ' + "RSD"}
