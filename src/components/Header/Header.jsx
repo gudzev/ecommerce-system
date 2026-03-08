@@ -9,6 +9,7 @@ import { useState } from "react";
 export function Header({setSearchText, cart})
 {
     const [inputText, setInputText] = useState("");
+
     const navigate = useNavigate();
 
     const searchProducts = (inputText) =>
@@ -34,7 +35,7 @@ export function Header({setSearchText, cart})
         let num = 0;
         cart?.forEach((item) =>
         {
-            num += item.quantity;
+            num += Number(item.quantity);
         });
         return num;
     }
@@ -46,7 +47,7 @@ export function Header({setSearchText, cart})
             </Link>
 
             <button className="header-categories">
-                <FontAwesomeIcon icon={faBars} className="fa-icon-2x fa-textirght" /> Sve kategorije
+                <FontAwesomeIcon icon={faBars} className="fa-icon-2x" /> Sve kategorije
             </button>
 
             <div className="header-search-container">

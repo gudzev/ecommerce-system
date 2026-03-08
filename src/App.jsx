@@ -21,7 +21,7 @@ function App()
   return (
       <Routes>
         <Route path="/" element={<Home cart={cart} setCart={setCart} searchText={searchText} setSearchText={setSearchText}/>} />
-        <Route path="/cart" element={<Cart cart={cart} setCart={setCart} searchText={searchText} setSearchText={setSearchText}/>} />
+        <Route path="/cart" element={<Cart cart={cart} setCart={setCart} setSearchText={setSearchText}/>} />
         <Route path="*" element={<NotFound />} />
       </Routes>
   )

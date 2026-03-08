@@ -2,7 +2,7 @@ import "./Cart.css";
 
 import { CartItem } from "./CartItem";
 
-export function CartPreview({cartProducts})
+export function CartPreview({cartProducts, cart, setCart})
 {
     return <div className="cart-preview">
                 <div className="cart-preview-header">
@@ -13,7 +13,7 @@ export function CartPreview({cartProducts})
             {
             cartProducts?.map((cartItem) =>
             {
-                return <CartItem key={cartItem.cartProduct.id} cartItem={cartItem} />
+                return <CartItem key={cartItem.id} cartItem={cartItem} cart={cart} setCart={setCart} />
             })
             }
             </div>

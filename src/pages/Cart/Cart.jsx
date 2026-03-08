@@ -2,7 +2,6 @@ import "./Cart.css";
 
 import { Header } from "../../components/Header/Header";
 import { Footer } from "../../components/Footer/Footer";
-import { CartItem } from "./CartItem";
 import { CartCheckout } from "./CartCheckout";
 import { CartPreview } from "./CartPreview";
 
@@ -10,7 +9,7 @@ import { useState, useEffect } from "react";
 
 import axios from "axios";
 
-export function Cart({setSearchText, cart})
+export function Cart({setSearchText, cart, setCart})
 {
     const [cartProducts, setCartProducts] = useState([]);
 
@@ -20,16 +19,22 @@ export function Cart({setSearchText, cart})
         {
             const response = await axios.get("/data.json");
             const products = response.data.products;
-
             const newProducts = [];
 
             cart.forEach((cartProduct) =>
             {
-                products.forEach((dataProduct) =>
+                products.forEach((existingProduct) =>
                 {
-                    if(cartProduct.productId == dataProduct.id)
+                    if(cartProduct.productId == existingProduct.id)
                     {
-                        newProducts.push({cartProduct: dataProduct, quantity: cartProduct.quantity});
+                        newProducts.push(
+                            {
+                                id: existingProduct.id,
+                                name: existingProduct.name,
+                                image_url: existingProduct.image_url,
+                                price_rsd: existingProduct.price_rsd,
+                                quantity: Number(cartProduct.quantity)
+                            });
                     }
                 })
             })
@@ -47,8 +52,8 @@ export function Cart({setSearchText, cart})
                 <h1 className="cart-header">Korpa</h1>
 
                 <div className="cart-flex-container">
-                    <CartPreview cartProducts={cartProducts}/>
-                    <CartCheckout />
+                    <CartPreview cartProducts={cartProducts} cart={cart} setCart={setCart}/>
+                    <CartCheckout cartProducts={cartProducts}/>
                 </div>
 
             </div>

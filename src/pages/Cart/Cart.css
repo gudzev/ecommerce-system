@@ -4,6 +4,7 @@
     justify-content: center;
     background-color: var(--bg-color);
     height: 100%;
+    min-height: calc(100vh - 654px);
 }
 
 .cart-content
@@ -210,6 +211,16 @@
     color: var(--page-header-bg);
 }
 
+.cart-checkout-heading h1
+{
+    font-size: 1.5rem;
+}
+
+.cart-checkout-summary-row h2
+{
+    font-size: 1.2rem;
+}
+
 /* Tablets */
 @media screen and ((min-width: 769px) and (max-width: 1279px))
 {
@@ -274,12 +285,47 @@
         flex-direction: column;
         align-items: center;
     }
+    
+    .cart-preview-header, .cart-item
+    {
+        display: grid;
+        grid-template-areas: "img name qty price del";
+        gap: 5px;
+        padding-right: 10px;
+    }
+
+    .cart-preview-header
+    {
+        padding: 5px;
+    }
+
+    .preview-product-heading
+    {
+        width: auto;
+        grid-column: 1 / 3; 
+    }
+
+    .preview-quantity-heading
+    {
+        grid-column: 3;
+        width: auto;
+    }
+
+    .preview-price-heading
+    {        
+        width: auto;
+        grid-column: 4; 
+    }
 
     .cart-item-img
     {
         width: 100%;
         height: 100%;
-        grid-area: product;
+        max-width: 80px;
+        max-height: 80px;
+        min-height: 60px;
+        min-width: 60px;
+        grid-area: img;
     }
     
     .cart-item-name
@@ -292,41 +338,26 @@
 
     .cart-item-qty
     {
-        grid-area: qty;
+        display: flex;
         min-width: 2rem;
         width: 100%;
+        max-width: none;
+        grid-area: qty;
     }
 
     .cart-item-price
     {
+        height: 100%;
+        max-width: 80px;
         grid-area: price;
-    }
-
-    .cart-preview-header
-    {
-        padding: 5px;
-    }
-    
-    .preview-product-heading
-    {
         display: flex;
-        width: 37%;
         justify-content: center;
-        font-size: 1rem;
+        align-items: center;
     }
 
-    .preview-price-heading
+    .cart-item-delete-btn
     {
-        width: 50%;
-        max-width: 120px;
-        font-size: 1rem;
-        text-align: center;
-    }
-
-    .preview-quantity-heading
-    {
-        max-width: 60px;
-        font-size: 1rem;
+        grid-area: del;
     }
 
     .cart-item-delete-btn
@@ -344,7 +375,7 @@
     {
         width: 100%;
         height: auto;
-        border: 1px solid var(--header-links-bg-border);
+        border-top: none;
     }
 
     .cart-checkout
@@ -365,14 +396,6 @@
         text-align: center;
         font-size: .9rem;
         height: 100%;
-        padding-left: 5px;
-    }
-
-    .cart-item
-    {
-        display: grid;
-        grid-template-areas: "product name qty price del";
-        grid-template-columns: 1fr 1.8fr .75fr 2.4fr 1fr;
-        gap: 0px;
+        padding-left: 3px;
     }
 }
