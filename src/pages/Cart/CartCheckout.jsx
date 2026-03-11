@@ -38,11 +38,11 @@ export function CartCheckout({cartProducts, cart})
         calculateDeliveryTotal();
     }, [cartProducts]);
 
-    const proceedToSummary = () =>
+    const proceedToCheckout = () =>
     {
         if(cart.length > 0)
         {
-            navigate("/summary");
+            navigate("/checkout");
         }
     }
 
@@ -67,7 +67,7 @@ export function CartCheckout({cartProducts, cart})
         </div>
 
         <div className="cart-checkout-summary-row">
-            <button className="checkout-btn" onClick={proceedToSummary}>
+            <button className="checkout-btn" onClick={proceedToCheckout}>
                 Nastavi ka plaćanju
             </button>
         </div>

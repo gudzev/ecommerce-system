@@ -1,0 +1,155 @@
+.checkout
+{
+    display: flex;
+    justify-content: center;
+    background-color: var(--bg-color);
+    height: 100%;
+    min-height: calc(100vh - 654px);
+}
+
+.checkout-content
+{
+    width: 1280px;
+    padding: 20px;
+}
+
+.checkout-form
+{
+    height: 700px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background-color: var(--bg-color);
+    border-radius: 12px;
+    border: 1px solid var(--header-links-bg-border);
+    padding: 20px 0px;
+}
+
+.checkout-input
+{
+    width: 100%;
+    padding: 5px 7px;
+    font-size: 1rem;
+}
+
+.checkout-textarea
+{
+    resize: none;
+    height: 6rem;
+    font-size: 1rem;
+}
+
+.checkout-input:focus, .checkout-textarea:focus
+{
+    outline: 1px solid var(--accent-color);
+}
+
+.checkout-column
+{
+    display: flex;
+    flex-direction: column;
+}
+
+.checkout-heading
+{
+    font-size: 1.5rem;
+    border-bottom: 1px solid var(--header-links-bg-border);
+    padding-bottom: 10px;
+}
+
+.checkout-heading-h2
+{
+    font-size: 1.2rem;
+    padding-bottom: 10px;
+}
+
+.checkout-row
+{
+    margin: 7px 0px;
+    display: flex;
+    flex-direction: column;
+    padding: 0px 20px;
+}
+
+.checkout-row.delivery-options
+{
+    display: flex;
+    flex-direction: row;
+}
+
+.checkout-row h1
+{
+    font-weight: 600;
+    padding-bottom: 3px;
+}
+
+.checkout-row label
+{
+    font-weight: 300;
+    padding-bottom: 3px;
+}
+
+.delivery-options-row .checkout-label
+{
+    margin-left: 7px;
+}
+
+.checkout-summary
+{
+    background-color: var(--text-color);
+}
+
+.checkout-items-details
+{
+    padding: 10px;
+}
+
+.checkout-items-overview
+{
+    overflow-y: auto;
+}
+
+.checkout-items-item
+{
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr .7fr;
+    max-height: 100px;
+    height: 100px;
+    overflow: hidden;
+    padding: 5px;
+}
+
+.checkout-item-price
+{
+    padding: 5px;
+}
+
+.checkout-item-img
+{
+    max-height: 100px;
+    max-width: 100px;
+    width: 100%;
+    height: 100%;
+}
+
+.checkout-item-name
+{
+    font-size: 1.2rem;
+}
+
+.checkout-item-quantity
+{
+    font-size: 1rem;
+    font-weight: 300;
+}
+
+.checkout-delete-item-btn
+{
+    padding: 5px;
+    cursor: pointer;
+    transition: all .3s;
+}
+
+.checkout-delete-item-btn:hover
+{
+    color: var(--header-links-bg);
+}

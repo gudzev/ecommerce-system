@@ -86,6 +86,6 @@ export function Product({image_url, name, price_rsd, id, cart, setCart})
                 <button className="add-to-cart-btn" onClick={() => { addToCart(id)}}>
                     <FontAwesomeIcon icon={faShoppingCart} />Dodaj u korpu
                 </button>
-                <span className={isAddedToCart ? `cart-added active` : `cart-added`}><FontAwesomeIcon icon={faCheck} />Added</span>
+                <span className={isAddedToCart ? `cart-added active` : `cart-added`}><FontAwesomeIcon icon={faCheck} />Dodato</span>
     </div>
 }

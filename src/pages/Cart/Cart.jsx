@@ -5,12 +5,9 @@ import { Footer } from "../../components/Footer/Footer";
 import { CartCheckout } from "./CartCheckout";
 import { CartPreview } from "./CartPreview";
 
-import { useState, useEffect } from "react";
-
-import axios from "axios";
-
-export function Cart({setSearchText, cart, setCart})
+export function Cart({setSearchText, cart, setCart, cartProducts})
 {
+    /*
     const [cartProducts, setCartProducts] = useState([]);
 
     useEffect(() =>
@@ -42,6 +39,7 @@ export function Cart({setSearchText, cart, setCart})
         }
         getCartProducts();
     }, [cart]);
+    */
 
     return <>
         <Header setSearchText={setSearchText} cart={cart}/>
