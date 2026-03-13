@@ -39,18 +39,34 @@ export function CheckoutForm({cartProducts, shipmentPrice, orderPrice, cart, set
 
     const makeAnOrder = async (cart) =>
     {
-        if(!(
-           validateEmail(email) &&
-           validatePhoneNumber(phoneNumber) &&
-           validateText(name) &&
-           validateText(surname) &&
-           validateText(city) &&
-           validateText(apartmentNumber) &&
-           validateText(street)
-        ))
+        if(deliveryMethod == 0)
         {
-            setDisplayError(true);
-            return;
+            if(!(
+            validateEmail(email) &&
+            validatePhoneNumber(phoneNumber) &&
+            validateText(name) &&
+            validateText(surname)
+            ))
+            {
+                setDisplayError(true);
+                return;
+            }
+        }
+        else
+        {
+            if(!(
+            validateEmail(email) &&
+            validatePhoneNumber(phoneNumber) &&
+            validateText(name) &&
+            validateText(surname) &&
+            validateText(city) &&
+            validateText(apartmentNumber) &&
+            validateText(street)
+            ))
+            {
+                setDisplayError(true);
+                return;
+            }
         }
 
         setDisplayError(false);
@@ -93,33 +109,33 @@ export function CheckoutForm({cartProducts, shipmentPrice, orderPrice, cart, set
                     </div>
 
                     <div className="checkout-row">
-                        <label htmlFor="email" className="checkout-label">E-mail adresa</label>
+                        <label htmlFor="email" className="checkout-label">E-mail adresa <span className="mandatory-field">*</span></label>
                         <input type="email" id="email" className="checkout-input" required onChange={(e) => setEmail(e.target.value)}/>
                     </div>
 
                     <div className="checkout-row">
-                        <label htmlFor="name" className="checkout-label">Ime</label>
+                        <label htmlFor="name" className="checkout-label">Ime <span className="mandatory-field">*</span></label>
                         <input type="text" id="name" className="checkout-input" required onChange={(e) => setName(e.target.value)}/>
                     </div>
 
                     <div className="checkout-row">
-                        <label htmlFor="surname" className="checkout-label">Prezime</label>
+                        <label htmlFor="surname" className="checkout-label">Prezime <span className="mandatory-field">*</span></label>
                         <input type="text" id="surname" className="checkout-input" required onChange={(e) => setSurname(e.target.value)}/>
                     </div>
 
                     <div className={deliveryMethod == 0 ? "checkout-row hidden" : "checkout-row"}>
-                        <label htmlFor="street" className="checkout-label">Naziv ulice</label>
-                        <input type="text" id="street" className="checkout-input" required onChange={(e) => setStreet(e.target.value)}/>
+                        <label htmlFor="street" className="checkout-label">Naziv ulice <span className="mandatory-field">*</span></label>
+                        <input type="text" id="street" className="checkout-input" onChange={(e) => setStreet(e.target.value)}/>
                     </div>
 
                     <div className={deliveryMethod == 0 ? "checkout-row hidden" : "checkout-row"}>
-                        <label htmlFor="apartmentNumber" className="checkout-label">Broj kuce, zgrade, stana</label>
-                        <input type="text" id="apartmentNumber" className="checkout-input" required onChange={(e) => setApartmentNumber(e.target.value)}/>
+                        <label htmlFor="apartmentNumber" className="checkout-label">Broj kuce, zgrade, stana <span className="mandatory-field">*</span></label>
+                        <input type="text" id="apartmentNumber" className="checkout-input" onChange={(e) => setApartmentNumber(e.target.value)}/>
                     </div>
 
                     <div className={deliveryMethod == 0 ? "checkout-row hidden" : "checkout-row"}>
-                        <label htmlFor="city" className="checkout-label">Grad</label>
-                        <input list="cities" id="city" className="checkout-input" required onChange={(e) => setCity(e.target.value)}/>
+                        <label htmlFor="city" className="checkout-label">Grad <span className="mandatory-field">*</span></label>
+                        <input list="cities" id="city" className="checkout-input" onChange={(e) => setCity(e.target.value)}/>
 
                         <datalist id="cities">
                             <option value="Beograd"></option>
@@ -179,7 +195,7 @@ export function CheckoutForm({cartProducts, shipmentPrice, orderPrice, cart, set
                     </div>
 
                     <div className="checkout-row">
-                        <label htmlFor="phoneNumber" className="checkout-label">Broj telefona</label>
+                        <label htmlFor="phoneNumber" className="checkout-label">Broj telefona <span className="mandatory-field">*</span></label>
                         <input type="text" id="phoneNumber" className="checkout-input" required onChange={(e) => setPhoneNumber(e.target.value)}/>
                     </div>
                 </div>

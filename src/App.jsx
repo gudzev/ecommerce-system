@@ -26,8 +26,7 @@ function App()
     return JSON.parse(localStorage.getItem("cart")) || [];
   });
 
-  // Reminder:
-  // Add asterix for mandatory fields in CheckoutForm.
+  // TO DO
   // Fetch deliveryOptions into state from deliveryOptions.json to simulate database request.
 
   useEffect(() =>
