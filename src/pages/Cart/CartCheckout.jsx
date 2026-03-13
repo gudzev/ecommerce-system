@@ -1,42 +1,11 @@
 import "./Cart.css";
-
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { calculateDelivery } from "../../utils/deliveryOptions";
 import { formatPrice } from "../../utils/formatPrice";
 
-export function CartCheckout({cartProducts, cart})
+export function CartCheckout({cart, orderPrice, shipmentPrice})
 {
-    const [orderPrice, setOrderPrice] = useState(0);
-    const [shipmentPrice, setShipmentPrice] = useState(0);
-
     const navigate = useNavigate();
-
-    useEffect(() =>
-    {
-        let price = 0;
-
-        const calculateProductsTotal = () =>
-        {
-            cartProducts.forEach((cartProduct) =>
-            {
-                price = price + (cartProduct.price_rsd * cartProduct.quantity);
-            })
-            setOrderPrice(price);
-        }
-
-        const calculateDeliveryTotal = () =>
-        {
-            let itemQuantity = 0;
-            cartProducts.forEach((product) => itemQuantity += product.quantity)
-
-            setShipmentPrice(calculateDelivery(price, itemQuantity));
-        }
-
-        calculateProductsTotal();
-        calculateDeliveryTotal();
-    }, [cartProducts]);
 
     const proceedToCheckout = () =>
     {

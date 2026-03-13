@@ -12,12 +12,7 @@ export function CartItem({cartItem, cart, setCart})
 
     const removeItemFromCart = (itemID) =>
     {
-        const existingCartItem = cart.find((cartItem) =>
-        {
-            return cartItem.productId == itemID;
-        });
-
-        const newCart = cart.filter((cartProduct) => existingCartItem.productId !== cartProduct.productId);
+        const newCart = cart.filter((cartProduct) => itemID !== cartProduct.productId);
         setCart(newCart);
     }
 

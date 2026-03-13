@@ -8,7 +8,7 @@ import { CheckoutForm } from "./CheckoutForm";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 
-export function Checkout({setSearchText, cart, cartProducts})
+export function Checkout({setSearchText, cart, cartProducts, shipmentPrice, orderPrice, setCart, deliveryMethod, setDeliveryMethod})
 {
     const navigate = useNavigate();
 
@@ -24,7 +24,14 @@ export function Checkout({setSearchText, cart, cartProducts})
         <Header setSearchText={setSearchText} cart={cart} />
         <section className="checkout">
             <div className="checkout-content">
-                <CheckoutForm cartProducts={cartProducts}/>
+                <CheckoutForm cartProducts={cartProducts}
+                              orderPrice={orderPrice}
+                              shipmentPrice={shipmentPrice}
+                              cart={cart}
+                              setCart={setCart}
+                              deliveryMethod={deliveryMethod}
+                              setDeliveryMethod={setDeliveryMethod}
+                />
             </div>
         </section>
         <Footer />

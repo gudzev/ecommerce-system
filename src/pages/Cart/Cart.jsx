@@ -5,42 +5,8 @@ import { Footer } from "../../components/Footer/Footer";
 import { CartCheckout } from "./CartCheckout";
 import { CartPreview } from "./CartPreview";
 
-export function Cart({setSearchText, cart, setCart, cartProducts})
+export function Cart({setSearchText, cart, setCart, cartProducts, shipmentPrice, orderPrice})
 {
-    /*
-    const [cartProducts, setCartProducts] = useState([]);
-
-    useEffect(() =>
-    {
-        const getCartProducts = async () =>
-        {
-            const response = await axios.get("/products.json");
-            const products = response.data.products;
-            const newProducts = [];
-
-            cart.forEach((cartProduct) =>
-            {
-                products.forEach((existingProduct) =>
-                {
-                    if(cartProduct.productId == existingProduct.id)
-                    {
-                        newProducts.push(
-                            {
-                                id: existingProduct.id,
-                                name: existingProduct.name,
-                                image_url: existingProduct.image_url,
-                                price_rsd: existingProduct.price_rsd,
-                                quantity: Number(cartProduct.quantity)
-                            });
-                    }
-                })
-            })
-            setCartProducts(newProducts);
-        }
-        getCartProducts();
-    }, [cart]);
-    */
-
     return <>
         <Header setSearchText={setSearchText} cart={cart}/>
 
@@ -51,7 +17,7 @@ export function Cart({setSearchText, cart, setCart, cartProducts})
 
                 <div className="cart-flex-container">
                     <CartPreview cartProducts={cartProducts} cart={cart} setCart={setCart}/>
-                    <CartCheckout cartProducts={cartProducts} cart={cart}/>
+                    <CartCheckout cart={cart} shipmentPrice={shipmentPrice} orderPrice={orderPrice}/>
                 </div>
 
             </div>
