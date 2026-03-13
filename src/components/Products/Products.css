@@ -84,6 +84,18 @@
     flex-grow: 1;
 }
 
+.empty-grid-message
+{
+    width: 100%;
+    padding-top: 30px;
+}
+
+.empty-grid-message h1
+{
+    text-align: center;
+    font-size: 1.5rem;
+}
+
 /* Tablet (NOT NEEDED FOR NOW) */
 @media screen and ((min-width: 769px) and (max-width: 1279px)) 
 {

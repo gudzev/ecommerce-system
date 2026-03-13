@@ -1,0 +1,13 @@
+{
+    "deliveryOptions":
+    [
+        {
+            "optionId": "0",
+            "pricePerItem": 0
+        },
+        {
+            "optionId": "1",
+            "pricePerItem": 400
+        }
+    ]
+}

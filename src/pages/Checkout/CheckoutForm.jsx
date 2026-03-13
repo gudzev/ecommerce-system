@@ -27,6 +27,7 @@ export function CheckoutForm({cartProducts, shipmentPrice, orderPrice, cart, set
 
     const validatePhoneNumber = (phoneNumber) => 
     {
+        // eslint-disable-next-line no-useless-escape
         const regex = /^(1\s?)?(\(\d{3}\)|\d{3})[\s\-]?\d{3}[\s\-]?\d{4}$/;
         return regex.test(phoneNumber);
     }
@@ -92,33 +93,33 @@ export function CheckoutForm({cartProducts, shipmentPrice, orderPrice, cart, set
                     </div>
 
                     <div className="checkout-row">
-                        <label htmlFor="" className="checkout-label">E-mail adresa</label>
-                        <input type="email" className="checkout-input" required onChange={(e) => setEmail(e.target.value)}/>
+                        <label htmlFor="email" className="checkout-label">E-mail adresa</label>
+                        <input type="email" id="email" className="checkout-input" required onChange={(e) => setEmail(e.target.value)}/>
                     </div>
 
                     <div className="checkout-row">
-                        <label htmlFor="" className="checkout-label">Ime</label>
-                        <input type="text" className="checkout-input" required onChange={(e) => setName(e.target.value)}/>
+                        <label htmlFor="name" className="checkout-label">Ime</label>
+                        <input type="text" id="name" className="checkout-input" required onChange={(e) => setName(e.target.value)}/>
                     </div>
 
                     <div className="checkout-row">
-                        <label htmlFor="" className="checkout-label">Prezime</label>
-                        <input type="text" className="checkout-input" required onChange={(e) => setSurname(e.target.value)}/>
+                        <label htmlFor="surname" className="checkout-label">Prezime</label>
+                        <input type="text" id="surname" className="checkout-input" required onChange={(e) => setSurname(e.target.value)}/>
                     </div>
 
                     <div className={deliveryMethod == 0 ? "checkout-row hidden" : "checkout-row"}>
-                        <label htmlFor="" className="checkout-label">Naziv ulice</label>
-                        <input type="text" className="checkout-input" required onChange={(e) => setStreet(e.target.value)}/>
+                        <label htmlFor="street" className="checkout-label">Naziv ulice</label>
+                        <input type="text" id="street" className="checkout-input" required onChange={(e) => setStreet(e.target.value)}/>
                     </div>
 
                     <div className={deliveryMethod == 0 ? "checkout-row hidden" : "checkout-row"}>
-                        <label htmlFor="" className="checkout-label">Broj kuce, zgrade, stana</label>
-                        <input type="text" className="checkout-input" required onChange={(e) => setApartmentNumber(e.target.value)}/>
+                        <label htmlFor="apartmentNumber" className="checkout-label">Broj kuce, zgrade, stana</label>
+                        <input type="text" id="apartmentNumber" className="checkout-input" required onChange={(e) => setApartmentNumber(e.target.value)}/>
                     </div>
 
                     <div className={deliveryMethod == 0 ? "checkout-row hidden" : "checkout-row"}>
-                        <label htmlFor="" className="checkout-label">Grad</label>
-                        <input list="cities" className="checkout-input" required onChange={(e) => setCity(e.target.value)}/>
+                        <label htmlFor="city" className="checkout-label">Grad</label>
+                        <input list="cities" id="city" className="checkout-input" required onChange={(e) => setCity(e.target.value)}/>
 
                         <datalist id="cities">
                             <option value="Beograd"></option>
@@ -173,26 +174,26 @@ export function CheckoutForm({cartProducts, shipmentPrice, orderPrice, cart, set
                     </div>
 
                     <div className="checkout-row">
-                        <label htmlFor="" className="checkout-label">Napomena</label>
-                        <textarea className="checkout-textarea" onChange={(e) => setAdditional(e.target.value)}/>
+                        <label htmlFor="additional" className="checkout-label">Napomena</label>
+                        <textarea className="checkout-textarea" id="additional" onChange={(e) => setAdditional(e.target.value)}/>
                     </div>
 
                     <div className="checkout-row">
-                        <label htmlFor="" className="checkout-label">Broj telefona</label>
-                        <input type="text" className="checkout-input" required onChange={(e) => setPhoneNumber(e.target.value)}/>
+                        <label htmlFor="phoneNumber" className="checkout-label">Broj telefona</label>
+                        <input type="text" id="phoneNumber" className="checkout-input" required onChange={(e) => setPhoneNumber(e.target.value)}/>
                     </div>
                 </div>
                 <div className="checkout-column">
                     <div className="checkout-row">
                         <h2 className="checkout-heading-h2">Metod plaćanja</h2>
                         <div className="delivery-options-row">
-                            <input type="radio" name="delivery-options" checked={deliveryMethod == 1 ? true : false} onChange={(e) => { if(e.target.value == "on") setDeliveryMethod(1)}}></input>
-                            <label htmlFor="" className="checkout-label">Plaćanje pouzećem</label>
+                            <input type="radio" id="deliveryMethod1" name="delivery-options" checked={deliveryMethod == 1 ? true : false} onChange={() => setDeliveryMethod(1)}></input>
+                            <label htmlFor="deliveryMethod1" className="checkout-label">Plaćanje pouzećem</label>
                         </div>
 
                         <div className="delivery-options-row">
-                            <input type="radio" name="delivery-options" checked={deliveryMethod == 0 ? true : false} onChange={(e) => { if(e.target.value == "on") setDeliveryMethod(0)}}></input>
-                            <label htmlFor="" className="checkout-label">Lično preuzimanje u radnji</label>
+                            <input type="radio" id="deliveryMethod0" name="delivery-options" checked={deliveryMethod == 0 ? true : false} onChange={() => setDeliveryMethod(0)}></input>
+                            <label htmlFor="deliveryMethod0" className="checkout-label">Lično preuzimanje u radnji</label>
                         </div>
                     </div>
 

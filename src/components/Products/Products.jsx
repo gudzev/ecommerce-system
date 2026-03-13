@@ -1,10 +1,12 @@
 import "./Products.css";
 
 import { Product } from "./Product";
+
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 import axios from "axios";
-import { useLocation } from "react-router-dom";
+
 
 export function Products({searchText, cart, setCart})
 {
@@ -43,6 +45,8 @@ export function Products({searchText, cart, setCart})
         <section className="products">
             <div className="products-grid">
             {
+                products.length > 0 
+                ? 
                 products?.map((product) =>
                 {
                     if(product.name.toLowerCase().includes(searchText))
@@ -50,6 +54,10 @@ export function Products({searchText, cart, setCart})
                         return <Product image_url={product.image_url} name={product.name} price_rsd={product.price_rsd} id={product.id} key={product.id} cart={cart} setCart={setCart}/>
                     }
                 })
+                :
+                <div className="empty-grid-message">
+                    <h1>Nije pronađen ni jedan proizvod u izabranoj kategoriji.</h1>
+                </div>
             }
             </div>
         </section>
