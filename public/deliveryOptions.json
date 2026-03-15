@@ -2,12 +2,18 @@
     "deliveryOptions":
     [
         {
-            "optionId": "0",
-            "pricePerItem": 0
+            "id": "0",
+            "pricePerItem": 400,
+            "name": "Plaćanje pouzećem",
+            "freeShippingMinimumValue": 75000,
+            "defaultOption": true
         },
         {
-            "optionId": "1",
-            "pricePerItem": 400
+            "id": "1",
+            "pricePerItem": 0,
+            "name": "Lično preuzimanje u radnji",
+            "freeShippingMinimumValue": 0,
+            "default": false
         }
     ]
 }

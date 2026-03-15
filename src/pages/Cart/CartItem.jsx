@@ -40,7 +40,7 @@ export function CartItem({cartItem, cart, setCart})
             <input type="number" min="1" max="10" step="1" onChange={handleQtyInput} defaultValue={quantity} className="cart-item-qty-input"/>
         </div>
         <p className="cart-item-price">
-            {formatPrice(cartItem.price_rsd * quantity) + ' ' + "RSD"}
+            {formatPrice(cartItem.price_on_sale ? cartItem.price_on_sale * quantity : cartItem.price_rsd * quantity) + ' ' + "RSD"}
         </p>
         <FontAwesomeIcon icon={faTrash} className="cart-item-delete-btn" onClick={() => removeItemFromCart(cartItem.id)}/>
     </div>

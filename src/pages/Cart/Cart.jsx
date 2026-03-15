@@ -8,6 +8,9 @@ import { CartPreview } from "./CartPreview";
 export function Cart({setSearchText, cart, setCart, cartProducts, shipmentPrice, orderPrice})
 {
     return <>
+
+        <title>Prodavnica - korpa</title>
+
         <Header setSearchText={setSearchText} cart={cart}/>
 
         <section className="cart">

@@ -9,25 +9,21 @@ import { Route, Routes } from 'react-router-dom';
 
 import { useState, useEffect } from 'react';
 
-import { calculateDelivery } from "./utils/calculateDelivery";
-
 import axios from 'axios';
 
 function App() 
 {
   const [orderPrice, setOrderPrice] = useState(0);
   const [shipmentPrice, setShipmentPrice] = useState(0);
+  const [deliveryOptions, setDeliveryOptions] = useState([]);
   const [cartProducts, setCartProducts] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
   const [searchText, setSearchText] = useState("");
-  const [deliveryMethod, setDeliveryMethod] = useState(1);
+  const [deliveryMethod, setDeliveryMethod] = useState(0);
   const [cart, setCart] = useState(() =>
   {
     return JSON.parse(localStorage.getItem("cart")) || [];
   });
-
-  // TO DO
-  // Fetch deliveryOptions into state from deliveryOptions.json to simulate database request.
 
   useEffect(() =>
   {
@@ -37,7 +33,16 @@ function App()
       const products = response.data.products;
       setAllProducts(products);
     }
+
+    const getAllDeliveryOptions = async () =>
+    {
+        const response = await axios.get("/deliveryOptions.json");
+        const deliveryOptions = response.data.deliveryOptions;
+        setDeliveryOptions(deliveryOptions);
+    }
+
     getAllProducts();
+    getAllDeliveryOptions();
   }, []);
 
   useEffect(() =>
@@ -57,6 +62,7 @@ function App()
                             name: existingProduct.name,
                             image_url: existingProduct.image_url,
                             price_rsd: existingProduct.price_rsd,
+                            price_on_sale: existingProduct.price_on_sale,
                             quantity: Number(cartProduct.quantity)
                         });
                 }
@@ -74,18 +80,29 @@ function App()
       let price = 0;
       const calculateProductsTotal = () =>
       {
-          cartProducts.forEach((cartProduct) =>
+        cartProducts.forEach((cartProduct) =>
+        {
+          if(!cartProduct.price_on_sale)
           {
-              price += cartProduct.price_rsd * cartProduct.quantity;
-          })
-          setOrderPrice(price);
+            price += cartProduct.price_rsd * cartProduct.quantity;
+          }
+          else
+          {
+            price += cartProduct.price_on_sale * cartProduct.quantity;
+          }
+        })
+        setOrderPrice(price);
       }
 
       const calculateDeliveryTotal = () =>
       {
-          let itemQuantity = 0;
-          cartProducts.forEach((product) => itemQuantity += product.quantity)
-          setShipmentPrice(calculateDelivery(price, itemQuantity, deliveryMethod));
+        let itemQuantity = 0;
+        cartProducts.forEach((product) => itemQuantity += product.quantity)
+        setShipmentPrice(() =>
+        {
+            const selectedOption = deliveryOptions.find((option) => option.id == deliveryMethod) || 0;
+            return (price >= selectedOption.freeShippingMinimumValue) ? 0 : selectedOption.pricePerItem * itemQuantity;
+        });
       }
 
       calculateProductsTotal();
@@ -114,7 +131,8 @@ function App()
                                                    orderPrice={orderPrice}
                                                    shipmentPrice={shipmentPrice}
                                                    deliveryMethod={deliveryMethod}
-                                                   setDeliveryMethod={setDeliveryMethod}/>}
+                                                   setDeliveryMethod={setDeliveryMethod}
+                                                   deliveryOptions={deliveryOptions}/>}
                                     />
         <Route path="*" element={<NotFound />} />
       </Routes>

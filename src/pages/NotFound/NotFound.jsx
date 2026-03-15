@@ -8,6 +8,9 @@ import { Link } from "react-router-dom";
 export function NotFound()
 {
     return <>
+
+        <title>Prodavnica - Nije Pronađeno</title>
+
         <Header />
 
         <section className="not-found">

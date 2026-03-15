@@ -28,7 +28,7 @@ export function CheckoutSummary({cartProducts, shipmentPrice, orderPrice, cart, 
                                 <h3 className="checkout-item-quantity">Količina: {cartProduct.quantity}</h3>
                             </div>
 
-                            <span className="checkout-item-price">{formatPrice(cartProduct.price_rsd * cartProduct.quantity) + ' ' + "RSD"}</span>
+                            <span className="checkout-item-price">{formatPrice((cartProduct.price_on_sale || cartProduct.price_rsd) * cartProduct.quantity) + ' ' + "RSD"}</span>
 
                             <FontAwesomeIcon icon={faTrash} className="checkout-delete-item-btn fa-icon-2x" onClick={() => removeItemFromCart(cartProduct.id)}/>
                     </div>

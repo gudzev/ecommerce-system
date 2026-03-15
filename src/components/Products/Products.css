@@ -96,10 +96,40 @@
     font-size: 1.5rem;
 }
 
-/* Tablet (NOT NEEDED FOR NOW) */
+.product-price-value.inactive
+{
+    text-decoration: line-through;
+    color: var(--header-links-bg-border);
+}
+
+.product-price-sale
+{
+    color: var(--saving-color);
+}
+
+.product-quantity
+{
+    margin: 5px 0px;
+}
+
+.product-price, .product-price-sale
+{
+    margin: 50px 0px;
+}
+
+/* Tablet */
 @media screen and ((min-width: 769px) and (max-width: 1279px)) 
 {
+    .products-grid
+    {
+        gap: 7px;
+    }
 
+    .product
+    {
+        min-width: 248px;
+        padding: 10px;
+    }
 }
 
 /* Mobile */

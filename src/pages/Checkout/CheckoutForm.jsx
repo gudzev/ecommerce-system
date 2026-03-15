@@ -6,7 +6,7 @@ import { useState } from "react";
 
 import axios from "axios";
 
-export function CheckoutForm({cartProducts, shipmentPrice, orderPrice, cart, setCart, deliveryMethod, setDeliveryMethod})
+export function CheckoutForm({cartProducts, shipmentPrice, orderPrice, cart, setCart, deliveryMethod, setDeliveryMethod, deliveryOptions})
 {
     const [email, setEmail] = useState("");
     const [name, setName] = useState("");
@@ -18,6 +18,8 @@ export function CheckoutForm({cartProducts, shipmentPrice, orderPrice, cart, set
     const [phoneNumber, setPhoneNumber] = useState("");
 
     const [displayError, setDisplayError] = useState(false);
+
+    const selectedOption = deliveryOptions?.find((option) => option.id == deliveryMethod);
 
     const validateEmail = (email) =>
     {
@@ -123,17 +125,17 @@ export function CheckoutForm({cartProducts, shipmentPrice, orderPrice, cart, set
                         <input type="text" id="surname" className="checkout-input" required onChange={(e) => setSurname(e.target.value)}/>
                     </div>
 
-                    <div className={deliveryMethod == 0 ? "checkout-row hidden" : "checkout-row"}>
+                    <div className={selectedOption?.name == "Plaćanje pouzećem" ? "checkout-row" : "checkout-row hidden"}>
                         <label htmlFor="street" className="checkout-label">Naziv ulice <span className="mandatory-field">*</span></label>
                         <input type="text" id="street" className="checkout-input" onChange={(e) => setStreet(e.target.value)}/>
                     </div>
 
-                    <div className={deliveryMethod == 0 ? "checkout-row hidden" : "checkout-row"}>
+                    <div className={selectedOption?.name == "Plaćanje pouzećem" ? "checkout-row" : "checkout-row hidden"}>
                         <label htmlFor="apartmentNumber" className="checkout-label">Broj kuce, zgrade, stana <span className="mandatory-field">*</span></label>
                         <input type="text" id="apartmentNumber" className="checkout-input" onChange={(e) => setApartmentNumber(e.target.value)}/>
                     </div>
 
-                    <div className={deliveryMethod == 0 ? "checkout-row hidden" : "checkout-row"}>
+                    <div className={selectedOption?.name == "Plaćanje pouzećem" ? "checkout-row" : "checkout-row  hidden"}>
                         <label htmlFor="city" className="checkout-label">Grad <span className="mandatory-field">*</span></label>
                         <input list="cities" id="city" className="checkout-input" onChange={(e) => setCity(e.target.value)}/>
 
@@ -202,15 +204,15 @@ export function CheckoutForm({cartProducts, shipmentPrice, orderPrice, cart, set
                 <div className="checkout-column">
                     <div className="checkout-row">
                         <h2 className="checkout-heading-h2">Metod plaćanja</h2>
-                        <div className="delivery-options-row">
-                            <input type="radio" id="deliveryMethod1" name="delivery-options" checked={deliveryMethod == 1 ? true : false} onChange={() => setDeliveryMethod(1)}></input>
-                            <label htmlFor="deliveryMethod1" className="checkout-label">Plaćanje pouzećem</label>
-                        </div>
-
-                        <div className="delivery-options-row">
-                            <input type="radio" id="deliveryMethod0" name="delivery-options" checked={deliveryMethod == 0 ? true : false} onChange={() => setDeliveryMethod(0)}></input>
-                            <label htmlFor="deliveryMethod0" className="checkout-label">Lično preuzimanje u radnji</label>
-                        </div>
+                        {
+                            deliveryOptions.map((option) =>
+                            {
+                                return <div className="delivery-options-row" key={option.id}>
+                                            <input type="radio" id={"deliveryMethod" + option.id} name="delivery-options" checked={deliveryMethod == option.id ? true : false} onChange={() => setDeliveryMethod(option.id)}></input>
+                                            <label htmlFor={"deliveryMethod" + option.id} className="checkout-label">{option.name}</label>
+                                        </div>
+                            })
+                        }
                     </div>
 
                     <div className="checkout-row">

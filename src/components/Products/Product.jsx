@@ -9,7 +9,7 @@ import { formatPrice } from "../../utils/formatPrice";
 
 let timeoutList = [];
 
-export function Product({image_url, name, price_rsd, id, cart, setCart})
+export function Product({image_url, name, price_rsd, id, price_on_sale, cart, setCart})
 {
     const [isAddedToCart, setIsAddedToCart] = useState(false);
     const quantitySelect = useRef(1);
@@ -80,7 +80,8 @@ export function Product({image_url, name, price_rsd, id, cart, setCart})
                             <option value="10">10</option>
                         </select>
                     </div>
-                    <span className="product-price">Cena: {formatPrice(price_rsd)} RSD</span>
+                    <span className="product-price">Cena: <span className={price_on_sale ? "product-price-value inactive" : "product-price-value"}>{formatPrice(price_rsd)} RSD</span></span>
+                    <span className="product-price-sale"> {price_on_sale ? formatPrice(price_on_sale) + ' ' + "RSD" : ""}</span>
                 </div>
 
                 <button className="add-to-cart-btn" onClick={() => { addToCart(id)}}>

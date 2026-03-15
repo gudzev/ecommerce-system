@@ -117,7 +117,7 @@
 .checkout-items-item
 {
     display: grid;
-    grid-template-columns: 1fr 3fr 1fr .7fr;
+    grid-template-columns: 1fr 3fr 1.1fr .7fr;
     max-height: 100px;
     height: 100px;
     overflow: hidden;
@@ -228,7 +228,7 @@
     .checkout-items-item
     {
         display: grid;
-        grid-template-columns: 2fr 3fr 1fr .7fr;
+        grid-template-columns: 2fr 3fr 1.1fr .7fr;
         max-height: 125px;
         height: auto;
         overflow: hidden;
@@ -268,7 +268,7 @@
     .checkout-items-item
     {
         display: grid;
-        grid-template-columns: 2fr 3fr 1fr .7fr;
+        grid-template-columns: 2fr 3fr 1.1fr .7fr;
         max-height: 125px;
         height: auto;
         overflow: hidden;

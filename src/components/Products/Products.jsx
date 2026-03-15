@@ -51,7 +51,7 @@ export function Products({searchText, cart, setCart})
                 {
                     if(product.name.toLowerCase().includes(searchText))
                     {
-                        return <Product image_url={product.image_url} name={product.name} price_rsd={product.price_rsd} id={product.id} key={product.id} cart={cart} setCart={setCart}/>
+                        return <Product image_url={product.image_url} name={product.name} price_rsd={product.price_rsd} price_on_sale={product.price_on_sale} id={product.id} key={product.id} cart={cart} setCart={setCart}/>
                     }
                 })
                 :
