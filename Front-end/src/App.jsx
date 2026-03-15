@@ -100,8 +100,9 @@ function App()
         cartProducts.forEach((product) => itemQuantity += product.quantity)
         setShipmentPrice(() =>
         {
-          const selectedOption = deliveryOptions?.find((option) => option.id == deliveryMethod) || 0;
-          return (price >= selectedOption.freeShippingMinimumValue) ? 0 : selectedOption.price_per_item * itemQuantity;
+          const selectedOption = deliveryOptions?.find((option) => option.id == deliveryMethod) || 1;
+          console.log(selectedOption);
+          return (price >= selectedOption.free_shipping_minimum_value) ? 0 : selectedOption.price_per_item * itemQuantity;
         });
       }
 
