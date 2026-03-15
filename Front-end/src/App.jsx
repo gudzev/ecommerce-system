@@ -101,6 +101,7 @@ function App()
         setShipmentPrice(() =>
         {
           const selectedOption = deliveryOptions?.find((option) => option.id == deliveryMethod) || 1;
+          if(!selectedOption.price_per_item) return 0;
           return (price >= selectedOption.free_shipping_minimum_value) ? 0 : selectedOption.price_per_item * itemQuantity;
         });
       }
