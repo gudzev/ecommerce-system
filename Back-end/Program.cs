@@ -7,7 +7,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "https://gudzev-store.netlify.app").AllowAnyHeader().AllowAnyMethod();
+        policy.WithOrigins("https://gudzev-store.netlify.app", "http://localhost:5173").AllowAnyHeader().AllowAnyMethod();
     });
 });
 
@@ -37,7 +37,7 @@ app.MapGet("/getProducts", () =>
                     p.name = reader["name"].ToString();
                     p.image_url = reader["image_url"].ToString();
                     p.price_rsd = Convert.ToInt32(reader["price_rsd"]);
-                    p.price_on_sale = Convert.ToInt32(reader["price_rsd"]);
+                    p.price_on_sale = reader["price_on_sale"] != DBNull.Value ? Convert.ToInt32(reader["price_on_sale"]) : null;
                     p.category_id = Convert.ToInt32(reader["category_id"]);
                     p.stock_quantity = Convert.ToInt32(reader["stock_quantity"]);
                     products.Add(p);

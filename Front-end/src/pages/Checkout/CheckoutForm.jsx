@@ -205,7 +205,7 @@ export function CheckoutForm({cartProducts, shipmentPrice, orderPrice, cart, set
                     <div className="checkout-row">
                         <h2 className="checkout-heading-h2">Metod plaćanja</h2>
                         {
-                            deliveryOptions.map((option) =>
+                            deliveryOptions?.map((option) =>
                             {
                                 return <div className="delivery-options-row" key={option.id}>
                                             <input type="radio" id={"deliveryMethod" + option.id} name="delivery-options" checked={deliveryMethod == option.id ? true : false} onChange={() => setDeliveryMethod(option.id)}></input>

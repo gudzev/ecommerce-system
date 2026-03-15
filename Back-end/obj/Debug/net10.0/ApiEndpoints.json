@@ -9,7 +9,7 @@
     "Parameters": [
       {
         "Name": "o",
-        "Type": "WebStoreBackEnd.Order",
+        "Type": "FrontEndCommunicator.Order",
         "IsRequired": true
       }
     ],

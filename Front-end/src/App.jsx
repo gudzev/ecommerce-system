@@ -30,14 +30,14 @@ function App()
     const getAllProducts = async () =>
     {
       const response = await axios.get("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/getProducts");
-      const products = response.data.products;
+      const products = response.data;
       setAllProducts(products);
     }
 
     const getAllDeliveryOptions = async () =>
     {
         const response = await axios.get("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/getDeliveryOptions");
-        const deliveryOptions = response.data.deliveryOptions;
+        const deliveryOptions = response.data;
         setDeliveryOptions(deliveryOptions);
     }
 
@@ -52,7 +52,7 @@ function App()
         const newProducts = [];
         cart.forEach((cartProduct) =>
         {
-            allProducts.forEach((existingProduct) =>
+            allProducts?.forEach((existingProduct) =>
             {
                 if(cartProduct.productId == existingProduct.id)
                 {
@@ -100,8 +100,8 @@ function App()
         cartProducts.forEach((product) => itemQuantity += product.quantity)
         setShipmentPrice(() =>
         {
-            const selectedOption = deliveryOptions.find((option) => option.id == deliveryMethod) || 0;
-            return (price >= selectedOption.freeShippingMinimumValue) ? 0 : selectedOption.pricePerItem * itemQuantity;
+          const selectedOption = deliveryOptions?.find((option) => option.id == deliveryMethod) || 0;
+          return (price >= selectedOption.freeShippingMinimumValue) ? 0 : selectedOption.price_per_item * itemQuantity;
         });
       }
 
