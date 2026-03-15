@@ -88,7 +88,6 @@ export function CheckoutForm({cartProducts, shipmentPrice, orderPrice, cart, set
                 delivery_method_id: deliveryMethod,
                 orderItems: cart
             }
-            console.log(order.delivery_method_id);
             const request = await axios.post("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/createOrder", order);
             console.log(request);
         }
