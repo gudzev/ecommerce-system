@@ -18,7 +18,7 @@ app.UseHttpsRedirection();
 
 string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-app.MapGet("/getProducts", () =>
+app.MapGet("/products", () =>
 {
     List<Product> products = new List<Product>();
 
@@ -48,7 +48,7 @@ app.MapGet("/getProducts", () =>
     return Results.Json(products);
 });
 
-app.MapGet("/getCategories", () =>
+app.MapGet("/categories", () =>
 {
     List<Category> categories = new List<Category>();
 
@@ -73,7 +73,7 @@ app.MapGet("/getCategories", () =>
     return Results.Json(categories);
 });
 
-app.MapGet("/getDeliveryOptions", () =>
+app.MapGet("/delivery-options", () =>
 {
     List<DeliveryOption> deliveryOptions = new List<DeliveryOption>();
 
@@ -101,7 +101,99 @@ app.MapGet("/getDeliveryOptions", () =>
     return Results.Json(deliveryOptions);
 });
 
-app.MapPost("/createOrder", (Order o) =>
+app.MapGet("/orders", () =>
+{
+    List<Order> orders = new List<Order>();
+
+    using (SqlConnection connection = new SqlConnection(connectionString))
+    {
+        connection.Open();
+
+        using (SqlCommand command = new SqlCommand("SELECT * FROM Orders WHERE is_fulfilled = 0", connection))
+        {
+            using(SqlDataReader reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    Order o = new Order();
+                    o.id = Convert.ToInt32(reader["id"]);
+                    o.name = reader["name"].ToString();
+                    o.surname = reader["surname"].ToString();
+                    o.email = reader["email"] != DBNull.Value ? reader["email"].ToString() : null;
+                    o.street = reader["street"] != DBNull.Value ? reader["street"].ToString() : null;
+                    o.apartment_number = reader["apartment_number"] != DBNull.Value ? reader["apartment_number"].ToString() : null;
+                    o.additional = reader["additional"] != DBNull.Value ? reader["additional"].ToString() : null;
+                    o.city = reader["city"] != DBNull.Value ? reader["city"].ToString() : null;
+                    o.delivery_method_id = Convert.ToInt32(reader["delivery_method_id"]);
+                    o.created_at = Convert.ToDateTime(reader["created_at"]);
+                    o.is_fullfilled = Convert.ToBoolean(reader["is_fulfilled"]);
+                    o.phone_number = reader["phone_number"].ToString();
+                    orders.Add(o);
+                }
+            }
+        }
+    }
+    return Results.Json(orders);
+});
+
+app.MapGet("/orders/{id}", (int id) =>
+{
+Order order = new Order();
+
+using (SqlConnection connection = new SqlConnection(connectionString))
+{
+    connection.Open();
+
+    string query = @"SELECT orders.id, orders.name, surname, email, street, apartment_number, additional, city, delivery_method_id, created_at, is_fulfilled, phone_number, order_id, product_id, quantity, price_at_purchase, products.name AS product_name, image_url
+                         FROM orders
+                         JOIN order_items ON order_items.order_id = orders.id
+                         JOIN products ON products.id = order_items.product_id
+                         WHERE orders.id = @id";
+
+    using (SqlCommand command = new SqlCommand(query, connection))
+    {
+        command.Parameters.AddWithValue("@id", id);
+
+        using (SqlDataReader reader = command.ExecuteReader())
+        {
+                if (reader.Read())
+                {
+                    order.id = Convert.ToInt32(reader["id"]);
+                    order.name = reader["name"].ToString();
+                    order.surname = reader["surname"].ToString();
+                    order.email = reader["email"] != DBNull.Value ? reader["email"].ToString() : null;
+                    order.street = reader["street"] != DBNull.Value ? reader["street"].ToString() : null;
+                    order.apartment_number = reader["apartment_number"] != DBNull.Value ? reader["apartment_number"].ToString() : null;
+                    order.additional = reader["additional"] != DBNull.Value ? reader["additional"].ToString() : null;
+                    order.city = reader["city"] != DBNull.Value ? reader["city"].ToString() : null;
+                    order.delivery_method_id = Convert.ToInt32(reader["delivery_method_id"]);
+                    order.created_at = Convert.ToDateTime(reader["created_at"]);
+                    order.is_fullfilled = Convert.ToBoolean(reader["is_fulfilled"]);
+                    order.phone_number = reader["phone_number"].ToString();
+                    order.orderItems = new List<OrderItem>();
+                    do
+                    {
+                        order.orderItems.Add(new OrderItem(
+                        Convert.ToInt32(reader["product_id"]),
+                        Convert.ToInt32(reader["order_id"]),
+                        Convert.ToInt32(reader["quantity"]),
+                        Convert.ToInt32(reader["price_at_purchase"]),
+                        reader["product_name"].ToString(),
+                        reader["image_url"].ToString()));
+                    }
+                    while (reader.Read());
+                }
+                else
+                {
+                    return Results.NotFound();
+                }
+            }
+        }
+    }
+    return Results.Json(order);
+});
+
+app.MapPost("/orders", (Order o) =>
 {
     using (SqlConnection connection = new SqlConnection(connectionString))
     {

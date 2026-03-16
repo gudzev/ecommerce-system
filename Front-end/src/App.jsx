@@ -29,14 +29,14 @@ function App()
   {
     const getAllProducts = async () =>
     {
-      const response = await axios.get("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/getProducts");
+      const response = await axios.get("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/products");
       const products = response.data;
       setAllProducts(products);
     }
 
     const getAllDeliveryOptions = async () =>
     {
-        const response = await axios.get("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/getDeliveryOptions");
+        const response = await axios.get("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/delivery-options");
         const deliveryOptions = response.data;
         setDeliveryOptions(deliveryOptions);
     }
