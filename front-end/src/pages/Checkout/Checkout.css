@@ -203,6 +203,17 @@
     visibility: hidden;
 }
 
+.order-confirmation
+{
+    text-align: center;
+    padding: 20px;
+}
+
+.order-confirmation.hidden, .checkout-form.hidden
+{
+    display: none;
+}
+
 .mandatory-field
 {
     color: red;

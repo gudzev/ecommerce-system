@@ -12,8 +12,7 @@ export function CartPreview({cartProducts, cart, setCart})
                 </div>
             {
             cartProducts?.map((cartItem) =>
-            {
-                return <CartItem key={cartItem.id} cartItem={cartItem} cart={cart} setCart={setCart} />
+            {                return <CartItem key={cartItem.id} cartItem={cartItem} cart={cart} setCart={setCart} />
             })
             }
             </div>

@@ -6,7 +6,7 @@ import { useState } from "react";
 
 import axios from "axios";
 
-export function CheckoutForm({cartProducts, shipmentPrice, orderPrice, cart, setCart, deliveryMethod, setDeliveryMethod, deliveryOptions})
+export function CheckoutForm({cartProducts, shipmentPrice, orderPrice, cart, setCart, deliveryMethod, setDeliveryMethod, deliveryOptions, setOrderID, orderID})
 {
     const [email, setEmail] = useState("");
     const [name, setName] = useState("");
@@ -89,7 +89,8 @@ export function CheckoutForm({cartProducts, shipmentPrice, orderPrice, cart, set
                 orderItems: cart
             }
             const request = await axios.post("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/orders", order);
-            console.log(request);
+            setOrderID(request.data.orderId);
+            setCart([]);
         }
         catch(error)
         {
@@ -103,7 +104,7 @@ export function CheckoutForm({cartProducts, shipmentPrice, orderPrice, cart, set
         makeAnOrder(cart);
     }
 
-    return <form method="post" action="" className="checkout-form" onSubmit={handleFormSubmit}>
+    return <form method="post" action="" className={orderID == null ? "checkout-form" : "checkout-form hidden"} onSubmit={handleFormSubmit}>
                 <div className="checkout-column">
                     <div className="checkout-row">
                         <h1 className="checkout-heading">Adresa za dostavu</h1>

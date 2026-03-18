@@ -7,7 +7,15 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("https://gudzev-store.netlify.app", "http://localhost:5173").AllowAnyHeader().AllowAnyMethod();
+        policy
+            .WithOrigins(
+                "http://localhost:5173",
+                "http://127.0.0.1:5173",
+                "https://gudzev-store.netlify.app"
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowAnyOrigin();
     });
 });
 
@@ -138,24 +146,24 @@ app.MapGet("/orders", () =>
 
 app.MapGet("/orders/{id}", (int id) =>
 {
-Order order = new Order();
+    Order order = new Order();
 
-using (SqlConnection connection = new SqlConnection(connectionString))
-{
-    connection.Open();
+    using (SqlConnection connection = new SqlConnection(connectionString))
+    {
+        connection.Open();
 
-    string query = @"SELECT orders.id, orders.name, surname, email, street, apartment_number, additional, city, delivery_method_id, created_at, is_fulfilled, phone_number, order_id, product_id, quantity, price_at_purchase, products.name AS product_name, image_url
+        string query = @"SELECT orders.id, orders.name, surname, email, street, apartment_number, additional, city, delivery_method_id, created_at, is_fulfilled, phone_number, order_id, product_id, quantity, price_at_purchase, products.name AS product_name, image_url
                          FROM orders
                          JOIN order_items ON order_items.order_id = orders.id
                          JOIN products ON products.id = order_items.product_id
                          WHERE orders.id = @id";
 
-    using (SqlCommand command = new SqlCommand(query, connection))
-    {
-        command.Parameters.AddWithValue("@id", id);
-
-        using (SqlDataReader reader = command.ExecuteReader())
+        using (SqlCommand command = new SqlCommand(query, connection))
         {
+            command.Parameters.AddWithValue("@id", id);
+
+            using (SqlDataReader reader = command.ExecuteReader())
+            {
                 if (reader.Read())
                 {
                     order.id = Convert.ToInt32(reader["id"]);
