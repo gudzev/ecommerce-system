@@ -14,7 +14,7 @@ builder.Services.AddCors(options =>
                 "https://gudzev-store.netlify.app"
             )
             .AllowAnyHeader()
-            .AllowAnyMethod()
+            .AllowAnyMethod();
     });
 });
 
