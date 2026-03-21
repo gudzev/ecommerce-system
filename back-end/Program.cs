@@ -1,5 +1,5 @@
 using Microsoft.Data.SqlClient;
-using FrontEndCommunicator;
+using Backend;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,8 +9,6 @@ builder.Services.AddCors(options =>
     {
         policy
             .WithOrigins(
-                "http://localhost:5173",
-                "http://127.0.0.1:5173",
                 "https://gudzev-store.netlify.app"
             )
             .AllowAnyHeader()
@@ -178,6 +176,7 @@ app.MapGet("/orders/{id}", (int id) =>
                     order.is_fullfilled = Convert.ToBoolean(reader["is_fulfilled"]);
                     order.phone_number = reader["phone_number"].ToString();
                     order.orderItems = new List<OrderItem>();
+
                     do
                     {
                         order.orderItems.Add(new OrderItem(
@@ -200,8 +199,33 @@ app.MapGet("/orders/{id}", (int id) =>
     return Results.Json(order);
 });
 
-app.MapPost("/orders", (Order o) =>
+app.MapPost("/add-product", (Product p) =>
 {
+    using (SqlConnection connection = new SqlConnection(connectionString))
+    {
+        connection.Open();
+
+        string query = @"INSERT INTO products(name, image_url, price_rsd, price_on_sale, category_id, stock_quantity)
+                         VALUES(@name, @image_url, @price_rsd, @price_on_sale, @category_id, @stock_quantity)";
+
+        using(SqlCommand command = new SqlCommand(query, connection))
+        {
+            command.Parameters.AddWithValue("@name", p.name);
+            command.Parameters.AddWithValue("@image_url", p.image_url);
+            command.Parameters.AddWithValue("@price_rsd", p.price_rsd);
+            command.Parameters.AddWithValue("@price_on_sale", p.price_on_sale);
+            command.Parameters.AddWithValue("@category_id", p.category_id);
+            command.Parameters.AddWithValue("@stock_quantity", p.stock_quantity);
+
+            command.ExecuteNonQuery();
+        }
+    }
+});
+
+app.MapPost("/make-order", (Order o) =>
+{
+    if (o.orderItems == null) return Results.Json(new { success = false, errorMessage = "Order items are empty." });
+
     using (SqlConnection connection = new SqlConnection(connectionString))
     {
         connection.Open();
@@ -259,7 +283,7 @@ app.MapPost("/orders", (Order o) =>
             catch(Exception ex)
             {
                 transaction.Rollback();
-                return Results.Json(new { success = false, ex.Message });
+                return Results.Json(new { success = false, errorMessage = ex.Message });
             }
         }
     }

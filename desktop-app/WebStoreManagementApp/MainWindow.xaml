@@ -1,0 +1,116 @@
+﻿<Window x:Class="WebStoreManagementApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WebStoreManagementApp"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="600" Width="1200" ResizeMode="NoResize">
+
+    <Window.Resources>
+        <SolidColorBrush x:Key="PageHeaderBg" Color="#000000"/>
+        <SolidColorBrush x:Key="PageHeaderBgHover" Color="#050505"/>
+        <SolidColorBrush x:Key="HeaderLinksBg" Color="#333333"/>
+        <SolidColorBrush x:Key="HeaderLinksBorder" Color="#5e5e5e"/>
+        <SolidColorBrush x:Key="AccentColor" Color="#ffcb05"/>
+        <SolidColorBrush x:Key="AccentHover" Color="#dcb104"/>
+        <SolidColorBrush x:Key="SavingColor" Color="#EE0000"/>
+        <SolidColorBrush x:Key="TextColor" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="BgColor" Color="#f2f2f2"/>
+        <SolidColorBrush x:Key="BgAccent" Color="#e6e6e6"/>
+        <SolidColorBrush x:Key="BorderColor" Color="#fdfeec"/>
+
+        <Style x:Key="SidebarButton" TargetType="Button">
+            <Setter Property="Height" Value="60"/>
+            <Setter Property="Background" Value="{StaticResource PageHeaderBg}"/>
+            <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource PageHeaderBgHover}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Grid Background="{DynamicResource AccentColor}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="75"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Border Background="{StaticResource PageHeaderBg}" Grid.Column="0" Grid.Row="1">
+            <StackPanel>
+                <Button x:Name="ProizvodiBtn" Content="Proizvodi" Style="{StaticResource SidebarButton}" Click="ProizvodiBtn_Click"/>
+                <Button x:Name="NarudzbineBtn" Content="Narudžbine" Style="{StaticResource SidebarButton}" Click="NarudzbineBtn_Click"/>
+                <Button x:Name="DostavaBtn" Content="Metode dostave" Style="{StaticResource SidebarButton}" Click="DostavaBtn_Click"/>
+
+            </StackPanel>
+        </Border>
+
+        <Grid x:Name="Header" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" Background="{StaticResource PageHeaderBg}">
+            <Image Source="/Resources/logo.png" Margin="30,-18,971,-18"/>
+            <Label x:Name="CurrentGridLabel" Content="Proizvodi" Foreground="White" Margin="267,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        </Grid>
+
+        <Grid x:Name="Proizvodi" Grid.Column="1" Grid.Row="1" Background="{StaticResource HeaderLinksBg}"/>
+
+        <Grid x:Name="Narudzbine" Grid.Column="1" Grid.Row="1" Background="{StaticResource HeaderLinksBg}">
+        </Grid>
+
+        <Grid x:Name="Dostava" Grid.Column="1" Grid.Row="1" Background="{StaticResource HeaderLinksBg}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="325"></ColumnDefinition>
+                <ColumnDefinition Width="300"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"></RowDefinition>
+                <RowDefinition Height="40"></RowDefinition>
+                <RowDefinition Height="40"></RowDefinition>
+                <RowDefinition Height="40"></RowDefinition>
+                <RowDefinition Height="40"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+
+
+            <Label Content="ID metode za dostavu" Grid.Column="0" VerticalAlignment="Center" Foreground="White" HorizontalAlignment="Left" FontSize="16" Margin="5,0,0,0" />
+            <TextBox TextWrapping="Wrap" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" Width="300" Height="25" FontSize="16"/>
+
+            <Label Content="Cena po artiklu za dostavu" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" Foreground="White" HorizontalAlignment="Left" FontSize="16" Margin="5,0,0,0"/>
+            <TextBox TextWrapping="Wrap" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" Width="300" Height="25" FontSize="16"/>
+
+            <Label Content="Ime opcije za dostavu" Grid.Column="0" Grid.Row="2" VerticalAlignment="Center" Foreground="White" HorizontalAlignment="Left" FontSize="16" Margin="5,0,0,0"/>
+            <TextBox TextWrapping="Wrap" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Right" Width="300" Height="25" FontSize="16"/>
+
+            <Label Content="Minimalna vrednost za besplatnu dostavu" Grid.Column="0" Grid.Row="3" VerticalAlignment="Center" Foreground="White" HorizontalAlignment="Left" FontSize="16" Margin="5,0,0,0"/>
+            <TextBox TextWrapping="Wrap" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Right" Width="300" Height="25" FontSize="16"/>
+
+            <CheckBox Content="Default opcija" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" FontSize="16"/>
+
+            <DataGrid d:ItemsSource="{d:SampleData ItemCount=5}" Grid.ColumnSpan="3" Grid.Row="5"/>
+
+        </Grid>
+
+
+    </Grid>
+</Window>
+    
+    
