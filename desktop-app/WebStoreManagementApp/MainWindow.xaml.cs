@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Text.Json;
 
 namespace WebStoreManagementApp
 {
@@ -61,23 +62,36 @@ namespace WebStoreManagementApp
             CurrentGridLabel.Content = "Narudžbine";
         }
 
-        private async void DostavaBtn_Click(object sender, RoutedEventArgs e)
+
+
+
+
+        /* Dostava */
+        private void DostavaBtn_Click(object sender, RoutedEventArgs e)
         {
             showGrid(Dostava);
             CurrentGridLabel.Content = "Dostava";
 
+            if (deliveryOptions.Count != 0)
+            {
+                MethodsTable.ItemsSource = deliveryOptions;
+            }
+            else
+            {
+                LoadMethodsTable();
+            }
+        }
+
+        private async void LoadMethodsTable()
+        {
             try
             {
                 HttpResponseMessage response = await client.GetAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/delivery-options");
                 response.EnsureSuccessStatusCode();
+                deliveryOptions = await response.Content.ReadFromJsonAsync<List<DeliveryOption>>();
 
-                if(deliveryOptions.Count == 0)
-                {
-                    deliveryOptions = await response.Content.ReadFromJsonAsync<List<DeliveryOption>>();
-
-                }
                 MethodsTable.ItemsSource = deliveryOptions;
-                LoadFirstRow();
+                LoadFirstMethodsRow();
             }
             catch (Exception ex)
             {
@@ -88,20 +102,89 @@ namespace WebStoreManagementApp
         {
             DeliveryOption deliveryOption = (DeliveryOption)MethodsTable.SelectedItem;
 
-            MethodIDTextBox.Text = deliveryOption.id.ToString();
+            if (deliveryOption == null) deliveryOption = (DeliveryOption)MethodsTable.Items[0];
+
             minimumValueTextBox.Text = deliveryOption.free_shipping_minimum_value.ToString();
             optionNameTextBox.Text = deliveryOption.name.ToString();
             pricePerProductTextBox.Text = deliveryOption.price_per_item.ToString();
-            optionIsDefaultCheckBox.IsChecked = deliveryOption.is_default;
         }
 
-        private void LoadFirstRow()
+        private void LoadFirstMethodsRow()
         {
-            MethodIDTextBox.Text = deliveryOptions[0].id.ToString();
             minimumValueTextBox.Text = deliveryOptions[0].free_shipping_minimum_value.ToString();
             optionNameTextBox.Text = deliveryOptions[0].name.ToString();
             pricePerProductTextBox.Text = deliveryOptions[0].price_per_item.ToString();
-            optionIsDefaultCheckBox.IsChecked = deliveryOptions[0].is_default;
+        }
+
+        private async void methodDeleteBtn_Click(object sender, RoutedEventArgs e)
+        {
+            int deliveryMethodId;
+            if (MethodsTable.SelectedItem is DeliveryOption selected)
+            {
+                deliveryMethodId = selected.id;
+            }
+            else
+            {
+                return;
+            }
+
+            try
+            {
+                HttpResponseMessage response = await client.DeleteAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/delete-delivery-option/" + deliveryMethodId);
+                response.EnsureSuccessStatusCode();
+                LoadMethodsTable();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        private async void methodUpdateBtn_Click(object sender, RoutedEventArgs e)
+        {
+            DeliveryOption deliveryOption = getDeliveryOption();
+
+            try
+            {
+                HttpResponseMessage response = await client.PutAsJsonAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/update-delivery-option/", deliveryOption);
+                response.EnsureSuccessStatusCode();
+                LoadMethodsTable();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message); 
+            }
+        }
+
+        private async void methodAddBtn_Click(object sender, RoutedEventArgs e)
+        {
+            DeliveryOption deliveryOption = getDeliveryOption();
+
+            try
+            {
+                HttpResponseMessage response = await client.PostAsJsonAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/add-delivery-option/", deliveryOption);
+                response.EnsureSuccessStatusCode();
+                LoadMethodsTable();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message); 
+            }
+        }
+
+        private DeliveryOption getDeliveryOption()
+        {
+            DeliveryOption deliveryOption = new DeliveryOption();
+
+            if (MethodsTable.SelectedItem is DeliveryOption selected)
+            {
+                deliveryOption.id = selected.id;
+                deliveryOption.free_shipping_minimum_value = int.Parse(minimumValueTextBox.Text);
+                deliveryOption.price_per_item = int.Parse(pricePerProductTextBox.Text);
+                deliveryOption.name = optionNameTextBox.Text;
+
+            }
+            return deliveryOption;
         }
     }
 }

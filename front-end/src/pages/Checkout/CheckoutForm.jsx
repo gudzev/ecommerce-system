@@ -125,17 +125,17 @@ export function CheckoutForm({cartProducts, shipmentPrice, orderPrice, cart, set
                         <input type="text" id="surname" className="checkout-input" required onChange={(e) => setSurname(e.target.value)}/>
                     </div>
 
-                    <div className={selectedOption?.name == "Plaćanje pouzećem" ? "checkout-row" : "checkout-row hidden"}>
+                    <div className={selectedOption?.name == "Lično preuzimanje u radnji" ? "checkout-row hidden" : "checkout-row"}>
                         <label htmlFor="street" className="checkout-label">Naziv ulice <span className="mandatory-field">*</span></label>
                         <input type="text" id="street" className="checkout-input" onChange={(e) => setStreet(e.target.value)}/>
                     </div>
 
-                    <div className={selectedOption?.name == "Plaćanje pouzećem" ? "checkout-row" : "checkout-row hidden"}>
+                    <div className={selectedOption?.name == "Lično preuzimanje u radnji" ? "checkout-row hidden" : "checkout-row"}>
                         <label htmlFor="apartmentNumber" className="checkout-label">Broj kuce, zgrade, stana <span className="mandatory-field">*</span></label>
                         <input type="text" id="apartmentNumber" className="checkout-input" onChange={(e) => setApartmentNumber(e.target.value)}/>
                     </div>
 
-                    <div className={selectedOption?.name == "Plaćanje pouzećem" ? "checkout-row" : "checkout-row  hidden"}>
+                    <div className={selectedOption?.name == "Lično preuzimanje u radnji" ? "checkout-row hidden" : "checkout-row"}>
                         <label htmlFor="city" className="checkout-label">Grad <span className="mandatory-field">*</span></label>
                         <input list="cities" id="city" className="checkout-input" onChange={(e) => setCity(e.target.value)}/>
 

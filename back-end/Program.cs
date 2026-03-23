@@ -97,7 +97,6 @@ app.MapGet("/delivery-options", () =>
                     d.name = reader["name"].ToString();
                     d.price_per_item = Convert.ToInt32(reader["price_per_item"]);
                     d.free_shipping_minimum_value = Convert.ToInt32(reader["free_shipping_minimum_value"]);
-                    d.is_default = Convert.ToBoolean(reader["is_default"]);
                     deliveryOptions.Add(d);
                 }
             }
@@ -114,15 +113,14 @@ app.MapPost("/add-delivery-option", (DeliveryOption o) =>
         {
             connection.Open();
 
-            string query = @"INSERT INTO delivery_options(price_per_item, name, free_shipping_minimum_value, is_default)
-                         VALUES(@price_per_item, @name, @free_shipping_minimum_value, @is_default)";
+            string query = @"INSERT INTO delivery_options(price_per_item, name, free_shipping_minimum_value)
+                         VALUES(@price_per_item, @name, @free_shipping_minimum_value)";
 
             using (SqlCommand command = new SqlCommand(query, connection))
             {
                 command.Parameters.AddWithValue("@price_per_item", o.price_per_item);
                 command.Parameters.AddWithValue("@name", o.name);
                 command.Parameters.AddWithValue("@free_shipping_minimum_value", o.free_shipping_minimum_value);
-                command.Parameters.AddWithValue("@is_default", o.is_default);
 
                 command.ExecuteNonQuery();
             }
@@ -144,15 +142,15 @@ app.MapPut(("/update-delivery-option"), (DeliveryOption d) =>
             connection.Open();
 
             string query = @"UPDATE delivery_options
-                             SET price_per_item = @price_per_item, name = @name, is_default = @is_default, free_shipping_minimum_value = @free_shipping_minimum_value
+                             SET price_per_item = @price_per_item, name = @name, free_shipping_minimum_value = @free_shipping_minimum_value
                              WHERE id = @id";
 
             using(SqlCommand command = new SqlCommand(query, connection))
             {
                 command.Parameters.AddWithValue("@price_per_item", d.price_per_item);
                 command.Parameters.AddWithValue("@name", d.name);
-                command.Parameters.AddWithValue("@is_default", d.is_default);
                 command.Parameters.AddWithValue("@free_shipping_minimum_value", d.free_shipping_minimum_value);
+                command.Parameters.AddWithValue("@id", d.id);
 
                 command.ExecuteNonQuery();
             }
