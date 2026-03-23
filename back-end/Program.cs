@@ -106,6 +106,96 @@ app.MapGet("/delivery-options", () =>
     return Results.Json(deliveryOptions);
 });
 
+app.MapPost("/add-delivery-option", (DeliveryOption o) =>
+{
+    try
+    {
+        using (SqlConnection connection = new SqlConnection(connectionString))
+        {
+            connection.Open();
+
+            string query = @"INSERT INTO delivery_options(price_per_item, name, free_shipping_minimum_value, is_default)
+                         VALUES(@price_per_item, @name, @free_shipping_minimum_value, @is_default)";
+
+            using (SqlCommand command = new SqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@price_per_item", o.price_per_item);
+                command.Parameters.AddWithValue("@name", o.name);
+                command.Parameters.AddWithValue("@free_shipping_minimum_value", o.free_shipping_minimum_value);
+                command.Parameters.AddWithValue("@is_default", o.is_default);
+
+                command.ExecuteNonQuery();
+            }
+        }
+        return Results.Ok(new { success = true });
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+});
+
+app.MapPut(("/update-delivery-option"), (DeliveryOption d) =>
+{
+    try
+    {
+        using (SqlConnection connection = new SqlConnection(connectionString))
+        {
+            connection.Open();
+
+            string query = @"UPDATE delivery_options
+                             SET price_per_item = @price_per_item, name = @name, is_default = @is_default, free_shipping_minimum_value = @free_shipping_minimum_value
+                             WHERE id = @id";
+
+            using(SqlCommand command = new SqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@price_per_item", d.price_per_item);
+                command.Parameters.AddWithValue("@name", d.name);
+                command.Parameters.AddWithValue("@is_default", d.is_default);
+                command.Parameters.AddWithValue("@free_shipping_minimum_value", d.free_shipping_minimum_value);
+
+                command.ExecuteNonQuery();
+            }
+        }
+        return Results.Ok(new { success = true });
+    }
+    catch(Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+});
+
+app.MapDelete("/delete-delivery-option/{deliveryOptionID}", (int deliveryOptionID) =>
+{
+    try
+    {
+        using (SqlConnection connection = new SqlConnection(connectionString))
+        {
+            connection.Open();
+
+            string query = @"DELETE FROM delivery_options 
+                             WHERE id = @id";
+
+            using (SqlCommand command = new SqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@id", deliveryOptionID);
+
+                int rowsAffected = command.ExecuteNonQuery();
+
+                if (rowsAffected == 0)
+                {
+                    return Results.NotFound(new { message = "Delivery option not found." });
+                }
+            }
+        }
+        return Results.Ok(new { success = true });
+    }
+    catch(Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+});
+
 app.MapGet("/orders", () =>
 {
     List<Order> orders = new List<Order>();
@@ -201,28 +291,36 @@ app.MapGet("/orders/{id}", (int id) =>
 
 app.MapPost("/add-product", (Product p) =>
 {
-    using (SqlConnection connection = new SqlConnection(connectionString))
+    try
     {
-        connection.Open();
+        using (SqlConnection connection = new SqlConnection(connectionString))
+        {
+            connection.Open();
 
-        string query = @"INSERT INTO products(name, image_url, price_rsd, price_on_sale, category_id, stock_quantity)
+            string query = @"INSERT INTO products(name, image_url, price_rsd, price_on_sale, category_id, stock_quantity)
                          VALUES(@name, @image_url, @price_rsd, @price_on_sale, @category_id, @stock_quantity)";
 
-        using(SqlCommand command = new SqlCommand(query, connection))
-        {
-            command.Parameters.AddWithValue("@name", p.name);
-            command.Parameters.AddWithValue("@image_url", p.image_url);
-            command.Parameters.AddWithValue("@price_rsd", p.price_rsd);
-            command.Parameters.AddWithValue("@price_on_sale", p.price_on_sale);
-            command.Parameters.AddWithValue("@category_id", p.category_id);
-            command.Parameters.AddWithValue("@stock_quantity", p.stock_quantity);
+            using (SqlCommand command = new SqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@name", p.name);
+                command.Parameters.AddWithValue("@image_url", p.image_url);
+                command.Parameters.AddWithValue("@price_rsd", p.price_rsd);
+                command.Parameters.AddWithValue("@price_on_sale", p.price_on_sale);
+                command.Parameters.AddWithValue("@category_id", p.category_id);
+                command.Parameters.AddWithValue("@stock_quantity", p.stock_quantity);
 
-            command.ExecuteNonQuery();
+                command.ExecuteNonQuery();
+            }
         }
+        return Results.Ok(new { success = true });
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
     }
 });
 
-app.MapPost("/make-order", (Order o) =>
+app.MapPost("/add-order", (Order o) =>
 {
     if (o.orderItems == null) return Results.Json(new { success = false, errorMessage = "Order items are empty." });
 
@@ -266,7 +364,6 @@ app.MapPost("/make-order", (Order o) =>
 
                     using (SqlCommand command = new SqlCommand("INSERT INTO order_items(product_id, order_id, quantity, price_at_purchase) VALUES(@product_id, @order_id , @quantity, @price_at_purchase)", connection, transaction))
                     {
-                        Console.WriteLine($"Inserting product_id={item.productId}, order_id={orderId}");
                         command.Parameters.AddWithValue("@product_id", Convert.ToInt32(item.productId));
                         command.Parameters.AddWithValue("@order_id", orderId);
                         command.Parameters.AddWithValue("@quantity", Convert.ToInt32(item.quantity));

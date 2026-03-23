@@ -1,4 +1,6 @@
 ﻿using Backend;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,13 +16,14 @@ namespace WebStoreManagementApp
 {
     public partial class MainWindow : Window
     {
+        private static HttpClient client = new HttpClient();
+        private List<Grid> grids = new List<Grid>();
+        private List<DeliveryOption> deliveryOptions = new List<DeliveryOption>();
         public MainWindow()
         {
             InitializeComponent();
             LoadGrids();
         }
-
-        List<Grid> grids = new List<Grid>();
 
         private void LoadGrids()
         {
@@ -58,10 +61,47 @@ namespace WebStoreManagementApp
             CurrentGridLabel.Content = "Narudžbine";
         }
 
-        private void DostavaBtn_Click(object sender, RoutedEventArgs e)
+        private async void DostavaBtn_Click(object sender, RoutedEventArgs e)
         {
             showGrid(Dostava);
             CurrentGridLabel.Content = "Dostava";
+
+            try
+            {
+                HttpResponseMessage response = await client.GetAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/delivery-options");
+                response.EnsureSuccessStatusCode();
+
+                if(deliveryOptions.Count == 0)
+                {
+                    deliveryOptions = await response.Content.ReadFromJsonAsync<List<DeliveryOption>>();
+
+                }
+                MethodsTable.ItemsSource = deliveryOptions;
+                LoadFirstRow();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+        private void LoadMethodsRow(object sender, SelectionChangedEventArgs e)
+        {
+            DeliveryOption deliveryOption = (DeliveryOption)MethodsTable.SelectedItem;
+
+            MethodIDTextBox.Text = deliveryOption.id.ToString();
+            minimumValueTextBox.Text = deliveryOption.free_shipping_minimum_value.ToString();
+            optionNameTextBox.Text = deliveryOption.name.ToString();
+            pricePerProductTextBox.Text = deliveryOption.price_per_item.ToString();
+            optionIsDefaultCheckBox.IsChecked = deliveryOption.is_default;
+        }
+
+        private void LoadFirstRow()
+        {
+            MethodIDTextBox.Text = deliveryOptions[0].id.ToString();
+            minimumValueTextBox.Text = deliveryOptions[0].free_shipping_minimum_value.ToString();
+            optionNameTextBox.Text = deliveryOptions[0].name.ToString();
+            pricePerProductTextBox.Text = deliveryOptions[0].price_per_item.ToString();
+            optionIsDefaultCheckBox.IsChecked = deliveryOptions[0].is_default;
         }
     }
 }
