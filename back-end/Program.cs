@@ -53,6 +53,96 @@ app.MapGet("/products", () =>
     return Results.Json(products);
 });
 
+app.MapPost("/add-product", (Product p) =>
+{
+    try
+    {
+        using (SqlConnection connection = new SqlConnection(connectionString))
+        {
+            connection.Open();
+
+            string query = @"INSERT INTO products(name, image_url, price_rsd, price_on_sale, category_id, stock_quantity)
+                             VALUES(@name, @image_url, @price_rsd, @price_on_sale, @category_id, @stock_quantity)";
+
+            using (SqlCommand command = new SqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@name", p.name);
+                command.Parameters.AddWithValue("@image_url", p.image_url);
+                command.Parameters.AddWithValue("@price_rsd", p.price_rsd);
+                command.Parameters.AddWithValue("@price_on_sale", p.price_on_sale);
+                command.Parameters.AddWithValue("@category_id", p.category_id);
+                command.Parameters.AddWithValue("@stock_quantity", p.stock_quantity);
+
+                command.ExecuteNonQuery();
+            }
+        }
+        return Results.Ok(new { success = true });
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+});
+
+app.MapPut("/update-product", (Product p) =>
+{
+    try
+    {
+        using (SqlConnection connection = new SqlConnection(connectionString))
+        {
+            connection.Open();
+
+            string query = @"UPDATE products
+                             SET name = @name, image_url = @image_url, price_rsd = @price_rsd, price_on_sale = @price_on_sale, category_id = @category_id, stock_quantity = @stock_quantity
+                             WHERE id = @id";
+
+            using(SqlCommand command = new SqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@name", p.name);
+                command.Parameters.AddWithValue("@image_url", p.image_url);
+                command.Parameters.AddWithValue("@price_rsd", p.price_rsd);
+                command.Parameters.AddWithValue("@price_on_sale", p.price_on_sale);
+                command.Parameters.AddWithValue("@category_id", p.category_id);
+                command.Parameters.AddWithValue("@stock_quantity", p.stock_quantity);
+                command.Parameters.AddWithValue("@id", p.id);
+
+                command.ExecuteNonQuery();
+            }
+        }
+        return Results.Ok(new { success = true });
+    }
+    catch(Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+});
+
+app.MapDelete("/delete-product/{productId}", (int productId) =>
+{
+    try
+    {
+        using (SqlConnection connection = new SqlConnection(connectionString))
+        {
+            connection.Open();
+
+            string query = @"DELETE FROM products
+                             WHERE id = @id";
+
+            using (SqlCommand command = new SqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@id", productId);
+
+                command.ExecuteNonQuery();
+            }
+        }
+        return Results.Ok(new { success = true });
+    }
+    catch(Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+});
+
 app.MapGet("/categories", () =>
 {
     List<Category> categories = new List<Category>();
@@ -76,6 +166,86 @@ app.MapGet("/categories", () =>
         }
     }
     return Results.Json(categories);
+});
+
+app.MapPost("/add-category", (Category c) =>
+{
+    try
+    {
+        using (SqlConnection connection = new SqlConnection(connectionString))
+        {
+            connection.Open();
+
+            string query = @"INSERT INTO categories(name) 
+                             VALUES(@name)";
+
+            using (SqlCommand command = new SqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@name", c.name);
+
+                command.ExecuteNonQuery();
+            }
+        }
+        return Results.Ok(new { success = true });
+    }
+    catch(Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+});
+
+app.MapPut("/update-category", (Category c) =>
+{
+    try
+    {
+        using (SqlConnection connection = new SqlConnection(connectionString))
+        {
+            connection.Open();
+
+            string query = @"UPDATE categories
+                             SET name = @name
+                             WHERE id = @id";
+
+            using (SqlCommand command = new SqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@name", c.name);
+                command.Parameters.AddWithValue("@id", c.id);
+
+                command.ExecuteNonQuery();
+            }
+        }
+        return Results.Ok(new { success = true });
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+});
+
+app.MapDelete("/delete-category/{categoryId}", (int categoryId) =>
+{
+    try
+    {
+        using (SqlConnection connection = new SqlConnection(connectionString))
+        {
+            connection.Open();
+
+            string query = @"DELETE FROM categories
+                             WHERE id = @id";
+
+            using (SqlCommand command = new SqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@id", categoryId);
+
+                command.ExecuteNonQuery();
+            }
+        }
+        return Results.Ok(new { success = true });
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
 });
 
 app.MapGet("/delivery-options", () =>
@@ -133,7 +303,7 @@ app.MapPost("/add-delivery-option", (DeliveryOption o) =>
     }
 });
 
-app.MapPut(("/update-delivery-option"), (DeliveryOption d) =>
+app.MapPut(("/update-delivery-option/"), (DeliveryOption d) =>
 {
     try
     {
@@ -219,7 +389,7 @@ app.MapGet("/orders", () =>
                     o.city = reader["city"] != DBNull.Value ? reader["city"].ToString() : null;
                     o.delivery_method_id = Convert.ToInt32(reader["delivery_method_id"]);
                     o.created_at = Convert.ToDateTime(reader["created_at"]);
-                    o.is_fullfilled = Convert.ToBoolean(reader["is_fulfilled"]);
+                    o.is_fulfilled = Convert.ToBoolean(reader["is_fulfilled"]);
                     o.phone_number = reader["phone_number"].ToString();
                     orders.Add(o);
                 }
@@ -261,7 +431,7 @@ app.MapGet("/orders/{id}", (int id) =>
                     order.city = reader["city"] != DBNull.Value ? reader["city"].ToString() : null;
                     order.delivery_method_id = Convert.ToInt32(reader["delivery_method_id"]);
                     order.created_at = Convert.ToDateTime(reader["created_at"]);
-                    order.is_fullfilled = Convert.ToBoolean(reader["is_fulfilled"]);
+                    order.is_fulfilled = Convert.ToBoolean(reader["is_fulfilled"]);
                     order.phone_number = reader["phone_number"].ToString();
                     order.orderItems = new List<OrderItem>();
 
@@ -285,37 +455,6 @@ app.MapGet("/orders/{id}", (int id) =>
         }
     }
     return Results.Json(order);
-});
-
-app.MapPost("/add-product", (Product p) =>
-{
-    try
-    {
-        using (SqlConnection connection = new SqlConnection(connectionString))
-        {
-            connection.Open();
-
-            string query = @"INSERT INTO products(name, image_url, price_rsd, price_on_sale, category_id, stock_quantity)
-                         VALUES(@name, @image_url, @price_rsd, @price_on_sale, @category_id, @stock_quantity)";
-
-            using (SqlCommand command = new SqlCommand(query, connection))
-            {
-                command.Parameters.AddWithValue("@name", p.name);
-                command.Parameters.AddWithValue("@image_url", p.image_url);
-                command.Parameters.AddWithValue("@price_rsd", p.price_rsd);
-                command.Parameters.AddWithValue("@price_on_sale", p.price_on_sale);
-                command.Parameters.AddWithValue("@category_id", p.category_id);
-                command.Parameters.AddWithValue("@stock_quantity", p.stock_quantity);
-
-                command.ExecuteNonQuery();
-            }
-        }
-        return Results.Ok(new { success = true });
-    }
-    catch (Exception ex)
-    {
-        return Results.Problem(ex.Message);
-    }
 });
 
 app.MapPost("/add-order", (Order o) =>
@@ -381,6 +520,34 @@ app.MapPost("/add-order", (Order o) =>
                 return Results.Json(new { success = false, errorMessage = ex.Message });
             }
         }
+    }
+});
+
+app.MapPut("/update-order/", (Order o) =>
+{
+    try
+    {
+        using (SqlConnection connection = new SqlConnection())
+        {
+            connection.Open();
+
+            string query = @"UPDATE orders 
+                             SET is_fulfilled = @is_fulfilled
+                             WHERE id = @id";
+
+            using (SqlCommand command = new SqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@is_fulfilled", o.is_fulfilled);
+                command.Parameters.AddWithValue("@id", o.id);
+
+                command.ExecuteNonQuery();
+            }
+        }
+        return Results.Ok(new { success = true });
+    }
+    catch(Exception ex)
+    {
+        return Results.Problem(ex.Message);
     }
 });
 

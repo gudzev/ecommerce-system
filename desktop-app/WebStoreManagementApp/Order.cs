@@ -14,6 +14,6 @@
         public int delivery_method_id { get; set; }
         public DateTime created_at { get; set; }
         public List<OrderItem>? orderItems { get; set; }
-        public bool? is_fullfilled { get; set; }
+        public bool? is_fulfilled { get; set; }
     }
 }
