@@ -5,6 +5,7 @@ import { CheckoutSummary } from "./CheckoutSummary";
 import { useState } from "react";
 
 import axios from "axios";
+import emailjs from '@emailjs/browser';
 
 export function CheckoutForm({cartProducts, shipmentPrice, orderPrice, cart, setCart, deliveryMethod, setDeliveryMethod, deliveryOptions, setOrderID, orderID})
 {
@@ -16,8 +17,17 @@ export function CheckoutForm({cartProducts, shipmentPrice, orderPrice, cart, set
     const [city, setCity] = useState("");
     const [additional, setAdditional] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
-
     const [displayError, setDisplayError] = useState(false);
+
+    emailjs.init({
+    publicKey: 'Ce2FA7FiR-U2dyB3t',
+    blockHeadless: true,
+    limitRate: 
+    {
+        id: 'app',
+        throttle: 10000,
+    },
+    });
 
     const selectedOption = deliveryOptions?.find((option) => option.id == deliveryMethod);
 
@@ -89,6 +99,23 @@ export function CheckoutForm({cartProducts, shipmentPrice, orderPrice, cart, set
                 orderItems: cart
             }
             const request = await axios.post("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/add-order", order);
+
+
+            emailjs.send('service_x6pdb0e', 'template_uwxvoly', 
+                {
+                    email: order.email,
+                    name: order.name,
+                    orderId: request.data.orderId,
+                })
+                .then((response) => 
+                {
+                    console.log(response.status, response.text);
+                },
+                (error) => 
+                {
+                    console.log(error);
+                });
+            
             setOrderID(request.data.orderId);
             setCart([]);
         }
