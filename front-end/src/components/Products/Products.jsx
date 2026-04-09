@@ -36,7 +36,7 @@ export function Products({searchText, cart, setCart, allProducts})
 
         }
         getProducts();
-    }, [location]);
+    }, [location, allProducts]);
 
     return (
         <section className="products">
