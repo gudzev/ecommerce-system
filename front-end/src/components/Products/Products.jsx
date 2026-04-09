@@ -5,10 +5,8 @@ import { Product } from "./Product";
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
-import axios from "axios";
 
-
-export function Products({searchText, cart, setCart})
+export function Products({searchText, cart, setCart, allProducts})
 {
     const [products, setProducts] = useState([]);
     const location = useLocation();
@@ -18,12 +16,11 @@ export function Products({searchText, cart, setCart})
         const getProducts = async () =>
         {
             const searchParams = new URLSearchParams(document.location.search);
-            const response = await axios.get("/products.json");
 
             if(searchParams.size > 0)
             {
                 const eligibleProducts = [];
-                response.data.products.forEach((product) =>
+                allProducts.forEach((product) =>
                 {
                     if(searchParams.get("category") == product.category_id)
                     {
@@ -34,7 +31,7 @@ export function Products({searchText, cart, setCart})
             }
             else
             {
-                setProducts(response.data.products);
+                setProducts(allProducts);
             }
 
         }

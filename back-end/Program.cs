@@ -45,6 +45,38 @@ app.MapGet("/products", () =>
                     p.price_on_sale = reader["price_on_sale"] != DBNull.Value ? Convert.ToInt32(reader["price_on_sale"]) : null;
                     p.category_id = Convert.ToInt32(reader["category_id"]);
                     p.stock_quantity = Convert.ToInt32(reader["stock_quantity"]);
+                    p.is_active = Convert.ToBoolean(reader["is_active"]);
+                    products.Add(p);
+                }
+            }
+        }
+    }
+    return Results.Json(products);
+});
+
+app.MapGet("/active-products", () =>
+{
+    List<Product> products = new List<Product>();
+
+    using (SqlConnection connection = new SqlConnection(connectionString))
+    {
+        connection.Open();
+
+        using (SqlCommand command = new SqlCommand("SELECT * FROM products WHERE is_active = 1", connection))
+        {
+            using (SqlDataReader reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    Product p = new Product();
+                    p.id = Convert.ToInt32(reader["id"]);
+                    p.name = reader["name"].ToString();
+                    p.image_url = reader["image_url"].ToString();
+                    p.price_rsd = Convert.ToInt32(reader["price_rsd"]);
+                    p.price_on_sale = reader["price_on_sale"] != DBNull.Value ? Convert.ToInt32(reader["price_on_sale"]) : null;
+                    p.category_id = Convert.ToInt32(reader["category_id"]);
+                    p.stock_quantity = Convert.ToInt32(reader["stock_quantity"]);
+                    p.is_active = Convert.ToBoolean(reader["is_active"]);
                     products.Add(p);
                 }
             }
@@ -68,10 +100,10 @@ app.MapPost("/add-product", (Product p) =>
             {
                 command.Parameters.AddWithValue("@name", p.name);
                 command.Parameters.AddWithValue("@image_url", p.image_url);
-                command.Parameters.AddWithValue("@price_rsd", p.price_rsd);
-                command.Parameters.AddWithValue("@price_on_sale", p.price_on_sale);
-                command.Parameters.AddWithValue("@category_id", p.category_id);
-                command.Parameters.AddWithValue("@stock_quantity", p.stock_quantity);
+                command.Parameters.AddWithValue("@price_rsd", Convert.ToInt32(p.price_rsd));
+                command.Parameters.AddWithValue("@price_on_sale", (p.price_on_sale != null) ? Convert.ToInt32(p.price_on_sale) : DBNull.Value);
+                command.Parameters.AddWithValue("@category_id", Convert.ToInt32(p.category_id));
+                command.Parameters.AddWithValue("@stock_quantity", Convert.ToInt32(p.stock_quantity));
 
                 command.ExecuteNonQuery();
             }
@@ -93,7 +125,9 @@ app.MapPut("/update-product", (Product p) =>
             connection.Open();
 
             string query = @"UPDATE products
-                             SET name = @name, image_url = @image_url, price_rsd = @price_rsd, price_on_sale = @price_on_sale, category_id = @category_id, stock_quantity = @stock_quantity
+                             SET name = @name, image_url = @image_url, price_rsd = @price_rsd,
+                                 price_on_sale = @price_on_sale, category_id = @category_id,
+                                 stock_quantity = @stock_quantity
                              WHERE id = @id";
 
             using(SqlCommand command = new SqlCommand(query, connection))
@@ -117,7 +151,7 @@ app.MapPut("/update-product", (Product p) =>
     }
 });
 
-app.MapDelete("/delete-product/{productId}", (int productId) =>
+app.MapPatch("/products/{productId}/status", (int productId, bool isActive) =>
 {
     try
     {
@@ -125,12 +159,14 @@ app.MapDelete("/delete-product/{productId}", (int productId) =>
         {
             connection.Open();
 
-            string query = @"DELETE FROM products
+            string query = @"UPDATE products
+                             SET is_active = @isActive
                              WHERE id = @id";
 
             using (SqlCommand command = new SqlCommand(query, connection))
             {
                 command.Parameters.AddWithValue("@id", productId);
+                command.Parameters.AddWithValue("@isActive", isActive);
 
                 command.ExecuteNonQuery();
             }

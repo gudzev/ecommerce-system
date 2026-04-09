@@ -29,7 +29,7 @@ function App()
   {
     const getAllProducts = async () =>
     {
-      const response = await axios.get("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/products");
+      const response = await axios.get("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/active-products");
       const products = response.data;
       setAllProducts(products);
     }
@@ -115,7 +115,8 @@ function App()
         <Route path="/" element={<Home cart={cart}
                                        setCart={setCart}
                                        searchText={searchText}
-                                       setSearchText={setSearchText}/>} 
+                                       setSearchText={setSearchText}
+                                       allProducts={allProducts}/>}
                                   />
         <Route path="/cart" element={<Cart cart={cart}
                                            setCart={setCart}

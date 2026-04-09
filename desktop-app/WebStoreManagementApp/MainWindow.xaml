@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WebStoreManagementApp"
         mc:Ignorable="d"
-        Title="MainWindow" Height="800" Width="1200" Icon="/Resources/logo.png" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+        Title="Aplikacija za upravljanje veb prodavnicom" Height="800" Width="1200" Icon="/Resources/logo.png" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
 
     <Window.Resources>
         <SolidColorBrush x:Key="PageHeaderBg" Color="#000000"/>
@@ -20,7 +20,7 @@
         <SolidColorBrush x:Key="BgAccent" Color="#e6e6e6"/>
         <SolidColorBrush x:Key="BorderColor" Color="#fdfeec"/>
 
-        <Style x:Key="DostavaButton" TargetType="Button">
+        <Style x:Key="Btn" TargetType="Button">
             <Setter Property="Height" Value="35"/>
             <Setter Property="Width" Value="200"/>
             <Setter Property="Background" Value="{StaticResource AccentColor}"/>
@@ -70,9 +70,34 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+
+        <Style x:Key="TextBoxLabel" TargetType="Label">
+            <Setter Property="VerticalAlignment" Value="Center"></Setter>
+            <Setter Property="HorizontalAlignment" Value="Right"></Setter>
+            <Setter Property="FontSize" Value="16"></Setter>
+            <Setter Property="Margin" Value="5, 0, 10, 0"></Setter>
+            <Setter Property="Foreground" Value="White"></Setter>
+        </Style>
+
+        <Style x:Key="TextBox" TargetType="TextBox">
+            <Setter Property="TextWrapping" Value="NoWrap"></Setter>
+            <Setter Property="HorizontalAlignment" Value="Right"></Setter>
+            <Setter Property="Width" Value="300"></Setter>
+            <Setter Property="Height" Value="35"></Setter>
+            <Setter Property="FontSize" Value="16"></Setter>
+            <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
+        </Style>
+
+        <Style x:Key="ComboBox" TargetType="ComboBox">
+            <Setter Property="HorizontalAlignment" Value="Right"></Setter>
+            <Setter Property="Width" Value="300"></Setter>
+            <Setter Property="Height" Value="35"></Setter>
+            <Setter Property="FontSize" Value="16"></Setter>
+            <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
+        </Style>
     </Window.Resources>
 
-    <Grid Background="{DynamicResource AccentColor}">
+    <Grid Background="{StaticResource AccentColor}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="250"/>
             <ColumnDefinition Width="*"/>
@@ -93,17 +118,12 @@
 
         <Grid x:Name="Header" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" Background="{StaticResource PageHeaderBg}">
             <Image Source="/Resources/logo.png" Width="200" Height="55" HorizontalAlignment="Left" Margin="30,0,0,0"/>
-            <Label x:Name="CurrentGridLabel" Content="Proizvodi" Foreground="White" Margin="0,0,60,0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-        </Grid>
-
-        <Grid x:Name="Proizvodi" Grid.Column="1" Grid.Row="1" Background="{StaticResource HeaderLinksBg}"/>
-
-        <Grid x:Name="Narudzbine" Grid.Column="1" Grid.Row="1" Background="{StaticResource HeaderLinksBg}">
+            <Label x:Name="CurrentGridLabel" Content="Proizvodi" Foreground="White" Margin="0,0,75,0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
         </Grid>
 
         <Grid x:Name="Dostava" Grid.Column="1" Grid.Row="1" Background="{StaticResource HeaderLinksBg}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="325"></ColumnDefinition>
+                <ColumnDefinition Width="300"></ColumnDefinition>
                 <ColumnDefinition Width="300"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
@@ -114,23 +134,71 @@
                 <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
 
-            <Label Content="Cena po artiklu za dostavu" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" Foreground="White" HorizontalAlignment="Left" FontSize="16" Margin="5,0,0,0"/>
-            <TextBox x:Name="pricePerProductTextBox" TextWrapping="Wrap" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" Width="300" Height="35" FontSize="16" VerticalContentAlignment="Center"/>
+            <Label Content="Cena po artiklu za dostavu" Grid.Column="0" Grid.Row="0" Style="{StaticResource TextBoxLabel}"/>
+            <TextBox x:Name="pricePerProductTextBox" Grid.Row="0" Grid.Column="1" Style="{StaticResource TextBox}"/>
 
-            <Label Content="Ime opcije za dostavu" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" Foreground="White" HorizontalAlignment="Left" FontSize="16" Margin="5,0,0,0"/>
-            <TextBox x:Name="optionNameTextBox" TextWrapping="Wrap" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" Width="300" Height="35" FontSize="16" VerticalContentAlignment="Center"/>
+            <Label Content="Ime opcije za dostavu" Grid.Column="0" Grid.Row="1" Style="{StaticResource TextBoxLabel}"/>
+            <TextBox x:Name="optionNameTextBox" Grid.Row="1" Grid.Column="1" Style="{StaticResource TextBox}"/>
 
-            <Label Content="Minimalna vrednost za besplatnu dostavu" Grid.Column="0" Grid.Row="2" VerticalAlignment="Center" Foreground="White" HorizontalAlignment="Left" FontSize="16" Margin="5,0,0,0"/>
-            <TextBox x:Name="minimumValueTextBox" TextWrapping="Wrap" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Right" Width="300" Height="35" FontSize="16" VerticalContentAlignment="Center"/>
+            <Label Content="Min. vrednost za besplatnu dostavu" Grid.Column="0" Grid.Row="2" Style="{StaticResource TextBoxLabel}"/>
+            <TextBox x:Name="minimumValueTextBox" Grid.Row="2" Grid.Column="1" Style="{StaticResource TextBox}"/>
 
-            <Button x:Name="methodAddBtn" Content="Dodaj metodu" Grid.Column="2" Grid.Row="0" Style="{StaticResource DostavaButton}" Click="methodAddBtn_Click"/>
-            <Button x:Name="methodUpdateBtn" Content="Izmeni metodu" Grid.Column="2" Grid.Row="1" Style="{StaticResource DostavaButton}" Click="methodUpdateBtn_Click"/>
-            <Button x:Name="methodDeleteBtn" Content="Obriši metodu" Grid.Column="2" Grid.Row="2" Style="{StaticResource DostavaButton}" Click="methodDeleteBtn_Click"/>
+            <Button x:Name="methodAddBtn" Content="Dodaj metodu" Grid.Column="2" Grid.Row="0" Style="{StaticResource Btn}" Click="methodAddBtn_Click"/>
+            <Button x:Name="methodUpdateBtn" Content="Izmeni metodu" Grid.Column="2" Grid.Row="1" Style="{StaticResource Btn}" Click="methodUpdateBtn_Click"/>
+            <Button x:Name="methodDeleteBtn" Content="Obriši metodu" Grid.Column="2" Grid.Row="2" Style="{StaticResource Btn}" Click="methodDeleteBtn_Click"/>
 
             <DataGrid x:Name="MethodsTable" d:ItemsSource="{d:SampleData ItemCount=5}" Grid.ColumnSpan="3" Grid.Row="5" IsReadOnly="True" SelectionChanged="LoadMethodsRow" SelectionMode="Single" HorizontalAlignment="Stretch" ColumnWidth="*"/>
 
         </Grid>
 
+        <Grid x:Name="Narudzbine" Grid.Column="1" Grid.Row="1" Background="{StaticResource HeaderLinksBg}">
+            
+            
+            
+            
+        </Grid>
+
+        <Grid x:Name="Proizvodi" Grid.Column="1" Grid.Row="1" Background="{StaticResource HeaderLinksBg}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="300"></ColumnDefinition>
+                <ColumnDefinition Width="300"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60"></RowDefinition>
+                <RowDefinition Height="60"></RowDefinition>
+                <RowDefinition Height="60"></RowDefinition>
+                <RowDefinition Height="60"></RowDefinition>
+                <RowDefinition Height="60"></RowDefinition>
+                <RowDefinition Height="60"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <Button x:Name="productAddBtn" Content="Dodaj proizvod" Grid.Column="2" Grid.Row="0" Style="{StaticResource Btn}" Click="productAddBtn_Click"/>
+            <Button x:Name="productUpdateBtn" Content="Izmeni proizvod" Grid.Column="2" Grid.Row="1" Style="{StaticResource Btn}" Click="productUpdateBtn_Click"/>
+            <Button x:Name="productDeactivateBtn" Content="Deaktiviraj proizvod" Grid.Column="2" Grid.Row="2" Style="{StaticResource Btn}" Click="productDeactivateBtn_Click"/>
+            <Button x:Name="productActivateBtn" Content="Aktiviraj proizvod" Grid.Column="2" Grid.Row="3" Style="{StaticResource Btn}" Click="productActivateBtn_Click"/>
+
+            <Label Content="Naziv proizvoda" Grid.Column="0" Grid.Row="0" Style="{StaticResource TextBoxLabel}"/>
+            <TextBox x:Name="productNameTextBox" Grid.Column="1" Grid.Row="0" Style="{StaticResource TextBox}"/>
+            
+            <Label Content="Link do slike" Grid.Column="0" Grid.Row="1" Style="{StaticResource TextBoxLabel}"/>
+            <TextBox x:Name="imageURLTextBox" Grid.Column="1" Grid.Row="1" Style="{StaticResource TextBox}"/>
+
+            <Label Content="Normalna cena" Grid.Column="0" Grid.Row="2" Style="{StaticResource TextBoxLabel}"/>
+            <TextBox x:Name="priceTextBox" Grid.Column="1" Grid.Row="2" Style="{StaticResource TextBox}"/>
+
+            <Label Content="Cena ako je na popustu" Grid.Column="0" Grid.Row="3" Style="{StaticResource TextBoxLabel}"/>
+            <TextBox x:Name="salePriceTextBox" Grid.Column="1" Grid.Row="3" Style="{StaticResource TextBox}"/>
+
+            <Label Content="Kategorija" Grid.Column="0" Grid.Row="4" Style="{StaticResource TextBoxLabel}"/>
+            <ComboBox x:Name="categoryComboBox" Grid.Column="1" Grid.Row="4" Style="{StaticResource ComboBox}"/>
+
+            <Label Content="Količina na stanju" Grid.Column="0" Grid.Row="5" Style="{StaticResource TextBoxLabel}"/>
+            <TextBox x:Name="quantityTextBox" Grid.Column="1" Grid.Row="5" Style="{StaticResource TextBox}"/>
+
+            <DataGrid x:Name="ProductsTable" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="6" IsReadOnly="True" SelectionMode="Single" HorizontalAlignment="Stretch" ColumnWidth="*" d:ItemsSource="{d:SampleData ItemCount=5}" SelectionChanged="LoadProductsRow"/>
+        </Grid>
 
     </Grid>
 </Window>

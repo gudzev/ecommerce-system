@@ -9,6 +9,7 @@
         public int? price_on_sale { get; set; }
         public int category_id { get; set; }
         public int stock_quantity { get; set; }
+        public bool is_active { get; set; }
 
         public Product()
         {
