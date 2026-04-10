@@ -53,7 +53,7 @@ export function Products({searchText, cart, setCart, allProducts})
                 })
                 :
                 <div className="empty-grid-message">
-                    <h1>Nije pronađen ni jedan proizvod u izabranoj kategoriji.</h1>
+                    <h1>Nije pronađen ni jedan proizvod.</h1>
                 </div>
             }
             </div>

@@ -1,5 +1,6 @@
 using Microsoft.Data.SqlClient;
 using Backend;
+using System.Collections.ObjectModel;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -408,7 +409,13 @@ app.MapGet("/orders", () =>
     {
         connection.Open();
 
-        using (SqlCommand command = new SqlCommand("SELECT * FROM Orders WHERE is_fulfilled = 0", connection))
+        string query = @"SELECT orders.id, orders.name, surname, email, street, apartment_number, additional, city, delivery_method_id, created_at, is_fulfilled, phone_number, order_id, product_id, quantity, price_at_purchase, products.name AS product_name, image_url
+                         FROM orders
+                         JOIN order_items ON order_items.order_id = orders.id
+                         JOIN products ON products.id = order_items.product_id
+                         WHERE is_fulfilled = 0";
+
+        using (SqlCommand command = new SqlCommand(query, connection))
         {
             using(SqlDataReader reader = command.ExecuteReader())
             {
@@ -427,6 +434,20 @@ app.MapGet("/orders", () =>
                     o.created_at = Convert.ToDateTime(reader["created_at"]);
                     o.is_fulfilled = Convert.ToBoolean(reader["is_fulfilled"]);
                     o.phone_number = reader["phone_number"].ToString();
+                    o.orderItems = new ObservableCollection<OrderItem>();
+
+                    do
+                    {
+                        o.orderItems.Add(new OrderItem(
+                        Convert.ToInt32(reader["product_id"]),
+                        Convert.ToInt32(reader["order_id"]),
+                        Convert.ToInt32(reader["quantity"]),
+                        Convert.ToInt32(reader["price_at_purchase"]),
+                        reader["product_name"].ToString(),
+                        reader["image_url"].ToString()));
+                    }
+                    while (reader.Read() && Convert.ToInt32(reader["order_id"]) == o.id);
+
                     orders.Add(o);
                 }
             }
@@ -447,7 +468,7 @@ app.MapGet("/orders/{id}", (int id) =>
                          FROM orders
                          JOIN order_items ON order_items.order_id = orders.id
                          JOIN products ON products.id = order_items.product_id
-                         WHERE orders.id = @id";
+                         WHERE orders.id = @id AND is_fulfilled = 0";
 
         using (SqlCommand command = new SqlCommand(query, connection))
         {
@@ -469,7 +490,7 @@ app.MapGet("/orders/{id}", (int id) =>
                     order.created_at = Convert.ToDateTime(reader["created_at"]);
                     order.is_fulfilled = Convert.ToBoolean(reader["is_fulfilled"]);
                     order.phone_number = reader["phone_number"].ToString();
-                    order.orderItems = new List<OrderItem>();
+                    order.orderItems = new ObservableCollection<OrderItem>();
 
                     do
                     {
@@ -559,21 +580,20 @@ app.MapPost("/add-order", (Order o) =>
     }
 });
 
-app.MapPut("/update-order/", (Order o) =>
+app.MapPatch("/update-order", (Order o) =>
 {
     try
     {
-        using (SqlConnection connection = new SqlConnection())
+        using (SqlConnection connection = new SqlConnection(connectionString))
         {
             connection.Open();
 
             string query = @"UPDATE orders 
-                             SET is_fulfilled = @is_fulfilled
+                             SET is_fulfilled = 1
                              WHERE id = @id";
 
             using (SqlCommand command = new SqlCommand(query, connection))
             {
-                command.Parameters.AddWithValue("@is_fulfilled", o.is_fulfilled);
                 command.Parameters.AddWithValue("@id", o.id);
 
                 command.ExecuteNonQuery();

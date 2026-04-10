@@ -1,17 +1,9 @@
 ﻿using Backend;
+using System.Collections.ObjectModel;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Text.Json;
 
 namespace WebStoreManagementApp
 {
@@ -21,10 +13,10 @@ namespace WebStoreManagementApp
 
         private List<Grid> grids = new List<Grid>();
 
-        private List<DeliveryOption> deliveryOptions = new List<DeliveryOption>();
-        private List<Product> products = new List<Product>();
-        private List<Order> orders = new List<Order>();
-        private List<Category> categories = new List<Category>();
+        private ObservableCollection<DeliveryOption> deliveryOptions = new ObservableCollection<DeliveryOption>();
+        private ObservableCollection<Product> products = new ObservableCollection<Product>();
+        private ObservableCollection<Order> orders = new ObservableCollection<Order>();
+        private ObservableCollection<Category> categories = new ObservableCollection<Category>();
         public MainWindow()
         {
             InitializeComponent();
@@ -38,12 +30,8 @@ namespace WebStoreManagementApp
             grids.Add(Dostava);
 
             showGrid(Proizvodi); // show default grid
-
-            await getCategories(); // fill combobox on products (default) grid
-            categoryComboBox.ItemsSource = categories;
-            categoryComboBox.DisplayMemberPath = "name";
-
             LoadProductsTable();
+            fillCategoriesComboBox();
         }
 
         private void showGrid(Grid g)
@@ -70,6 +58,15 @@ namespace WebStoreManagementApp
             CurrentGridLabel.Content = "Proizvodi";
 
             LoadProductsTable();
+            fillCategoriesComboBox();
+        }
+
+        private async void fillCategoriesComboBox()
+        {
+
+            await getCategories(); // fill combobox on products (default) grid
+            categoryComboBox.ItemsSource = categories;
+            categoryComboBox.DisplayMemberPath = "name";
         }
 
         private async void LoadProductsTable()
@@ -78,14 +75,14 @@ namespace WebStoreManagementApp
             {
                 HttpResponseMessage response = await client.GetAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/products");
                 response.EnsureSuccessStatusCode();
-                products = await response.Content.ReadFromJsonAsync<List<Product>>();
+                products = await response.Content.ReadFromJsonAsync<ObservableCollection<Product>>();
 
                 ProductsTable.ItemsSource = products;
                 LoadFirstProductsRow();
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                Console.WriteLine(ex.Message);
             }
         }
 
@@ -98,19 +95,35 @@ namespace WebStoreManagementApp
             productNameTextBox.Text = product.name;
             imageURLTextBox.Text = product.image_url;
             priceTextBox.Text = product.price_rsd.ToString();
-            salePriceTextBox.Text = (product.price_on_sale != null) ? product.price_on_sale.ToString() : "";
-            categoryComboBox.SelectedIndex = product.category_id - 1;
+            salePriceTextBox.Text = product.price_on_sale.ToString() ?? "";
             quantityTextBox.Text = product.stock_quantity.ToString();
+
+            foreach(var category in categories)
+            {
+                if(category.id == product.category_id)
+                {
+                    categoryComboBox.SelectedItem = category;
+                }
+            }
         }
 
         private void LoadFirstProductsRow()
         {
-            productNameTextBox.Text = products[0].name;
-            imageURLTextBox.Text = products[0].image_url;
-            priceTextBox.Text = products[0].price_rsd.ToString();
-            salePriceTextBox.Text = (products[0].price_on_sale != null) ? products[0].price_rsd.ToString() : "";
-            categoryComboBox.SelectedIndex = products[0].category_id;
-            quantityTextBox.Text = products[0].stock_quantity.ToString();
+            Product product = (Product)ProductsTable.Items[0];
+
+            productNameTextBox.Text = product.name;
+            imageURLTextBox.Text = product.image_url;
+            priceTextBox.Text = product.price_rsd.ToString();
+            salePriceTextBox.Text = product.price_on_sale.ToString() ?? "";
+            quantityTextBox.Text = product.stock_quantity.ToString();
+
+            foreach (var category in categories)
+            {
+                if (category.id == product.category_id)
+                {
+                    categoryComboBox.SelectedItem = category;
+                }
+            }
         }
 
         private async void productAddBtn_Click(object sender, RoutedEventArgs e)
@@ -237,11 +250,109 @@ namespace WebStoreManagementApp
 
 
         /* Narudzbine */
-        private void NarudzbineBtn_Click(object sender, RoutedEventArgs e)
+        private async void NarudzbineBtn_Click(object sender, RoutedEventArgs e)
         {
             showGrid(Narudzbine);
             CurrentGridLabel.Content = "Narudžbine";
+            fillDeliveryMethodsComboBox();
+            await LoadOrdersTable();
+            LoadFirstOrdersRow();
         }
+
+        private async void fillDeliveryMethodsComboBox()
+        {
+            await fillDeliveryOptions();
+            deliveryMethodComboBox.ItemsSource = deliveryOptions;
+            deliveryMethodComboBox.DisplayMemberPath = "name";
+        }
+
+        private async Task LoadOrdersTable()
+        {
+            try
+            {
+                HttpResponseMessage response = await client.GetAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/orders/");
+                response.EnsureSuccessStatusCode();
+
+                orders = await response.Content.ReadFromJsonAsync<ObservableCollection<Order>>();
+                OrdersTable.ItemsSource = orders;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        private void LoadOrdersRow(object sender, SelectionChangedEventArgs e)
+        {
+            Order order = (Order)OrdersTable.SelectedItem;
+
+            if (order == null) order = (Order)OrdersTable.Items[0];
+
+            emailTextBox.Text = order.email;
+            nameTextBox.Text = order.name;
+            surnameTextBox.Text = order.surname;
+            streetTextBox.Text = order.street ?? "";
+            apartmentNumberTextBox.Text = order.apartment_number ?? "";
+            cityTextBox.Text = order.city ?? "";
+            phoneTextBox.Text = order.phone_number;
+            additionalTextBox.Text = order.additional ?? "";
+            orderDateTextBox.Text = order.created_at.ToString();
+
+            foreach (var deliveryMethod in deliveryOptions)
+            {
+                if (deliveryMethod.id == order.delivery_method_id)
+                {
+                    deliveryMethodComboBox.SelectedItem = deliveryMethod;
+                }
+            }
+            
+        }
+
+        private void LoadFirstOrdersRow()
+        {
+            Order order = (Order)OrdersTable.Items[0];
+
+            emailTextBox.Text = order.email;
+            nameTextBox.Text = order.name;
+            surnameTextBox.Text = order.surname;
+            streetTextBox.Text = order.street ?? "";
+            apartmentNumberTextBox.Text = order.apartment_number ?? "";
+            cityTextBox.Text = order.city ?? "";
+            phoneTextBox.Text = order.phone_number;
+            additionalTextBox.Text = order.additional ?? "";
+            orderDateTextBox.Text = order.created_at.ToString();
+
+            foreach (var deliveryMethod in deliveryOptions)
+            {
+                if (deliveryMethod.id == order.delivery_method_id)
+                {
+                    deliveryMethodComboBox.SelectedItem = deliveryMethod;
+                }
+            }
+        }
+        private async void markAsFulfilledBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Order? selectedOrder = null;
+
+            if(OrdersTable.SelectedItem is Order o)
+            {
+                selectedOrder = o;
+            }
+
+            if (selectedOrder == null) return;
+
+            try
+            {
+                HttpResponseMessage response = await client.PatchAsJsonAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/update-order/", selectedOrder);
+                response.EnsureSuccessStatusCode();
+                await LoadOrdersTable();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message); 
+            }
+        }
+
 
 
 
@@ -258,15 +369,26 @@ namespace WebStoreManagementApp
             LoadMethodsTable();
         }
 
-        private async void LoadMethodsTable()
+        private async Task fillDeliveryOptions()
         {
             try
             {
                 HttpResponseMessage response = await client.GetAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/delivery-options");
                 response.EnsureSuccessStatusCode();
-                deliveryOptions = await response.Content.ReadFromJsonAsync<List<DeliveryOption>>();
+                deliveryOptions = await response.Content.ReadFromJsonAsync<ObservableCollection<DeliveryOption>>();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
 
-                MethodsTable.ItemsSource = deliveryOptions;
+        private async void LoadMethodsTable()
+        {
+            try
+            {
+                await fillDeliveryOptions();
+;               MethodsTable.ItemsSource = deliveryOptions;
                 LoadFirstMethodsRow();
             }
             catch (Exception ex)
@@ -371,7 +493,7 @@ namespace WebStoreManagementApp
             {
                 HttpResponseMessage response = await client.GetAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/categories");
                 response.EnsureSuccessStatusCode();
-                categories = await response.Content.ReadFromJsonAsync<List<Category>>();
+                categories = await response.Content.ReadFromJsonAsync<ObservableCollection<Category>>();
             }
             catch(Exception ex)
             {

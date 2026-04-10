@@ -1,4 +1,6 @@
-﻿namespace Backend
+﻿using System.Collections.ObjectModel;
+
+namespace Backend
 {
     public class Order
     {
@@ -13,7 +15,7 @@
         public string? phone_number { get; set; }
         public int delivery_method_id { get; set; }
         public DateTime created_at { get; set; }
-        public List<OrderItem>? orderItems { get; set; }
+        public ObservableCollection<OrderItem>? orderItems { get; set; }
         public bool? is_fulfilled { get; set; }
     }
 }

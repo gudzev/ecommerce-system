@@ -3,9 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WebStoreManagementApp"
+        xmlns:local="clr-namespace:WebStoreManagementApp" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="Aplikacija za upravljanje veb prodavnicom" Height="800" Width="1200" Icon="/Resources/logo.png" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+        Title="Aplikacija za upravljanje veb prodavnicom" Height="800" Width="1440" Icon="/Resources/logo.png" WindowStartupLocation="CenterScreen" ResizeMode="CanResize">
 
     <Window.Resources>
         <SolidColorBrush x:Key="PageHeaderBg" Color="#000000"/>
@@ -147,19 +147,20 @@
             <Button x:Name="methodUpdateBtn" Content="Izmeni metodu" Grid.Column="2" Grid.Row="1" Style="{StaticResource Btn}" Click="methodUpdateBtn_Click"/>
             <Button x:Name="methodDeleteBtn" Content="Obriši metodu" Grid.Column="2" Grid.Row="2" Style="{StaticResource Btn}" Click="methodDeleteBtn_Click"/>
 
-            <DataGrid x:Name="MethodsTable" d:ItemsSource="{d:SampleData ItemCount=5}" Grid.ColumnSpan="3" Grid.Row="5" IsReadOnly="True" SelectionChanged="LoadMethodsRow" SelectionMode="Single" HorizontalAlignment="Stretch" ColumnWidth="*"/>
+            <DataGrid x:Name="MethodsTable" AutoGenerateColumns="False" Grid.ColumnSpan="3" Grid.Row="5" IsReadOnly="True" SelectionChanged="LoadMethodsRow" SelectionMode="Single" HorizontalAlignment="Stretch">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID" Binding="{Binding id}" Width="auto"/>
+                    <DataGridTextColumn Header="Cena po proizvodu" Binding="{Binding price_per_item}" Width="auto"/>
+                    <DataGridTextColumn Header="Ime metode" Binding="{Binding name}" Width="auto"/>
+                    <DataGridTextColumn Header="Min. vrednost za besplatnu dostavu" Binding="{Binding free_shipping_minimum_value}" Width="auto"/>
+                </DataGrid.Columns>
+            </DataGrid>
 
-        </Grid>
-
-        <Grid x:Name="Narudzbine" Grid.Column="1" Grid.Row="1" Background="{StaticResource HeaderLinksBg}">
-            
-            
-            
-            
         </Grid>
 
         <Grid x:Name="Proizvodi" Grid.Column="1" Grid.Row="1" Background="{StaticResource HeaderLinksBg}">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="300"></ColumnDefinition>
                 <ColumnDefinition Width="300"></ColumnDefinition>
                 <ColumnDefinition Width="300"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
@@ -197,7 +198,113 @@
             <Label Content="Količina na stanju" Grid.Column="0" Grid.Row="5" Style="{StaticResource TextBoxLabel}"/>
             <TextBox x:Name="quantityTextBox" Grid.Column="1" Grid.Row="5" Style="{StaticResource TextBox}"/>
 
-            <DataGrid x:Name="ProductsTable" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="6" IsReadOnly="True" SelectionMode="Single" HorizontalAlignment="Stretch" ColumnWidth="*" d:ItemsSource="{d:SampleData ItemCount=5}" SelectionChanged="LoadProductsRow"/>
+            <DataGrid x:Name="ProductsTable" AutoGenerateColumns="False" Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="6" IsReadOnly="True" SelectionMode="Single" HorizontalAlignment="Stretch" SelectionChanged="LoadProductsRow">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID" Binding="{Binding id}" Width="auto"/>
+                    <DataGridTextColumn Header="Naziv" Binding="{Binding name}" Width="auto"/>
+                    <DataGridTextColumn Header="Slika" Binding="{Binding image_url}" Width="200"/>
+                    <DataGridTextColumn Header="Cena" Binding="{Binding price_rsd}" Width="auto"/>
+                    <DataGridTextColumn Header="Popust" Binding="{Binding price_on_sale}" Width="auto"/>
+                    <DataGridTextColumn Header="ID Kategorije" Binding="{Binding category_id}" Width="90"/>
+                    <DataGridTextColumn Header="Na stanju" Binding="{Binding stock_quantity}" Width="90"/>
+                    <DataGridCheckBoxColumn Header="Aktivan" Binding="{Binding is_active}" Width="90"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+
+        <Grid x:Name="Narudzbine" Grid.Column="1" Grid.Row="1" Background="{StaticResource HeaderLinksBg}">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100"></ColumnDefinition>
+                <ColumnDefinition Width="300"></ColumnDefinition>
+                <ColumnDefinition Width="140"></ColumnDefinition>
+                <ColumnDefinition Width="300"></ColumnDefinition>
+                <ColumnDefinition Width="300"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60"></RowDefinition>
+                <RowDefinition Height="60"></RowDefinition>
+                <RowDefinition Height="60"></RowDefinition>
+                <RowDefinition Height="60"></RowDefinition>
+                <RowDefinition Height="60"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <Label Content="Email" Grid.Column="0" Grid.Row="0" Style="{StaticResource TextBoxLabel}"/>
+            <TextBox x:Name="emailTextBox" Grid.Column="1" Grid.Row="0" Style="{StaticResource TextBox}"/>
+
+            <Label Content="Ime" Grid.Column="0" Grid.Row="1" Style="{StaticResource TextBoxLabel}"/>
+            <TextBox x:Name="nameTextBox" Grid.Column="1" Grid.Row="1" Style="{StaticResource TextBox}"/>
+
+            <Label Content="Prezime" Grid.Column="0" Grid.Row="2" Style="{StaticResource TextBoxLabel}"/>
+            <TextBox x:Name="surnameTextBox" Grid.Column="1" Grid.Row="2" Style="{StaticResource TextBox}"/>
+
+            <Label Content="Ulica" Grid.Column="0" Grid.Row="3" Style="{StaticResource TextBoxLabel}"/>
+            <TextBox x:Name="streetTextBox" Grid.Column="1" Grid.Row="3" Style="{StaticResource TextBox}"/>
+
+            <Label Content="Kućni broj" Grid.Column="0" Grid.Row="4" Style="{StaticResource TextBoxLabel}"/>
+            <TextBox x:Name="apartmentNumberTextBox" Grid.Column="1" Grid.Row="4" Style="{StaticResource TextBox}"/>
+
+            <Label Content="Grad" Grid.Column="2" Grid.Row="0" Style="{StaticResource TextBoxLabel}"/>
+            <TextBox x:Name="cityTextBox" Grid.Column="3" Grid.Row="0" Style="{StaticResource TextBox}"/>
+
+            <Label Content="Telefon" Grid.Column="2" Grid.Row="1" Style="{StaticResource TextBoxLabel}"/>
+            <TextBox x:Name="phoneTextBox" Grid.Column="3" Grid.Row="1" Style="{StaticResource TextBox}"/>
+
+            <Label Content="Dodatno" Grid.Column="2" Grid.Row="2" Style="{StaticResource TextBoxLabel}"/>
+            <TextBox x:Name="additionalTextBox" Grid.Column="3" Grid.Row="2" Style="{StaticResource TextBox}"/>
+
+            <Label Content="Metoda dostave" Grid.Column="2" Grid.Row="3" Style="{StaticResource TextBoxLabel}"/>
+            <ComboBox x:Name="deliveryMethodComboBox" Grid.Column="3" Grid.Row="3" Style="{StaticResource ComboBox}"/>
+
+            <Label Content="Vreme kreiranja" Grid.Column="2" Grid.Row="4" Style="{StaticResource TextBoxLabel}"/>
+            <TextBox x:Name="orderDateTextBox" Grid.Column="3" Grid.Row="4" Style="{StaticResource TextBox}"/>
+
+            <Button x:Name="markAsFulfilledBtn" Content="Oznaci kao izvrseno" Grid.Column="4" Grid.Row="0" Style="{StaticResource Btn}" Click="markAsFulfilledBtn_Click"/>
+
+            <DataGrid x:Name="OrdersTable" AutoGenerateColumns="False" Grid.ColumnSpan="6" Grid.Row="7" IsReadOnly="True" SelectionMode="Single" HorizontalAlignment="Stretch" SelectionChanged="LoadOrdersRow">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID" Binding="{Binding id}" Width="50"/>
+                    <DataGridTextColumn Header="Email" Binding="{Binding email}" Width="*"/>
+                    <DataGridTextColumn Header="Ime" Binding="{Binding name}" Width="*"/>
+                    <DataGridTextColumn Header="Prezime" Binding="{Binding surname}" Width="*"/>
+                    <DataGridTextColumn Header="Ulica" Binding="{Binding street}" Width="*"/>
+                    <DataGridTextColumn Header="Broj" Binding="{Binding apartment_number}" Width="*"/>
+                    <DataGridTextColumn Header="Grad" Binding="{Binding city}" Width="*"/>
+                    <DataGridTextColumn Header="Dodatno" Binding="{Binding additional}" Width="*"/>
+                    <DataGridTextColumn Header="Telefon" Binding="{Binding phone_number}" Width="*"/>
+                    <DataGridTextColumn Header="ID Metode dostave" Binding="{Binding delivery_method_id}" Width="*"/>
+                    <DataGridTextColumn Header="Datum kreiranja" Binding="{Binding created_at}" Width="*"/>
+                    <DataGridTextColumn Header="Je ispunjen" Binding="{Binding is_fulfilled}" Width="*"/>
+                </DataGrid.Columns>
+
+                <DataGrid.RowDetailsTemplate>
+                    <DataTemplate>
+                        <DataGrid ItemsSource="{Binding orderItems}" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="ID Proizvoda" Binding="{Binding productId}" Width="Auto"/>
+                                <DataGridTextColumn Header="ID Narudžbine" Binding="{Binding order_id}" Width="Auto"/>
+                                <DataGridTextColumn Header="Naziv" Binding="{Binding product_name}" Width="Auto"/>
+                                <DataGridTemplateColumn Header="Slika" Width="100">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Image Source="{Binding product_image_url}" 
+                                                   Height="50" 
+                                                   Width="50" 
+                                                   Stretch="Uniform"
+                                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTextColumn Header="Količina" Binding="{Binding quantity}" Width="Auto"/>
+                                <DataGridTextColumn Header="Cena pri kupovini" Binding="{Binding price_at_purchase}" Width="Auto"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </DataTemplate>
+                </DataGrid.RowDetailsTemplate>
+            </DataGrid>
+
         </Grid>
 
     </Grid>
