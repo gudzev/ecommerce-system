@@ -24,7 +24,7 @@ app.UseHttpsRedirection();
 
 string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-app.MapGet("/products", () =>
+app.MapGet("/products", (bool? is_active) =>
 {
     List<Product> products = new List<Product>();
 
@@ -32,38 +32,19 @@ app.MapGet("/products", () =>
     {
         connection.Open();
 
-        using (SqlCommand command = new SqlCommand("SELECT * FROM products", connection))
+        string query = @"SELECT * FROM products";
+
+        if (is_active == true)
         {
-            using (SqlDataReader reader = command.ExecuteReader())
-            {
-                while (reader.Read())
-                {
-                    Product p = new Product();
-                    p.id = Convert.ToInt32(reader["id"]);
-                    p.name = reader["name"].ToString();
-                    p.image_url = reader["image_url"].ToString();
-                    p.price_rsd = Convert.ToInt32(reader["price_rsd"]);
-                    p.price_on_sale = reader["price_on_sale"] != DBNull.Value ? Convert.ToInt32(reader["price_on_sale"]) : null;
-                    p.category_id = Convert.ToInt32(reader["category_id"]);
-                    p.stock_quantity = Convert.ToInt32(reader["stock_quantity"]);
-                    p.is_active = Convert.ToBoolean(reader["is_active"]);
-                    products.Add(p);
-                }
-            }
+            query += " WHERE is_active = 1";
         }
-    }
-    return Results.Json(products);
-});
 
-app.MapGet("/active-products", () =>
-{
-    List<Product> products = new List<Product>();
+        if (is_active == false)
+        {
+            query += " WHERE is_active = 0";
+        }
 
-    using (SqlConnection connection = new SqlConnection(connectionString))
-    {
-        connection.Open();
-
-        using (SqlCommand command = new SqlCommand("SELECT * FROM products WHERE is_active = 1", connection))
+        using (SqlCommand command = new SqlCommand(query, connection))
         {
             using (SqlDataReader reader = command.ExecuteReader())
             {
@@ -136,7 +117,7 @@ app.MapPut("/update-product", (Product p) =>
                 command.Parameters.AddWithValue("@name", p.name);
                 command.Parameters.AddWithValue("@image_url", p.image_url);
                 command.Parameters.AddWithValue("@price_rsd", p.price_rsd);
-                command.Parameters.AddWithValue("@price_on_sale", p.price_on_sale);
+                command.Parameters.AddWithValue("@price_on_sale", (p.price_on_sale != null) ? Convert.ToInt32(p.price_on_sale) : DBNull.Value);
                 command.Parameters.AddWithValue("@category_id", p.category_id);
                 command.Parameters.AddWithValue("@stock_quantity", p.stock_quantity);
                 command.Parameters.AddWithValue("@id", p.id);
@@ -401,7 +382,7 @@ app.MapDelete("/delete-delivery-option/{deliveryOptionID}", (int deliveryOptionI
     }
 });
 
-app.MapGet("/orders", () =>
+app.MapGet("/orders", (int is_fulfilled) =>
 {
     List<Order> orders = new List<Order>();
 
@@ -413,10 +394,12 @@ app.MapGet("/orders", () =>
                          FROM orders
                          JOIN order_items ON order_items.order_id = orders.id
                          JOIN products ON products.id = order_items.product_id
-                         WHERE is_fulfilled = 0";
+                         WHERE is_fulfilled = @is_fulfilled";
 
         using (SqlCommand command = new SqlCommand(query, connection))
         {
+            command.Parameters.AddWithValue("@is_fulfilled", is_fulfilled);
+
             using(SqlDataReader reader = command.ExecuteReader())
             {
                 while (reader.Read())

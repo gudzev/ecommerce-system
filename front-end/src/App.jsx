@@ -29,7 +29,7 @@ function App()
   {
     const getAllProducts = async () =>
     {
-      const response = await axios.get("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/active-products");
+      const response = await axios.get("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/products?is_active=1");
       const products = response.data;
       setAllProducts(products);
     }

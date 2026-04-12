@@ -19,25 +19,19 @@
         <SolidColorBrush x:Key="BgColor" Color="#f2f2f2"/>
         <SolidColorBrush x:Key="BgAccent" Color="#e6e6e6"/>
         <SolidColorBrush x:Key="BorderColor" Color="#fdfeec"/>
+        <SolidColorBrush x:Key="PrimaryHueMidBrush" Color="#dcb104"/>
+        <SolidColorBrush x:Key="PrimaryHueDarkBrush" Color="#dcb104"/>
+        <SolidColorBrush x:Key="PrimaryHueLightBrush" Color="#dcb104"/>
+        <SolidColorBrush x:Key="MaterialDesign.Brush.Primary" Color="#dcb104"/>
 
-        <Style x:Key="Btn" TargetType="Button">
+
+        <Style x:Key="Btn" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
             <Setter Property="Height" Value="35"/>
             <Setter Property="Width" Value="200"/>
             <Setter Property="Background" Value="{StaticResource AccentColor}"/>
             <Setter Property="Foreground" Value="{StaticResource PageHeaderBg}"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Cursor" Value="Hand"/>
-
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}">
-                            <ContentPresenter HorizontalAlignment="Center"
-                                      VerticalAlignment="Center"/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
 
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
@@ -46,23 +40,12 @@
             </Style.Triggers>
         </Style>
 
-        <Style x:Key="SidebarButton" TargetType="Button">
+        <Style x:Key="SidebarButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
             <Setter Property="Height" Value="60"/>
             <Setter Property="Background" Value="{StaticResource PageHeaderBg}"/>
             <Setter Property="Foreground" Value="{StaticResource AccentColor}"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Cursor" Value="Hand"/>
-
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}">
-                            <ContentPresenter HorizontalAlignment="Center"
-                                      VerticalAlignment="Center"/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
 
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
@@ -71,29 +54,54 @@
             </Style.Triggers>
         </Style>
 
-        <Style x:Key="TextBoxLabel" TargetType="Label">
+        <Style x:Key="TextBoxLabel" TargetType="Label" BasedOn="{StaticResource MaterialDesignLabel}">
             <Setter Property="VerticalAlignment" Value="Center"></Setter>
             <Setter Property="HorizontalAlignment" Value="Right"></Setter>
             <Setter Property="FontSize" Value="16"></Setter>
             <Setter Property="Margin" Value="5, 0, 10, 0"></Setter>
-            <Setter Property="Foreground" Value="White"></Setter>
+            <Setter Property="Foreground" Value="{StaticResource TextColor}"></Setter>
         </Style>
 
-        <Style x:Key="TextBox" TargetType="TextBox">
+        <Style x:Key="TextBox" TargetType="TextBox" BasedOn="{StaticResource MaterialDesignTextBox}">
             <Setter Property="TextWrapping" Value="NoWrap"></Setter>
             <Setter Property="HorizontalAlignment" Value="Right"></Setter>
             <Setter Property="Width" Value="300"></Setter>
             <Setter Property="Height" Value="35"></Setter>
             <Setter Property="FontSize" Value="16"></Setter>
             <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
+            <Setter Property="Foreground" Value="White"></Setter>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderColor}"></Setter>
+            <Setter Property="CaretBrush" Value="{StaticResource AccentColor}"/>
+
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="materialDesign:TextFieldAssist.UnderlineBrush" Value="{StaticResource AccentColor}"/>
+                </Trigger>
+
+                <Trigger Property="IsKeyboardFocused" Value="True">
+                    <Setter Property="materialDesign:TextFieldAssist.UnderlineBrush" Value="{StaticResource AccentColor}"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>
 
-        <Style x:Key="ComboBox" TargetType="ComboBox">
+        <Style x:Key="ComboBox" TargetType="ComboBox" BasedOn="{StaticResource MaterialDesignComboBox}">
             <Setter Property="HorizontalAlignment" Value="Right"></Setter>
             <Setter Property="Width" Value="300"></Setter>
             <Setter Property="Height" Value="35"></Setter>
             <Setter Property="FontSize" Value="16"></Setter>
             <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
+            <Setter Property="Foreground" Value="White"></Setter>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderColor}"></Setter>
+
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="materialDesign:TextFieldAssist.UnderlineBrush" Value="{StaticResource AccentColor}"/>
+                </Trigger>
+
+                <Trigger Property="IsKeyboardFocused" Value="True">
+                    <Setter Property="materialDesign:TextFieldAssist.UnderlineBrush" Value="{StaticResource AccentColor}"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>
     </Window.Resources>
 
@@ -112,7 +120,7 @@
                 <Button x:Name="ProizvodiBtn" Content="Proizvodi" Style="{StaticResource SidebarButton}" Click="ProizvodiBtn_Click"/>
                 <Button x:Name="NarudzbineBtn" Content="Narudžbine" Style="{StaticResource SidebarButton}" Click="NarudzbineBtn_Click"/>
                 <Button x:Name="DostavaBtn" Content="Metode dostave" Style="{StaticResource SidebarButton}" Click="DostavaBtn_Click"/>
-
+                <Button x:Name="KategorijaBtn" Content="Kategorije" Style="{StaticResource SidebarButton}" Click="KategorijaBtn_Click"/>
             </StackPanel>
         </Border>
 
@@ -147,7 +155,7 @@
             <Button x:Name="methodUpdateBtn" Content="Izmeni metodu" Grid.Column="2" Grid.Row="1" Style="{StaticResource Btn}" Click="methodUpdateBtn_Click"/>
             <Button x:Name="methodDeleteBtn" Content="Obriši metodu" Grid.Column="2" Grid.Row="2" Style="{StaticResource Btn}" Click="methodDeleteBtn_Click"/>
 
-            <DataGrid x:Name="MethodsTable" AutoGenerateColumns="False" Grid.ColumnSpan="3" Grid.Row="5" IsReadOnly="True" SelectionChanged="LoadMethodsRow" SelectionMode="Single" HorizontalAlignment="Stretch">
+            <DataGrid x:Name="MethodsTable" SelectionUnit="FullRow" AutoGenerateColumns="False" Grid.ColumnSpan="3" Grid.Row="5" IsReadOnly="True" SelectionChanged="LoadMethodsRow" SelectionMode="Single" HorizontalAlignment="Stretch">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="ID" Binding="{Binding id}" Width="auto"/>
                     <DataGridTextColumn Header="Cena po proizvodu" Binding="{Binding price_per_item}" Width="auto"/>
@@ -160,7 +168,7 @@
 
         <Grid x:Name="Proizvodi" Grid.Column="1" Grid.Row="1" Background="{StaticResource HeaderLinksBg}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="300"></ColumnDefinition>
+                <ColumnDefinition Width="200"></ColumnDefinition>
                 <ColumnDefinition Width="300"></ColumnDefinition>
                 <ColumnDefinition Width="300"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
@@ -198,7 +206,7 @@
             <Label Content="Količina na stanju" Grid.Column="0" Grid.Row="5" Style="{StaticResource TextBoxLabel}"/>
             <TextBox x:Name="quantityTextBox" Grid.Column="1" Grid.Row="5" Style="{StaticResource TextBox}"/>
 
-            <DataGrid x:Name="ProductsTable" AutoGenerateColumns="False" Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="6" IsReadOnly="True" SelectionMode="Single" HorizontalAlignment="Stretch" SelectionChanged="LoadProductsRow">
+            <DataGrid x:Name="ProductsTable" SelectionUnit="FullRow" AutoGenerateColumns="False" Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="6" IsReadOnly="True" SelectionMode="Single" HorizontalAlignment="Stretch" SelectionChanged="LoadProductsRow">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="ID" Binding="{Binding id}" Width="auto"/>
                     <DataGridTextColumn Header="Naziv" Binding="{Binding name}" Width="auto"/>
@@ -262,8 +270,10 @@
             <TextBox x:Name="orderDateTextBox" Grid.Column="3" Grid.Row="4" Style="{StaticResource TextBox}"/>
 
             <Button x:Name="markAsFulfilledBtn" Content="Oznaci kao izvrseno" Grid.Column="4" Grid.Row="0" Style="{StaticResource Btn}" Click="markAsFulfilledBtn_Click"/>
+            <Button x:Name="historyBtn" Content="Prikazi istoriju narudžbina" Grid.Column="4" Grid.Row="1" Style="{StaticResource Btn}" Click="historyBtn_Click"/>
+            <Button x:Name="allOrdersBtn" Content="Prikazi sve narudžbine" Grid.Column="4" Grid.Row="2" Style="{StaticResource Btn}" Click="allOrdersBtn_Click"/>
 
-            <DataGrid x:Name="OrdersTable" AutoGenerateColumns="False" Grid.ColumnSpan="6" Grid.Row="7" IsReadOnly="True" SelectionMode="Single" HorizontalAlignment="Stretch" SelectionChanged="LoadOrdersRow">
+            <DataGrid x:Name="OrdersTable" SelectionUnit="FullRow" AutoGenerateColumns="False" Grid.ColumnSpan="6" Grid.Row="7" IsReadOnly="True" SelectionMode="Single" HorizontalAlignment="Stretch" SelectionChanged="LoadOrdersRow">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="ID" Binding="{Binding id}" Width="50"/>
                     <DataGridTextColumn Header="Email" Binding="{Binding email}" Width="*"/>
@@ -305,6 +315,35 @@
                 </DataGrid.RowDetailsTemplate>
             </DataGrid>
 
+        </Grid>
+
+        <Grid x:Name="Kategorije" Grid.Column="1" Grid.Row="1" Background="{StaticResource HeaderLinksBg}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150"></ColumnDefinition>
+                <ColumnDefinition Width="300"></ColumnDefinition>
+                <ColumnDefinition Width="300"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60"></RowDefinition>
+                <RowDefinition Height="60"></RowDefinition>
+                <RowDefinition Height="60"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <Label Content="Naziv kategorije" Grid.Column="0" Grid.Row="0" Style="{StaticResource TextBoxLabel}"/>
+            <TextBox x:Name="categoryNameTextBox" Grid.Row="0" Grid.Column="1" Style="{StaticResource TextBox}"/>
+
+            <Button x:Name="addCategoryBtn" Content="Dodaj kategoriju" Grid.Column="2" Grid.Row="0" Style="{StaticResource Btn}" Click="addCategoryBtn_Click"/>
+            <Button x:Name="updateCategoryBtn" Content="Izmeni kategoriju" Grid.Column="2" Grid.Row="1" Style="{StaticResource Btn}" Click="updateCategoryBtn_Click"/>
+            <Button x:Name="removeCategoryBtn" Content="Obriši kategoriju" Grid.Column="2" Grid.Row="2" Style="{StaticResource Btn}" Click="removeCategoryBtn_Click"/>
+
+            <DataGrid x:Name="CategoriesTable" SelectionUnit="FullRow" AutoGenerateColumns="False" Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="3" IsReadOnly="True" SelectionMode="Single" HorizontalAlignment="Stretch" SelectionChanged="LoadCategoriesRow">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID kategorije" Binding="{Binding id}" Width="auto"/>
+                    <DataGridTextColumn Header="Naziv kategorije" Binding="{Binding name}" Width="auto"/>
+                </DataGrid.Columns>
+            </DataGrid>
         </Grid>
 
     </Grid>
