@@ -15,9 +15,10 @@ function App()
 {
   const [orderPrice, setOrderPrice] = useState(0);
   const [shipmentPrice, setShipmentPrice] = useState(0);
-  const [deliveryOptions, setDeliveryOptions] = useState([]);
   const [cartProducts, setCartProducts] = useState([]);
+  const [deliveryOptions, setDeliveryOptions] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
+  const [allCategories, setAllCategories] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [deliveryMethod, setDeliveryMethod] = useState(1);
   const [cart, setCart] = useState(() =>
@@ -29,7 +30,7 @@ function App()
   {
     const getAllProducts = async () =>
     {
-      const response = await axios.get("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/products?is_active=1");
+      const response = await axios.get("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/products?is_active=true");
       const products = response.data;
       setAllProducts(products);
     }
@@ -41,8 +42,16 @@ function App()
         setDeliveryOptions(deliveryOptions);
     }
 
+    const getAllCategories = async () =>
+    {
+      const response = await axios.get("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/categories");
+      const categories = response.data;
+      setAllCategories(categories);
+    }
+
     getAllProducts();
     getAllDeliveryOptions();
+    getAllCategories();
   }, []);
 
   useEffect(() =>
@@ -116,7 +125,8 @@ function App()
                                        setCart={setCart}
                                        searchText={searchText}
                                        setSearchText={setSearchText}
-                                       allProducts={allProducts}/>}
+                                       allProducts={allProducts}
+                                       allCategories={allCategories}/>}
                                   />
         <Route path="/cart" element={<Cart cart={cart}
                                            setCart={setCart}
