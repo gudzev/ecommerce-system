@@ -1,8 +1,63 @@
-# Web Store
+# EcommerceSystem
 
-This is a web store project that is supposed to load data from database hosted on Azure, have a working desktop app for store management and an API that communicates with web app.
+## 🔗 Try out the App
 
-Phases of project are:
-- React FrontEnd
-- Database hosted on Azure + Desktop App (most likely using WPF)
-- Connect everything using an API
+Test the live app here:
+
+- https://gudzev-store.netlify.app/
+
+---
+
+## 📋 Description
+
+This is a full e-commerce system consisting of:
+- React web application for customers
+- WPF desktop application for store management
+- ASP.NET Minimal API backend hosted on Azure
+- SQL Server database
+
+All components communicate through a shared REST API.
+
+---
+
+## 🛠️ Tech Stack
+
+- React
+- C# (ASP.NET Minimal API)
+- WPF (.NET)
+- SQL Server
+
+---
+
+## 🚧 To Do
+
+- [ ] Add secure authentication for API access
+- [ ] Add input validation on backend
+
+---
+
+## 🔌 API Endpoints
+
+### Products
+- GET `/products?is_active={bool?}`
+- POST `/add-product`
+- PUT `/update-product`
+- PATCH `/products/{productId}/status`
+
+### Categories
+- GET `/categories`
+- POST `/add-category`
+- PUT `/update-category`
+- DELETE `/delete-category/{categoryId}`
+
+### Delivery Options
+- GET `/delivery-options`
+- POST `/add-delivery-option`
+- PUT `/update-delivery-option`
+- DELETE `/delete-delivery-option/{deliveryOptionID}`
+
+### Orders
+- GET `/orders?is_fulfilled={int}`
+- GET `/orders/{id}`
+- POST `/add-order`
+- PATCH `/update-order`

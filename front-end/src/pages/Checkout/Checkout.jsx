@@ -8,7 +8,7 @@ import { CheckoutForm } from "./CheckoutForm";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-export function Checkout({setSearchText, cart, cartProducts, shipmentPrice, orderPrice, setCart, deliveryMethod, setDeliveryMethod, deliveryOptions})
+export function Checkout({setSearchText, cart, cartProducts, shipmentPrice, orderPrice, setCart, deliveryMethod, setDeliveryMethod, deliveryOptions, allCategories})
 {
     const [orderID, setOrderID] = useState(null);
 
@@ -26,7 +26,7 @@ export function Checkout({setSearchText, cart, cartProducts, shipmentPrice, orde
         
         <title>Prodavnica - plaćanje</title>
         
-        <Header setSearchText={setSearchText} cart={cart} />
+        <Header setSearchText={setSearchText} cart={cart} allCategories={allCategories} />
         <section className="checkout">
             <div className="checkout-content">
                 <CheckoutForm cartProducts={cartProducts}

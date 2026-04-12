@@ -5,15 +5,13 @@
             "id": "1",
             "pricePerItem": 400,
             "name": "Plaćanje pouzećem",
-            "freeShippingMinimumValue": 75000,
-            "defaultOption": true
+            "freeShippingMinimumValue": 75000
         },
         {
             "id": "2",
             "pricePerItem": 0,
             "name": "Lično preuzimanje u radnji",
-            "freeShippingMinimumValue": 0,
-            "default": false
+            "freeShippingMinimumValue": 0
         }
     ]
 }

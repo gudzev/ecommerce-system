@@ -5,13 +5,13 @@ import { Footer } from "../../components/Footer/Footer";
 import { CartCheckout } from "./CartCheckout";
 import { CartPreview } from "./CartPreview";
 
-export function Cart({setSearchText, cart, setCart, cartProducts, shipmentPrice, orderPrice})
+export function Cart({setSearchText, cart, setCart, cartProducts, shipmentPrice, orderPrice, allCategories})
 {
     return <>
 
         <title>Prodavnica - korpa</title>
 
-        <Header setSearchText={setSearchText} cart={cart}/>
+        <Header setSearchText={setSearchText} cart={cart} allCategories={allCategories}/>
 
         <section className="cart">
             <div className="cart-content">

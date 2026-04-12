@@ -133,7 +133,8 @@ function App()
                                            setSearchText={setSearchText}
                                            cartProducts={cartProducts}
                                            orderPrice={orderPrice}
-                                           shipmentPrice={shipmentPrice}/>} 
+                                           shipmentPrice={shipmentPrice}
+                                           allCategories={allCategories}/>} 
                                   />
 
         <Route path="/checkout" element={<Checkout setSearchText={setSearchText}
@@ -144,9 +145,10 @@ function App()
                                                    shipmentPrice={shipmentPrice}
                                                    deliveryMethod={deliveryMethod}
                                                    setDeliveryMethod={setDeliveryMethod}
-                                                   deliveryOptions={deliveryOptions}/>}
+                                                   deliveryOptions={deliveryOptions}
+                                                   allCategories={allCategories}/>}
                                     />
-        <Route path="*" element={<NotFound />} />
+        <Route path="*" element={<NotFound allCategories={allCategories} />} />
       </Routes>
   )
 }

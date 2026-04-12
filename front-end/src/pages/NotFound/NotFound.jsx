@@ -5,13 +5,13 @@ import { Footer } from "../../components/Footer/Footer";
 
 import { Link } from "react-router-dom";
 
-export function NotFound()
+export function NotFound({allCategories})
 {
     return <>
 
         <title>Prodavnica - Nije Pronađeno</title>
 
-        <Header />
+        <Header allCategories={allCategories}/>
 
         <section className="not-found">
             <div className="not-found-content">
