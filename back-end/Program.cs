@@ -402,37 +402,45 @@ app.MapGet("/orders", (int is_fulfilled) =>
 
             using(SqlDataReader reader = command.ExecuteReader())
             {
+                Dictionary<int, Order> ordersDict = new Dictionary<int, Order>();
+
                 while (reader.Read())
                 {
-                    Order o = new Order();
-                    o.id = Convert.ToInt32(reader["id"]);
-                    o.name = reader["name"].ToString();
-                    o.surname = reader["surname"].ToString();
-                    o.email = reader["email"] != DBNull.Value ? reader["email"].ToString() : null;
-                    o.street = reader["street"] != DBNull.Value ? reader["street"].ToString() : null;
-                    o.apartment_number = reader["apartment_number"] != DBNull.Value ? reader["apartment_number"].ToString() : null;
-                    o.additional = reader["additional"] != DBNull.Value ? reader["additional"].ToString() : null;
-                    o.city = reader["city"] != DBNull.Value ? reader["city"].ToString() : null;
-                    o.delivery_method_id = Convert.ToInt32(reader["delivery_method_id"]);
-                    o.created_at = Convert.ToDateTime(reader["created_at"]);
-                    o.is_fulfilled = Convert.ToBoolean(reader["is_fulfilled"]);
-                    o.phone_number = reader["phone_number"].ToString();
-                    o.orderItems = new ObservableCollection<OrderItem>();
+                    int orderId = Convert.ToInt32(reader["id"]);
 
-                    do
+                    if (!ordersDict.ContainsKey(orderId))
                     {
-                        o.orderItems.Add(new OrderItem(
+                        Order o = new Order
+                        {
+                            id = orderId,
+                            name = reader["name"].ToString(),
+                            surname = reader["surname"].ToString(),
+                            email = reader["email"] != DBNull.Value ? reader["email"].ToString() : null,
+                            street = reader["street"] != DBNull.Value ? reader["street"].ToString() : null,
+                            apartment_number = reader["apartment_number"] != DBNull.Value ? reader["apartment_number"].ToString() : null,
+                            additional = reader["additional"] != DBNull.Value ? reader["additional"].ToString() : null,
+                            city = reader["city"] != DBNull.Value ? reader["city"].ToString() : null,
+                            delivery_method_id = Convert.ToInt32(reader["delivery_method_id"]),
+                            created_at = Convert.ToDateTime(reader["created_at"]),
+                            is_fulfilled = Convert.ToBoolean(reader["is_fulfilled"]),
+                            phone_number = reader["phone_number"].ToString(),
+                            orderItems = new ObservableCollection<OrderItem>()
+                        };
+
+                        ordersDict.Add(orderId, o);
+                    }
+
+                    ordersDict[orderId].orderItems.Add(new OrderItem(
                         Convert.ToInt32(reader["product_id"]),
                         Convert.ToInt32(reader["order_id"]),
                         Convert.ToInt32(reader["quantity"]),
                         Convert.ToInt32(reader["price_at_purchase"]),
                         reader["product_name"].ToString(),
-                        reader["image_url"].ToString()));
-                    }
-                    while (reader.Read() && Convert.ToInt32(reader["order_id"]) == o.id);
-
-                    orders.Add(o);
+                        reader["image_url"].ToString()
+                    ));
                 }
+
+                orders = ordersDict.Values.ToList();
             }
         }
     }
