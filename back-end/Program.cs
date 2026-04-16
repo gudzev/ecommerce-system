@@ -1,6 +1,6 @@
 using Microsoft.Data.SqlClient;
-using Backend;
 using System.Collections.ObjectModel;
+using Backend.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -67,7 +67,7 @@ app.MapGet("/products", (bool? is_active) =>
     return Results.Json(products);
 });
 
-app.MapPost("/add-product", (Product p) =>
+app.MapPost("/products", (Product p) =>
 {
     try
     {
@@ -98,7 +98,7 @@ app.MapPost("/add-product", (Product p) =>
     }
 });
 
-app.MapPut("/update-product", (Product p) =>
+app.MapPut("/products", (Product p) =>
 {
     try
     {
@@ -186,7 +186,7 @@ app.MapGet("/categories", () =>
     return Results.Json(categories);
 });
 
-app.MapPost("/add-category", (Category c) =>
+app.MapPost("/categories", (Category c) =>
 {
     try
     {
@@ -212,7 +212,7 @@ app.MapPost("/add-category", (Category c) =>
     }
 });
 
-app.MapPut("/update-category", (Category c) =>
+app.MapPut("/categories", (Category c) =>
 {
     try
     {
@@ -240,7 +240,7 @@ app.MapPut("/update-category", (Category c) =>
     }
 });
 
-app.MapDelete("/delete-category/{categoryId}", (int categoryId) =>
+app.MapDelete("/categories/{categoryId}", (int categoryId) =>
 {
     try
     {
@@ -293,7 +293,7 @@ app.MapGet("/delivery-options", () =>
     return Results.Json(deliveryOptions);
 });
 
-app.MapPost("/add-delivery-option", (DeliveryOption o) =>
+app.MapPost("/delivery-options", (DeliveryOption o) =>
 {
     try
     {
@@ -321,7 +321,7 @@ app.MapPost("/add-delivery-option", (DeliveryOption o) =>
     }
 });
 
-app.MapPut(("/update-delivery-option/"), (DeliveryOption d) =>
+app.MapPut("/delivery-options", (DeliveryOption d) =>
 {
     try
     {
@@ -351,7 +351,7 @@ app.MapPut(("/update-delivery-option/"), (DeliveryOption d) =>
     }
 });
 
-app.MapDelete("/delete-delivery-option/{deliveryOptionID}", (int deliveryOptionID) =>
+app.MapDelete("/delivery-options/{deliveryOptionID}", (int deliveryOptionID) =>
 {
     try
     {
@@ -497,7 +497,7 @@ app.MapGet("/orders/{id}", (int id) =>
     return Results.Json(order);
 });
 
-app.MapPost("/add-order", (Order o) =>
+app.MapPost("/orders", (Order o) =>
 {
     if (o.orderItems == null) return Results.Json(new { success = false, errorMessage = "Order items are empty." });
 
@@ -563,7 +563,7 @@ app.MapPost("/add-order", (Order o) =>
     }
 });
 
-app.MapPatch("/update-order", (Order o) =>
+app.MapPatch("/orders", (Order o) =>
 {
     try
     {

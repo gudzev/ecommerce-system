@@ -98,7 +98,7 @@ export function CheckoutForm({cartProducts, shipmentPrice, orderPrice, cart, set
                 delivery_method_id: deliveryMethod,
                 orderItems: cart
             }
-            const request = await axios.post("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/add-order", order);
+            const request = await axios.post("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/orders", order);
 
 
             emailjs.send('service_x6pdb0e', 'template_uwxvoly', 

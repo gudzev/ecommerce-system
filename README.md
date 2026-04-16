@@ -33,6 +33,7 @@ All components communicate through a shared REST API.
 
 - [ ] Add secure authentication for API access
 - [ ] Add input validation on backend
+- [ ] Organize desktop-app and back-end code in a better way
 
 ---
 
@@ -40,24 +41,24 @@ All components communicate through a shared REST API.
 
 ### Products
 - GET `/products?is_active={bool?}`
-- POST `/add-product`
-- PUT `/update-product`
+- POST `/products`
+- PUT `/products`
 - PATCH `/products/{productId}/status`
 
 ### Categories
 - GET `/categories`
-- POST `/add-category`
-- PUT `/update-category`
-- DELETE `/delete-category/{categoryId}`
+- POST `/categories`
+- PUT `/categories`
+- DELETE `/categories/{categoryId}`
 
 ### Delivery Options
 - GET `/delivery-options`
-- POST `/add-delivery-option`
-- PUT `/update-delivery-option`
-- DELETE `/delete-delivery-option/{deliveryOptionID}`
+- POST `/delivery-options`
+- PUT `/delivery-options`
+- DELETE `/delivery-options/{deliveryOptionID}`
 
 ### Orders
 - GET `/orders?is_fulfilled={int}`
 - GET `/orders/{id}`
-- POST `/add-order`
-- PATCH `/update-order`
+- POST `/orders`
+- PATCH `/orders`

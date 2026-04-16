@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace Backend
+namespace Backend.Models
 {
     public class Order
     {

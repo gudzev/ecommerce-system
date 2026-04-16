@@ -17,6 +17,9 @@ namespace WebStoreManagementApp
         private ObservableCollection<Product> products = new ObservableCollection<Product>();
         private ObservableCollection<Order> orders = new ObservableCollection<Order>();
         private ObservableCollection<Category> categories = new ObservableCollection<Category>();
+
+        private bool shouldRefreshCategories = true;
+        private bool shouldRefreshDeliveryOptions = true;
         public MainWindow()
         {
             InitializeComponent();
@@ -30,9 +33,9 @@ namespace WebStoreManagementApp
             grids.Add(Dostava);
             grids.Add(Kategorije);
 
-            showGrid(Proizvodi); // show default grid
             await fillCategoriesComboBox();
             LoadProductsTable();
+            showGrid(Proizvodi); // show default grid
         }
 
         private void showGrid(Grid g)
@@ -55,10 +58,10 @@ namespace WebStoreManagementApp
         /* Proizvodi */
         private async void ProizvodiBtn_Click(object sender, RoutedEventArgs e)
         {
-            showGrid(Proizvodi);
             CurrentGridLabel.Content = "Proizvodi";
             await fillCategoriesComboBox();
             LoadProductsTable();
+            showGrid(Proizvodi);
         }
 
         private async Task fillCategoriesComboBox()
@@ -154,7 +157,7 @@ namespace WebStoreManagementApp
 
             try
             {
-                HttpResponseMessage response = await client.PostAsJsonAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/add-product/", newProduct);
+                HttpResponseMessage response = await client.PostAsJsonAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/products/", newProduct);
                 response.EnsureSuccessStatusCode();
                 LoadProductsTable();
             }
@@ -198,7 +201,7 @@ namespace WebStoreManagementApp
 
             try
             {
-                HttpResponseMessage response = await client.PutAsJsonAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/update-product/", existingProduct);
+                HttpResponseMessage response = await client.PutAsJsonAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/products/", existingProduct);
                 response.EnsureSuccessStatusCode();
                 LoadProductsTable();
             }
@@ -255,16 +258,16 @@ namespace WebStoreManagementApp
         /* Narudzbine */
         private async void NarudzbineBtn_Click(object sender, RoutedEventArgs e)
         {
-            showGrid(Narudzbine);
             CurrentGridLabel.Content = "Narudžbine";
             await fillDeliveryMethodsComboBox();
             await LoadOrdersTable(0);
             LoadFirstOrdersRow();
+            showGrid(Narudzbine);
         }
 
         private async Task fillDeliveryMethodsComboBox()
         {
-            await fillDeliveryOptions();
+            await getDeliveryOptions();
             deliveryMethodComboBox.ItemsSource = deliveryOptions;
             deliveryMethodComboBox.DisplayMemberPath = "name";
         }
@@ -350,7 +353,7 @@ namespace WebStoreManagementApp
 
             try
             {
-                HttpResponseMessage response = await client.PatchAsJsonAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/update-order/", selectedOrder);
+                HttpResponseMessage response = await client.PatchAsJsonAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/orders/", selectedOrder);
                 response.EnsureSuccessStatusCode();
                 await LoadOrdersTable(0);
             }
@@ -379,15 +382,23 @@ namespace WebStoreManagementApp
 
 
         /* Dostava */
-        private void DostavaBtn_Click(object sender, RoutedEventArgs e)
+        private async void DostavaBtn_Click(object sender, RoutedEventArgs e)
         {
-            showGrid(Dostava);
             CurrentGridLabel.Content = "Dostava";
-            LoadMethodsTable();
+            await LoadMethodsTable();
+            LoadFirstMethodsRow();
+            showGrid(Dostava);
         }
 
-        private async Task fillDeliveryOptions()
+        private async Task getDeliveryOptions()
         {
+            if (!shouldRefreshDeliveryOptions && deliveryOptions.Count > 0)
+            {
+                return;
+            }
+
+            shouldRefreshDeliveryOptions = false;
+
             try
             {
                 HttpResponseMessage response = await client.GetAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/delivery-options");
@@ -400,13 +411,12 @@ namespace WebStoreManagementApp
             }
         }
 
-        private async void LoadMethodsTable()
+        private async Task LoadMethodsTable()
         {
             try
             {
-                await fillDeliveryOptions();
+                await getDeliveryOptions();
 ;               MethodsTable.ItemsSource = deliveryOptions;
-                LoadFirstMethodsRow();
             }
             catch (Exception ex)
             {
@@ -439,6 +449,7 @@ namespace WebStoreManagementApp
             if (MethodsTable.SelectedItem is DeliveryOption selected)
             {
                 deliveryMethodId = selected.id;
+                shouldRefreshDeliveryOptions = true;
             }
             else
             {
@@ -447,9 +458,9 @@ namespace WebStoreManagementApp
 
             try
             {
-                HttpResponseMessage response = await client.DeleteAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/delete-delivery-option/" + deliveryMethodId);
+                HttpResponseMessage response = await client.DeleteAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/delivery-options/" + deliveryMethodId);
                 response.EnsureSuccessStatusCode();
-                LoadMethodsTable();
+                await LoadMethodsTable();
             }
             catch(Exception ex)
             {
@@ -459,13 +470,14 @@ namespace WebStoreManagementApp
 
         private async void methodUpdateBtn_Click(object sender, RoutedEventArgs e)
         {
-            DeliveryOption deliveryOption = getDeliveryOption();
+            DeliveryOption deliveryOption = getSelectedDeliveryOption();
+            shouldRefreshDeliveryOptions = true;
 
             try
             {
-                HttpResponseMessage response = await client.PutAsJsonAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/update-delivery-option/", deliveryOption);
+                HttpResponseMessage response = await client.PutAsJsonAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/delivery-options/", deliveryOption);
                 response.EnsureSuccessStatusCode();
-                LoadMethodsTable();
+                await LoadMethodsTable();
             }
             catch(Exception ex)
             {
@@ -475,13 +487,14 @@ namespace WebStoreManagementApp
 
         private async void methodAddBtn_Click(object sender, RoutedEventArgs e)
         {
-            DeliveryOption deliveryOption = getDeliveryOption();
+            DeliveryOption deliveryOption = getSelectedDeliveryOption();
+            shouldRefreshDeliveryOptions = true;
 
             try
             {
-                HttpResponseMessage response = await client.PostAsJsonAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/add-delivery-option/", deliveryOption);
+                HttpResponseMessage response = await client.PostAsJsonAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/delivery-options/", deliveryOption);
                 response.EnsureSuccessStatusCode();
-                LoadMethodsTable();
+                await LoadMethodsTable();
             }
             catch(Exception ex)
             {
@@ -489,7 +502,7 @@ namespace WebStoreManagementApp
             }
         }
 
-        private DeliveryOption getDeliveryOption()
+        private DeliveryOption getSelectedDeliveryOption()
         {
             DeliveryOption deliveryOption = new DeliveryOption();
 
@@ -508,6 +521,13 @@ namespace WebStoreManagementApp
         /* Kategorije */
         private async Task getCategories()
         {
+            if(!shouldRefreshCategories && categories.Count > 0)
+            {
+                return;
+            }
+
+            shouldRefreshCategories = false;
+
             try
             {
                 HttpResponseMessage response = await client.GetAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/categories");
@@ -534,10 +554,10 @@ namespace WebStoreManagementApp
         }
         private async void KategorijaBtn_Click(object sender, RoutedEventArgs e)
         {
-            showGrid(Kategorije);
             CurrentGridLabel.Content = "Kategorije";
             await LoadCategoriesTable();
             LoadFirstCategoriesRow();
+            showGrid(Kategorije);
         }
 
         private void LoadCategoriesRow(object sender, SelectionChangedEventArgs e)
@@ -562,12 +582,13 @@ namespace WebStoreManagementApp
             if (categoryNameTextBox.Text == "") return;
 
             Category newCategory = new Category();
-
             newCategory.name = categoryNameTextBox.Text;
+
+            shouldRefreshCategories = true;
 
             try
             {
-                HttpResponseMessage response = await client.PostAsJsonAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/add-category", newCategory);
+                HttpResponseMessage response = await client.PostAsJsonAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/categories", newCategory);
                 response.EnsureSuccessStatusCode();
                 await LoadCategoriesTable();
             }
@@ -584,9 +605,11 @@ namespace WebStoreManagementApp
             Category existingCategory = (Category)CategoriesTable.SelectedItem;
             existingCategory.name = categoryNameTextBox.Text;
 
+            shouldRefreshCategories = true;
+
             try
             {
-                HttpResponseMessage response = await client.PutAsJsonAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/update-category", existingCategory);
+                HttpResponseMessage response = await client.PutAsJsonAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/categories", existingCategory);
                 response.EnsureSuccessStatusCode();
                 await LoadCategoriesTable();
             }
@@ -601,9 +624,11 @@ namespace WebStoreManagementApp
             if (CategoriesTable.SelectedItem == null) return;
             Category selectedCategory = (Category)CategoriesTable.SelectedItem;
 
+            shouldRefreshCategories = true;
+
             try
             {
-                HttpResponseMessage response = await client.DeleteAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/delete-category/" + selectedCategory.id);
+                HttpResponseMessage response = await client.DeleteAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/categories/" + selectedCategory.id);
                 response.EnsureSuccessStatusCode();
                 await LoadCategoriesTable();
             }
