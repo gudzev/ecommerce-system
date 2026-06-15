@@ -4,7 +4,7 @@
 
 Test the live app here:
 
-- https://gudzev-store.netlify.app/
+- CURRENTLY UNAVAILABLE
 
 ---
 
@@ -13,7 +13,7 @@ Test the live app here:
 This is a full e-commerce system consisting of:
 - React web application for customers
 - WPF desktop application for store management
-- ASP.NET Minimal API backend hosted on Azure
+- ASP.NET Minimal API
 - SQL Server database
 
 All components communicate through a shared REST API.
@@ -62,3 +62,9 @@ All components communicate through a shared REST API.
 - GET `/orders/{id}`
 - POST `/orders`
 - PATCH `/orders`
+
+---
+
+## Setup instructions
+
+- If you want to test out the website, along with the desktop application, you will have to import db.bacpac file, and change the corresponding ConnectionStrings in desktop-app/appsettings.json and back-end/appsettings.json

@@ -30,21 +30,21 @@ function App()
   {
     const getAllProducts = async () =>
     {
-      const response = await axios.get("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/products?is_active=true");
+      const response = await axios.get("https://localhost:7097/products?is_active=true");
       const products = response.data;
       setAllProducts(products);
     }
 
     const getAllDeliveryOptions = async () =>
     {
-        const response = await axios.get("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/delivery-options");
+        const response = await axios.get("https://localhost:7097/delivery-options");
         const deliveryOptions = response.data;
         setDeliveryOptions(deliveryOptions);
     }
 
     const getAllCategories = async () =>
     {
-      const response = await axios.get("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/categories");
+      const response = await axios.get("https://localhost:7097/categories");
       const categories = response.data;
       setAllCategories(categories);
     }

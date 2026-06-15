@@ -46,7 +46,7 @@ namespace DesktopApp.Pages
         {
             try
             {
-                HttpResponseMessage response = await MainWindow.client.GetAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/orders?is_fulfilled=" + is_fulfilled);
+                HttpResponseMessage response = await MainWindow.client.GetAsync("https://localhost:7097/orders?is_fulfilled=" + is_fulfilled);
                 response.EnsureSuccessStatusCode();
 
                 MainWindow.orders = await response.Content.ReadFromJsonAsync<ObservableCollection<Order>>();
@@ -123,7 +123,7 @@ namespace DesktopApp.Pages
 
             try
             {
-                HttpResponseMessage response = await MainWindow.client.PatchAsJsonAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/orders/", selectedOrder);
+                HttpResponseMessage response = await MainWindow.client.PatchAsJsonAsync("https://localhost:7097/orders/", selectedOrder);
                 response.EnsureSuccessStatusCode();
                 await LoadOrdersTable(0);
             }

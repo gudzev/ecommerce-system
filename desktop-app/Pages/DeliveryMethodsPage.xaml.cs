@@ -45,7 +45,7 @@ namespace DesktopApp.Pages
 
             try
             {
-                HttpResponseMessage response = await MainWindow.client.GetAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/delivery-options");
+                HttpResponseMessage response = await MainWindow.client.GetAsync("https://localhost:7097/delivery-options");
                 response.EnsureSuccessStatusCode();
                 MainWindow.deliveryOptions = await response.Content.ReadFromJsonAsync<ObservableCollection<DeliveryOption>>();
             }
@@ -102,7 +102,7 @@ namespace DesktopApp.Pages
 
             try
             {
-                HttpResponseMessage response = await MainWindow.client.DeleteAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/delivery-options/" + deliveryMethodId);
+                HttpResponseMessage response = await MainWindow.client.DeleteAsync("https://localhost:7097/delivery-options/" + deliveryMethodId);
                 response.EnsureSuccessStatusCode();
                 await LoadMethodsTable();
             }
@@ -119,7 +119,7 @@ namespace DesktopApp.Pages
 
             try
             {
-                HttpResponseMessage response = await MainWindow.client.PutAsJsonAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/delivery-options/", deliveryOption);
+                HttpResponseMessage response = await MainWindow.client.PutAsJsonAsync("https://localhost:7097/delivery-options/", deliveryOption);
                 response.EnsureSuccessStatusCode();
                 await LoadMethodsTable();
             }
@@ -136,7 +136,7 @@ namespace DesktopApp.Pages
 
             try
             {
-                HttpResponseMessage response = await MainWindow.client.PostAsJsonAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/delivery-options/", deliveryOption);
+                HttpResponseMessage response = await MainWindow.client.PostAsJsonAsync("https://localhost:7097/delivery-options/", deliveryOption);
                 response.EnsureSuccessStatusCode();
                 await LoadMethodsTable();
             }

@@ -1,9 +1,6 @@
-.env
 .github
 .vs
 
 node_modules
 bin
 obj
-
-appsettings.json

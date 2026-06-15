@@ -42,7 +42,7 @@ namespace DesktopApp.Pages
 
             try
             {
-                HttpResponseMessage response = await MainWindow.client.GetAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/categories");
+                HttpResponseMessage response = await MainWindow.client.GetAsync("https://localhost:7097/categories");
                 response.EnsureSuccessStatusCode();
                 MainWindow.categories = await response.Content.ReadFromJsonAsync<ObservableCollection<Category>>();
             }
@@ -93,7 +93,7 @@ namespace DesktopApp.Pages
 
             try
             {
-                HttpResponseMessage response = await MainWindow.client.PostAsJsonAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/categories", newCategory);
+                HttpResponseMessage response = await MainWindow.client.PostAsJsonAsync("https://localhost:7097/categories", newCategory);
                 response.EnsureSuccessStatusCode();
                 await LoadCategoriesTable();
             }
@@ -114,7 +114,7 @@ namespace DesktopApp.Pages
 
             try
             {
-                HttpResponseMessage response = await MainWindow.client.PutAsJsonAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/categories", existingCategory);
+                HttpResponseMessage response = await MainWindow.client.PutAsJsonAsync("https://localhost:7097/categories", existingCategory);
                 response.EnsureSuccessStatusCode();
                 await LoadCategoriesTable();
             }
@@ -133,7 +133,7 @@ namespace DesktopApp.Pages
 
             try
             {
-                HttpResponseMessage response = await MainWindow.client.DeleteAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/categories/" + selectedCategory.id);
+                HttpResponseMessage response = await MainWindow.client.DeleteAsync("https://localhost:7097/categories/" + selectedCategory.id);
                 response.EnsureSuccessStatusCode();
                 await LoadCategoriesTable();
             }

@@ -33,7 +33,7 @@ namespace DesktopApp.Pages
         {
             try
             {
-                HttpResponseMessage response = await MainWindow.client.GetAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/products");
+                HttpResponseMessage response = await MainWindow.client.GetAsync("https://localhost:7097/products");
                 response.EnsureSuccessStatusCode();
                 MainWindow.products = await response.Content.ReadFromJsonAsync<ObservableCollection<Product>>();
 
@@ -114,7 +114,7 @@ namespace DesktopApp.Pages
 
             try
             {
-                HttpResponseMessage response = await MainWindow.client.PostAsJsonAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/products/", newProduct);
+                HttpResponseMessage response = await MainWindow.client.PostAsJsonAsync("https://localhost:7097/products/", newProduct);
                 response.EnsureSuccessStatusCode();
                 LoadProductsTable();
             }
@@ -158,7 +158,7 @@ namespace DesktopApp.Pages
 
             try
             {
-                HttpResponseMessage response = await MainWindow.client.PutAsJsonAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/products/", existingProduct);
+                HttpResponseMessage response = await MainWindow.client.PutAsJsonAsync("https://localhost:7097/products/", existingProduct);
                 response.EnsureSuccessStatusCode();
                 LoadProductsTable();
             }
@@ -170,17 +170,17 @@ namespace DesktopApp.Pages
 
         private async void productDeactivateBtn_Click(object sender, RoutedEventArgs e)
         {
-            setProductStatus(false);
+            await setProductStatus(false);
             LoadProductsTable();
         }
 
         private async void productActivateBtn_Click(object sender, RoutedEventArgs e)
         {
-            setProductStatus(true);
+            await setProductStatus(true);
             LoadProductsTable();
         }
 
-        async void setProductStatus(bool status)
+        async Task setProductStatus(bool status)
         {
             try
             {
@@ -194,7 +194,7 @@ namespace DesktopApp.Pages
                     return;
                 }
 
-                HttpResponseMessage response = await MainWindow.client.PatchAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/products/" + productId + "/status?isActive=" + status,
+                HttpResponseMessage response = await MainWindow.client.PatchAsync("https://localhost:7097/products/" + productId + "/status?isActive=" + status,
                     null
                     );
                 response.EnsureSuccessStatusCode();

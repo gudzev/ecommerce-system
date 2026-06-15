@@ -67,7 +67,7 @@ namespace WebStoreManagementApp
 
             try
             {
-                HttpResponseMessage response = await client.GetAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/delivery-options");
+                HttpResponseMessage response = await client.GetAsync("https://localhost:7097/delivery-options");
                 response.EnsureSuccessStatusCode();
                 deliveryOptions = await response.Content.ReadFromJsonAsync<ObservableCollection<DeliveryOption>>();
             }
@@ -88,7 +88,7 @@ namespace WebStoreManagementApp
 
             try
             {
-                HttpResponseMessage response = await client.GetAsync("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/categories");
+                HttpResponseMessage response = await client.GetAsync("https://localhost:7097/categories");
                 response.EnsureSuccessStatusCode();
                 categories = await response.Content.ReadFromJsonAsync<ObservableCollection<Category>>();
             }
