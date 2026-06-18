@@ -209,6 +209,13 @@
     padding: 20px;
 }
 
+.shipping-reminder
+{
+    margin-top: 10px;
+    font-size: .9rem;
+    font-style: italic;
+}
+
 .order-confirmation.hidden, .checkout-form.hidden
 {
     display: none;

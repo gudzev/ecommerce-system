@@ -7,6 +7,8 @@ import { useState } from "react";
 import axios from "axios";
 import emailjs from '@emailjs/browser';
 
+import { formatPrice } from "../../utils/formatPrice";
+
 export function CheckoutForm({cartProducts, shipmentPrice, orderPrice, cart, setCart, deliveryMethod, setDeliveryMethod, deliveryOptions, setOrderID, orderID})
 {
     const [email, setEmail] = useState("");
@@ -47,6 +49,29 @@ export function CheckoutForm({cartProducts, shipmentPrice, orderPrice, cart, set
     const validateText = (text) =>
     {
         return (text != "") ? true : false;
+    }
+
+    const returnEmailHTML = (cartProducts) =>
+    {
+        let emailHTML = `<table style="background-color: #f2f2f2; border-radius: 10px;">
+                            <tr>
+                                <th style="width: 100; text-align: center;">Slika proizvoda</th>
+                                <th style="width: 125; text-align: center;">Naziv</th>
+                                <th style="width: 75; text-align: center;">Količina</th>
+                                <th style="width: 125; text-align: center;">Cena</th>
+                            </tr>`;
+        cartProducts?.forEach((cartProduct) =>
+        {
+            emailHTML += `<tr>
+                            <td><img src='${cartProduct.image_url}' width='100' height='100' alt='Slika proizvoda' /></td>
+                            <td style="width: 125; text-align: center;">${cartProduct.name}</td>
+                            <td style="width: 75; text-align: center;">${cartProduct.quantity}</td>
+                            <td style="width: 125; text-align: center;">${(cartProduct.price_on_sale) ? formatPrice(cartProduct.price_on_sale) : formatPrice(cartProduct.price_rsd)} RSD</td>
+                          </tr>`
+
+        });
+        emailHTML += '</table>';
+        return emailHTML;
     }
 
     const makeAnOrder = async (cart) =>
@@ -98,14 +123,16 @@ export function CheckoutForm({cartProducts, shipmentPrice, orderPrice, cart, set
                 delivery_method_id: deliveryMethod,
                 orderItems: cart
             }
-            const request = await axios.post("https://webstoreapi-cpb8c7fqfxf6dree.germanywestcentral-01.azurewebsites.net/orders", order);
-
+            const request = await axios.post("https://localhost:7097/orders", order);
+            setOrderID(request.data.orderId);
+            setCart([]);
 
             emailjs.send('service_x6pdb0e', 'template_uwxvoly', 
                 {
                     email: order.email,
                     name: order.name,
                     orderId: request.data.orderId,
+                    cartProducts: returnEmailHTML(cartProducts)
                 })
                 .then((response) => 
                 {
@@ -115,9 +142,6 @@ export function CheckoutForm({cartProducts, shipmentPrice, orderPrice, cart, set
                 {
                     console.log(error);
                 });
-            
-            setOrderID(request.data.orderId);
-            setCart([]);
         }
         catch(error)
         {
@@ -240,6 +264,7 @@ export function CheckoutForm({cartProducts, shipmentPrice, orderPrice, cart, set
                                         </div>
                             })
                         }
+                        <p className="shipping-reminder">{(selectedOption?.name != "Lično preuzimanje u radnji") ? (`*Dostava preko ${formatPrice(selectedOption?.free_shipping_minimum_value)} RSD je besplatna`) : ""}</p>
                     </div>
 
                     <div className="checkout-row">
