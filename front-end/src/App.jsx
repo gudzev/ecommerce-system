@@ -4,6 +4,7 @@ import { Home } from "./pages/Home/Home";
 import { Cart } from './pages/Cart/Cart';
 import { NotFound } from "./pages/NotFound/NotFound";
 import { Checkout } from './pages/Checkout/Checkout';
+import { Product } from './pages/Product/Product';
 
 import { Route, Routes } from 'react-router-dom';
 
@@ -148,6 +149,11 @@ function App()
                                                    deliveryOptions={deliveryOptions}
                                                    allCategories={allCategories}/>}
                                     />
+                                    
+        <Route path="/proizvod/*" element={<Product allCategories={allCategories}
+                                                    allProducts={allProducts}/>}
+                                    />
+
         <Route path="*" element={<NotFound allCategories={allCategories} />} />
       </Routes>
   )

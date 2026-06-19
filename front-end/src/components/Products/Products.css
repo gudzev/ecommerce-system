@@ -32,6 +32,13 @@
     border: 1px solid var(--bg-border-color);
     border-radius: 10px;
     box-shadow: 0px 1px 1px rgba(0, 0, 0, .2);
+    border: 1px solid transparent;
+    transition: all .3s;
+}
+
+.product:hover
+{
+    border: 1px solid var(--accent-color);
 }
 
 .product-name
@@ -39,6 +46,7 @@
     height: 44px;
     font-size: 1.2rem;
     margin-bottom: 20px;
+    cursor: pointer;
 }
 
 .product-img
@@ -48,6 +56,7 @@
     margin-left: auto;
     width: 75%;
     height: 50%;
+    cursor: pointer;
 }
 
 .add-to-cart-btn

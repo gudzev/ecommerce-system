@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShoppingCart, faCheck } from "@fortawesome/free-solid-svg-icons";
 
 import { useState, useRef } from "react";
+import { useNavigate } from 'react-router-dom';
 
 import { formatPrice } from "../../utils/formatPrice";
 
@@ -11,6 +12,7 @@ let timeoutList = [];
 
 export function Product({image_url, name, price_rsd, id, price_on_sale, cart, setCart})
 {
+    const navigate = useNavigate()
     const [isAddedToCart, setIsAddedToCart] = useState(false);
     const quantitySelect = useRef(1);
 
@@ -59,10 +61,15 @@ export function Product({image_url, name, price_rsd, id, price_on_sale, cart, se
         });
     }
 
-    return <div className="product">
-                <img src={image_url} alt={name + " image"} className="product-img" />
+    const viewProductDetails = () =>
+    {
+        navigate(`/proizvod/${encodeURIComponent(name.toLowerCase().replaceAll(' ', '-'))}`);
+    }
 
-                <h2 className="product-name">{name}</h2>
+    return <div className="product">
+                <img src={image_url} alt={name + " image"} className="product-img" onClick={() => viewProductDetails()}/>
+
+                <h2 className="product-name" onClick={() => viewProductDetails()}>{name}</h2>
 
                 <div className="product-details">
                     <div className="product-quantity">

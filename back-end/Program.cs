@@ -57,6 +57,7 @@ app.MapGet("/products", (bool? is_active) =>
                     p.category_id = Convert.ToInt32(reader["category_id"]);
                     p.stock_quantity = Convert.ToInt32(reader["stock_quantity"]);
                     p.is_active = Convert.ToBoolean(reader["is_active"]);
+                    p.description = reader["description"].ToString();
                     products.Add(p);
                 }
             }

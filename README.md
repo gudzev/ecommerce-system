@@ -67,4 +67,4 @@ All components communicate through a shared REST API.
 
 ## Setup instructions
 
-- If you want to test out the website, along with the desktop application, you will have to import db.bacpac file, and change the corresponding ConnectionStrings in desktop-app/appsettings.json and back-end/appsettings.json
+- If you want to test out the website, along with the desktop application, you will have to import web_store.bacpac file in SQL server, and change the corresponding ConnectionStrings in desktop-app/appsettings.json and back-end/appsettings.json

@@ -6,10 +6,16 @@ import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
 
-export function Products({searchText, cart, setCart, allProducts})
+export function Products({searchText, cart, setCart, allProducts, allCategories})
 {
     const [products, setProducts] = useState([]);
     const location = useLocation();
+
+    const getProductCategory = (category_id) =>
+    {
+        const foundProductCategory = allCategories?.find((category) => category.id == category_id);
+        return foundProductCategory?.name.replaceAll(' ', '-').toLowerCase();
+    }
 
     useEffect(() =>
     {
@@ -17,12 +23,12 @@ export function Products({searchText, cart, setCart, allProducts})
         {
             const searchParams = new URLSearchParams(document.location.search);
 
-            if(searchParams.size > 0)
+            if(searchParams.get("kategorija"))
             {
                 const eligibleProducts = [];
                 allProducts.forEach((product) =>
                 {
-                    if(searchParams.get("category") == product.category_id)
+                    if(searchParams.get("kategorija") == getProductCategory(product.category_id))
                     {
                         eligibleProducts.push(product);
                     }
@@ -31,12 +37,14 @@ export function Products({searchText, cart, setCart, allProducts})
             }
             else
             {
+
                 setProducts(allProducts);
             }
 
         }
         getProducts();
     }, [location, allProducts]);
+
 
     return (
         <section className="products">

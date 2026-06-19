@@ -11,7 +11,7 @@ export function Home({cart, setCart, setSearchText, searchText, allProducts, all
         <title>Prodavnica - početna</title>
 
         <Header setSearchText={setSearchText} allCategories={allCategories} cart={cart}/>
-        <Products searchText={searchText} cart={cart} setCart={setCart} allProducts={allProducts}/>
+        <Products searchText={searchText} cart={cart} setCart={setCart} allProducts={allProducts} allCategories={allCategories}/>
         <Footer />
     </>
 }

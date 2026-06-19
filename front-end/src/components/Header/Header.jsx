@@ -6,6 +6,8 @@ import { faBars, faMagnifyingGlass, faCartShopping, faHouse, faSuitcase, faPhone
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
+
+// TO-DO - use useContext hook to reduce amount of props needed each time header is displayed
 export function Header({setSearchText, cart, allCategories})
 {
     const [inputText, setInputText] = useState("");
@@ -76,7 +78,7 @@ export function Header({setSearchText, cart, allCategories})
                 <ul className="ul-links">
                     <li><Link to="/"><FontAwesomeIcon icon={faHouse} className="fa-icon-1x" /></Link></li>
                     {
-                        allCategories.map((category, index) =>
+                        allCategories?.map((category, index) =>
                         {
                             if(index > 7)
                             {
@@ -84,7 +86,7 @@ export function Header({setSearchText, cart, allCategories})
                             }
                             else
                             {
-                                return <li key={category.id}><Link to={`/?category=${category.id}`}>{category.name}</Link></li>
+                                return <li key={category.id}><Link to={`/?kategorija=${encodeURIComponent(category.name.replaceAll(' ', '-').toLowerCase())}`}>{category.name}</Link></li>
                             } 
                         })
                     }
