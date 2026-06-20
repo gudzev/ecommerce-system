@@ -23,6 +23,7 @@ export function Products({searchText, cart, setCart, allProducts, allCategories}
         {
             const searchParams = new URLSearchParams(document.location.search);
 
+
             if(searchParams.get("kategorija"))
             {
                 const eligibleProducts = [];
@@ -37,7 +38,6 @@ export function Products({searchText, cart, setCart, allProducts, allCategories}
             }
             else
             {
-
                 setProducts(allProducts);
             }
 
@@ -45,17 +45,17 @@ export function Products({searchText, cart, setCart, allProducts, allCategories}
         getProducts();
     }, [location, allProducts]);
 
-
     return (
         <section className="products">
             <div className="products-grid">
             {
-                products.length > 0 
-                ? 
+                (products.length > 0)
+                ?
                 products?.map((product) =>
                 {
                     if(product.name.toLowerCase().includes(searchText))
                     {
+                        console.log(product);
                         return <Product image_url={product.image_url} name={product.name} price_rsd={product.price_rsd} price_on_sale={product.price_on_sale} id={product.id} key={product.id} cart={cart} setCart={setCart}/>
                     }
                 })

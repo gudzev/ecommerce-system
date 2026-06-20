@@ -74,8 +74,8 @@ app.MapPost("/products", (Product p) =>
         {
             connection.Open();
 
-            string query = @"INSERT INTO products(name, image_url, price_rsd, price_on_sale, category_id, stock_quantity)
-                             VALUES(@name, @image_url, @price_rsd, @price_on_sale, @category_id, @stock_quantity)";
+            string query = @"INSERT INTO products(name, image_url, price_rsd, price_on_sale, category_id, stock_quantity, description)
+                             VALUES(@name, @image_url, @price_rsd, @price_on_sale, @category_id, @stock_quantity, @description)";
 
             using (SqlCommand command = new SqlCommand(query, connection))
             {
@@ -85,6 +85,7 @@ app.MapPost("/products", (Product p) =>
                 command.Parameters.AddWithValue("@price_on_sale", (p.price_on_sale != null) ? Convert.ToInt32(p.price_on_sale) : DBNull.Value);
                 command.Parameters.AddWithValue("@category_id", Convert.ToInt32(p.category_id));
                 command.Parameters.AddWithValue("@stock_quantity", Convert.ToInt32(p.stock_quantity));
+                command.Parameters.AddWithValue("@description", p.description);
 
                 command.ExecuteNonQuery();
             }
@@ -108,7 +109,7 @@ app.MapPut("/products", (Product p) =>
             string query = @"UPDATE products
                              SET name = @name, image_url = @image_url, price_rsd = @price_rsd,
                                  price_on_sale = @price_on_sale, category_id = @category_id,
-                                 stock_quantity = @stock_quantity
+                                 stock_quantity = @stock_quantity, description = @description
                              WHERE id = @id";
 
             using(SqlCommand command = new SqlCommand(query, connection))
@@ -120,6 +121,7 @@ app.MapPut("/products", (Product p) =>
                 command.Parameters.AddWithValue("@category_id", p.category_id);
                 command.Parameters.AddWithValue("@stock_quantity", p.stock_quantity);
                 command.Parameters.AddWithValue("@id", p.id);
+                command.Parameters.AddWithValue("@description", p.description);
 
                 command.ExecuteNonQuery();
             }

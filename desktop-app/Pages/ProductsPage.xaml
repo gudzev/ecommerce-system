@@ -21,6 +21,7 @@
             <RowDefinition Height="60"></RowDefinition>
             <RowDefinition Height="60"></RowDefinition>
             <RowDefinition Height="60"></RowDefinition>
+            <RowDefinition Height="60"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
 
@@ -47,7 +48,10 @@
         <Label Content="Količina na stanju" Grid.Column="0" Grid.Row="5" Style="{StaticResource TextBoxLabel}"/>
         <TextBox x:Name="quantityTextBox" Grid.Column="1" Grid.Row="5" Style="{StaticResource TextBox}"/>
 
-        <DataGrid x:Name="ProductsTable" SelectionUnit="FullRow" AutoGenerateColumns="False" Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="6" IsReadOnly="True" SelectionMode="Single" HorizontalAlignment="Stretch" SelectionChanged="LoadProductsRow">
+        <Label Content="Opis" Grid.Column="0" Grid.Row="6" Style="{StaticResource TextBoxLabel}"/>
+        <RichTextBox x:Name="descriptionRichTextBox" Grid.Column="1" Grid.Row="6" Grid.ColumnSpan="2" Style="{StaticResource RichTextBox}" />
+
+        <DataGrid x:Name="ProductsTable" SelectionUnit="FullRow" AutoGenerateColumns="False" Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="7" IsReadOnly="True" SelectionMode="Single" HorizontalAlignment="Stretch" SelectionChanged="LoadProductsRow">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Binding="{Binding id}" Width="auto"/>
                 <DataGridTextColumn Header="Naziv" Binding="{Binding name}" Width="auto"/>
@@ -56,6 +60,7 @@
                 <DataGridTextColumn Header="Popust" Binding="{Binding price_on_sale}" Width="auto"/>
                 <DataGridTextColumn Header="ID Kategorije" Binding="{Binding category_id}" Width="90"/>
                 <DataGridTextColumn Header="Na stanju" Binding="{Binding stock_quantity}" Width="90"/>
+                <DataGridTextColumn Header="Opis" Binding="{Binding description}" Width="180"/>
                 <DataGridCheckBoxColumn Header="Aktivan" Binding="{Binding is_active}" Width="90"/>
             </DataGrid.Columns>
         </DataGrid>

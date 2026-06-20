@@ -5,8 +5,13 @@ import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 import { formatPrice } from "../../utils/formatPrice";
 
+import { useNavigate } from "react-router-dom";
+import { viewProductDetails } from "../../utils/viewProductDetails";
+
 export function CheckoutSummary({cartProducts, shipmentPrice, orderPrice, cart, setCart})
 {
+    const navigate = useNavigate();
+
     const removeItemFromCart = (itemID) =>
     {
         const newCart = cart.filter((cartProduct) => itemID !== cartProduct.productId);
@@ -21,10 +26,10 @@ export function CheckoutSummary({cartProducts, shipmentPrice, orderPrice, cart, 
                 cartProducts.map((cartProduct) => 
                 {
                     return <div className="checkout-items-item" key={cartProduct.id}>
-                            <img src={cartProduct.image_url} alt={cartProduct.name + ' ' + "Image"} className="checkout-item-img" />
+                            <img src={cartProduct.image_url} alt={cartProduct.name + ' ' + "Image"} className="checkout-item-img" onClick={() => viewProductDetails(navigate, cartProduct.name)}/>
                             
                             <div className="checkout-items-details">
-                                <h2 className="checkout-item-name">{cartProduct.name}</h2>
+                                <h2 className="checkout-item-name" onClick={() => viewProductDetails(navigate, cartProduct.name)}>{cartProduct.name}</h2>
                                 <h3 className="checkout-item-quantity">Količina: {cartProduct.quantity}</h3>
                             </div>
 

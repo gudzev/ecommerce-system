@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using WebStoreManagementApp;
 
 namespace DesktopApp.Pages
@@ -52,11 +53,13 @@ namespace DesktopApp.Pages
 
             if (product == null) product = (Product)ProductsTable.Items[0];
 
+            clearTextBoxes();
             productNameTextBox.Text = product.name;
             imageURLTextBox.Text = product.image_url;
             priceTextBox.Text = product.price_rsd.ToString();
             salePriceTextBox.Text = product.price_on_sale.ToString() ?? "";
             quantityTextBox.Text = product.stock_quantity.ToString();
+            descriptionRichTextBox.AppendText(product.description.ToString() ?? "");
 
             foreach (var category in MainWindow.categories)
             {
@@ -79,6 +82,7 @@ namespace DesktopApp.Pages
             priceTextBox.Text = product.price_rsd.ToString();
             salePriceTextBox.Text = product.price_on_sale.ToString() ?? "";
             quantityTextBox.Text = product.stock_quantity.ToString();
+            descriptionRichTextBox.AppendText(product?.description?.ToString() ?? "");
 
             foreach (var category in MainWindow.categories)
             {
@@ -111,6 +115,7 @@ namespace DesktopApp.Pages
             newProduct.price_on_sale = (salePriceTextBox.Text == "") ? null : Convert.ToInt32(salePriceTextBox.Text);
             newProduct.category_id = categoryId;
             newProduct.stock_quantity = Convert.ToInt32(quantityTextBox.Text);
+            newProduct.description = new TextRange(descriptionRichTextBox.Document.ContentStart, descriptionRichTextBox.Document.ContentEnd).Text;
 
             try
             {
@@ -155,6 +160,7 @@ namespace DesktopApp.Pages
             existingProduct.price_on_sale = (salePriceTextBox.Text == "") ? null : Convert.ToInt32(salePriceTextBox.Text);
             existingProduct.category_id = categoryId;
             existingProduct.stock_quantity = Convert.ToInt32(quantityTextBox.Text);
+            existingProduct.description = new TextRange(descriptionRichTextBox.Document.ContentStart, descriptionRichTextBox.Document.ContentEnd).Text;
 
             try
             {
@@ -203,6 +209,16 @@ namespace DesktopApp.Pages
             {
                 Console.WriteLine(ex.Message);
             }
+        }
+
+        void clearTextBoxes()
+        {
+            productNameTextBox.Clear();
+            imageURLTextBox.Clear();
+            priceTextBox.Clear();
+            salePriceTextBox.Clear();
+            quantityTextBox.Clear();
+            descriptionRichTextBox.Document.Blocks.Clear();
         }
     }
 }

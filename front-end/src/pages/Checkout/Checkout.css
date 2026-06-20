@@ -144,11 +144,13 @@
     max-width: 90px;
     height: auto;
     max-height: 90px;
+    cursor: pointer;
 }
 
 .checkout-item-name
 {
     font-size: 1.2rem;
+    cursor: pointer;
 }
 
 .checkout-item-quantity
@@ -268,7 +270,7 @@
     }
 }
 
-/* Telefon */
+/* Mobile */
 @media screen and (max-width: 768px)
 {
     .checkout-content

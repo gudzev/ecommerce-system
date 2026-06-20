@@ -3,12 +3,17 @@ import "./Cart.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
-import { formatPrice } from "../../utils/formatPrice";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+import { formatPrice } from "../../utils/formatPrice";
+import { viewProductDetails } from "../../utils/viewProductDetails";
 
 export function CartItem({cartItem, cart, setCart})
 {
     const [quantity, setQuantity] = useState(cartItem.quantity);
+
+    const navigate = useNavigate();
 
     const removeItemFromCart = (itemID) =>
     {
@@ -34,8 +39,8 @@ export function CartItem({cartItem, cart, setCart})
     }
 
     return <div className="cart-item">
-        <img src={cartItem.image_url} alt={cartItem.name + ' ' + "Image"} className="cart-item-img"/>
-        <h2 className="cart-item-name">{cartItem.name}</h2>
+        <img src={cartItem.image_url} alt={cartItem.name + ' ' + "Image"} className="cart-item-img" onClick={() => viewProductDetails(navigate, cartItem.name)}/>
+        <h2 className="cart-item-name" onClick={() => viewProductDetails(navigate, cartItem.name)}>{cartItem.name}</h2>
         <div className="cart-item-qty">
             <input type="number" min="1" max="10" step="1" onChange={handleQtyInput} defaultValue={quantity} className="cart-item-qty-input"/>
         </div>

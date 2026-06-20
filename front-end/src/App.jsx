@@ -151,7 +151,10 @@ function App()
                                     />
                                     
         <Route path="/proizvod/*" element={<Product allCategories={allCategories}
-                                                    allProducts={allProducts}/>}
+                                                    allProducts={allProducts}
+                                                    cart={cart}
+                                                    setCart={setCart}
+                                                    setSearchText={setSearchText}/>}
                                     />
 
         <Route path="*" element={<NotFound allCategories={allCategories} />} />

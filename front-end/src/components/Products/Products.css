@@ -78,7 +78,7 @@
 
 .cart-added
 {
-    color: green;
+    color: var(--success-color);
     margin-top: 8px;
     visibility: hidden;
 }

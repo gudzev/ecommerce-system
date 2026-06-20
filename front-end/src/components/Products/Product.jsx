@@ -6,6 +6,7 @@ import { faShoppingCart, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { useState, useRef } from "react";
 import { useNavigate } from 'react-router-dom';
 
+import { viewProductDetails } from "../../utils/viewProductDetails";
 import { formatPrice } from "../../utils/formatPrice";
 
 let timeoutList = [];
@@ -61,15 +62,10 @@ export function Product({image_url, name, price_rsd, id, price_on_sale, cart, se
         });
     }
 
-    const viewProductDetails = () =>
-    {
-        navigate(`/proizvod/${encodeURIComponent(name.toLowerCase().replaceAll(' ', '-'))}`);
-    }
-
     return <div className="product">
-                <img src={image_url} alt={name + " image"} className="product-img" onClick={() => viewProductDetails()}/>
+                <img src={image_url} alt={name + " image"} className="product-img" onClick={() => viewProductDetails(navigate, name)}/>
 
-                <h2 className="product-name" onClick={() => viewProductDetails()}>{name}</h2>
+                <h2 className="product-name" onClick={() => viewProductDetails(navigate, name)}>{name}</h2>
 
                 <div className="product-details">
                     <div className="product-quantity">
