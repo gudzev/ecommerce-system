@@ -10,7 +10,7 @@ Test the live app here:
 
 ## 📋 Description
 
-This is a full e-commerce system consisting of:
+This is a full e-commerce system for PC hardware consisting of:
 - React web application for customers
 - WPF desktop application for store management
 - ASP.NET Minimal API

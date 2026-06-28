@@ -1,4 +1,6 @@
-﻿namespace Backend
+﻿using Backend.Models;
+
+namespace DesktopApp.Models
 {
     public class Product
     {
@@ -11,6 +13,14 @@
         public int category_id { get; set; }
         public int stock_quantity { get; set; }
         public bool is_active { get; set; }
+        public CaseDetails? caseDetails { get; set; }
+        public MotherboardDetails? motherboardDetails { get; set; }
+        public ProcessorDetails? processorDetails { get; set; }
+        public SSDDetails? ssdDetails { get; set; }
+        public HDDDetails? hddDetails { get; set; }
+        public GraphicsCardDetails? graphicsCardDetails { get; set; }
+        public PowerSupplyDetails? powerSupplyDetails { get; set; }
+        public RAMDetails? ramDetails { get; set; }
 
         public Product()
         {

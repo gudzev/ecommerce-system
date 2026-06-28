@@ -1,6 +1,7 @@
 using Microsoft.Data.SqlClient;
 using System.Collections.ObjectModel;
 using Backend.Models;
+using Backend.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,15 +23,18 @@ app.UseHttpsRedirection();
 
 string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-app.MapGet("/products", (bool? is_active) =>
+//app.MapProductEndpoints(connectionString);
+
+app.MapGet("/products", async (bool? is_active) =>
 {
     List<Product> products = new List<Product>();
 
     using (SqlConnection connection = new SqlConnection(connectionString))
     {
-        connection.Open();
+        await connection.OpenAsync();
 
-        string query = @"SELECT * FROM products";
+        string query = @"SELECT * FROM products
+                         JOIN categories ON categories.id = products.category_id";
 
         if (is_active == true)
         {
@@ -42,13 +46,15 @@ app.MapGet("/products", (bool? is_active) =>
             query += " WHERE is_active = 0";
         }
 
+        Product p;
+
         using (SqlCommand command = new SqlCommand(query, connection))
         {
-            using (SqlDataReader reader = command.ExecuteReader())
+            using (SqlDataReader reader = await command.ExecuteReaderAsync())
             {
-                while (reader.Read())
+                while (await reader.ReadAsync())
                 {
-                    Product p = new Product();
+                    p = new Product();
                     p.id = Convert.ToInt32(reader["id"]);
                     p.name = reader["name"].ToString();
                     p.image_url = reader["image_url"].ToString();
@@ -58,6 +64,44 @@ app.MapGet("/products", (bool? is_active) =>
                     p.stock_quantity = Convert.ToInt32(reader["stock_quantity"]);
                     p.is_active = Convert.ToBoolean(reader["is_active"]);
                     p.description = reader["description"].ToString();
+
+                    if (reader["name"].ToString() == "Graficka karta")
+                    {
+                        p.graphicsCardDetails = new GraphicsCardDetails().getDetails();
+                    }
+                    else if(reader["name"].ToString() == "Procesor")
+                    {
+                        p.processorDetails = new ProcessorDetails().getDetails();
+                    }
+                    else if (reader["name"].ToString() == "Matična ploča")
+                    {
+                        p.motherboardDetails = new MotherboardDetails().getDetails();
+                    }
+                    else if (reader["name"].ToString() == "Memorija")
+                    {
+                        p.ramDetails = new RAMDetails().getDetails();
+                    }
+                    else if (reader["name"].ToString() == "SSD")
+                    {
+                        p.ssdDetails = new SSDDetails().getDetails();
+                    }
+                    else if (reader["name"].ToString() == "HDD")
+                    {
+                        p.hddDetails = new HDDDetails().getDetails();
+                    }
+                    else if (reader["name"].ToString() == "Napajanje")
+                    {
+                        p.powerSupplyDetails = new PowerSupplyDetails().getDetails();
+                    }
+                    else if (reader["name"].ToString() == "Kućište")
+                    {
+                        p.caseDetails = new CaseDetails().getDetails();
+                    }
+                    else
+                    {
+                        // Product is not of a defined category
+                    }
+
                     products.Add(p);
                 }
             }
@@ -66,13 +110,13 @@ app.MapGet("/products", (bool? is_active) =>
     return Results.Json(products);
 });
 
-app.MapPost("/products", (Product p) =>
+app.MapPost("/products", async (Product p) =>
 {
     try
     {
         using (SqlConnection connection = new SqlConnection(connectionString))
         {
-            connection.Open();
+            await connection.OpenAsync();
 
             string query = @"INSERT INTO products(name, image_url, price_rsd, price_on_sale, category_id, stock_quantity, description)
                              VALUES(@name, @image_url, @price_rsd, @price_on_sale, @category_id, @stock_quantity, @description)";
@@ -87,7 +131,7 @@ app.MapPost("/products", (Product p) =>
                 command.Parameters.AddWithValue("@stock_quantity", Convert.ToInt32(p.stock_quantity));
                 command.Parameters.AddWithValue("@description", p.description);
 
-                command.ExecuteNonQuery();
+                await command.ExecuteNonQueryAsync();
             }
         }
         return Results.Ok(new { success = true });
@@ -98,13 +142,13 @@ app.MapPost("/products", (Product p) =>
     }
 });
 
-app.MapPut("/products", (Product p) =>
+app.MapPut("/products", async (Product p) =>
 {
     try
     {
         using (SqlConnection connection = new SqlConnection(connectionString))
         {
-            connection.Open();
+            await connection.OpenAsync();
 
             string query = @"UPDATE products
                              SET name = @name, image_url = @image_url, price_rsd = @price_rsd,
@@ -123,7 +167,7 @@ app.MapPut("/products", (Product p) =>
                 command.Parameters.AddWithValue("@id", p.id);
                 command.Parameters.AddWithValue("@description", p.description);
 
-                command.ExecuteNonQuery();
+                await command.ExecuteNonQueryAsync();
             }
         }
         return Results.Ok(new { success = true });
@@ -134,13 +178,13 @@ app.MapPut("/products", (Product p) =>
     }
 });
 
-app.MapPatch("/products/{productId}/status", (int productId, bool isActive) =>
+app.MapPatch("/products/{productId}/status", async (int productId, bool isActive) =>
 {
     try
     {
         using (SqlConnection connection = new SqlConnection(connectionString))
         {
-            connection.Open();
+            await connection.OpenAsync();
 
             string query = @"UPDATE products
                              SET is_active = @isActive
@@ -151,7 +195,7 @@ app.MapPatch("/products/{productId}/status", (int productId, bool isActive) =>
                 command.Parameters.AddWithValue("@id", productId);
                 command.Parameters.AddWithValue("@isActive", isActive);
 
-                command.ExecuteNonQuery();
+                await command.ExecuteNonQueryAsync();
             }
         }
         return Results.Ok(new { success = true });
@@ -162,19 +206,19 @@ app.MapPatch("/products/{productId}/status", (int productId, bool isActive) =>
     }
 });
 
-app.MapGet("/categories", () =>
+app.MapGet("/categories", async () =>
 {
     List<Category> categories = new List<Category>();
 
     using (SqlConnection connection = new SqlConnection(connectionString))
     {
-        connection.Open();
+        await connection.OpenAsync();
 
         using(SqlCommand command = new SqlCommand("SELECT * FROM categories", connection))
         {
-            using(SqlDataReader reader = command.ExecuteReader())
+            using(SqlDataReader reader = await command.ExecuteReaderAsync())
             {
-                while(reader.Read())
+                while(await reader.ReadAsync())
                 {
                     Category c = new Category();
                     c.id = Convert.ToInt32(reader["id"]);
@@ -187,13 +231,13 @@ app.MapGet("/categories", () =>
     return Results.Json(categories);
 });
 
-app.MapPost("/categories", (Category c) =>
+app.MapPost("/categories", async (Category c) =>
 {
     try
     {
         using (SqlConnection connection = new SqlConnection(connectionString))
         {
-            connection.Open();
+            await connection.OpenAsync();
 
             string query = @"INSERT INTO categories(name) 
                              VALUES(@name)";
@@ -202,7 +246,7 @@ app.MapPost("/categories", (Category c) =>
             {
                 command.Parameters.AddWithValue("@name", c.name);
 
-                command.ExecuteNonQuery();
+                await command.ExecuteNonQueryAsync();
             }
         }
         return Results.Ok(new { success = true });
@@ -213,13 +257,13 @@ app.MapPost("/categories", (Category c) =>
     }
 });
 
-app.MapPut("/categories", (Category c) =>
+app.MapPut("/categories", async (Category c) =>
 {
     try
     {
         using (SqlConnection connection = new SqlConnection(connectionString))
         {
-            connection.Open();
+            await connection.OpenAsync();
 
             string query = @"UPDATE categories
                              SET name = @name
@@ -230,7 +274,7 @@ app.MapPut("/categories", (Category c) =>
                 command.Parameters.AddWithValue("@name", c.name);
                 command.Parameters.AddWithValue("@id", c.id);
 
-                command.ExecuteNonQuery();
+                await command.ExecuteNonQueryAsync();
             }
         }
         return Results.Ok(new { success = true });
@@ -241,13 +285,13 @@ app.MapPut("/categories", (Category c) =>
     }
 });
 
-app.MapDelete("/categories/{categoryId}", (int categoryId) =>
+app.MapDelete("/categories/{categoryId}", async (int categoryId) =>
 {
     try
     {
         using (SqlConnection connection = new SqlConnection(connectionString))
         {
-            connection.Open();
+            await connection.OpenAsync();
 
             string query = @"DELETE FROM categories
                              WHERE id = @id";
@@ -256,7 +300,7 @@ app.MapDelete("/categories/{categoryId}", (int categoryId) =>
             {
                 command.Parameters.AddWithValue("@id", categoryId);
 
-                command.ExecuteNonQuery();
+                await command.ExecuteNonQueryAsync();
             }
         }
         return Results.Ok(new { success = true });
@@ -267,19 +311,19 @@ app.MapDelete("/categories/{categoryId}", (int categoryId) =>
     }
 });
 
-app.MapGet("/delivery-options", () =>
+app.MapGet("/delivery-options", async () =>
 {
     List<DeliveryOption> deliveryOptions = new List<DeliveryOption>();
 
     using (SqlConnection connection = new SqlConnection(connectionString))
     {
-        connection.Open();
+        await connection.OpenAsync();
 
         using (SqlCommand command = new SqlCommand("SELECT * FROM delivery_options", connection))
         {
-            using (SqlDataReader reader = command.ExecuteReader())
+            using (SqlDataReader reader = await command.ExecuteReaderAsync())
             {
-                while (reader.Read())
+                while (await reader.ReadAsync())
                 {
                     DeliveryOption d = new DeliveryOption();
                     d.id = Convert.ToInt32(reader["id"]);
@@ -294,13 +338,13 @@ app.MapGet("/delivery-options", () =>
     return Results.Json(deliveryOptions);
 });
 
-app.MapPost("/delivery-options", (DeliveryOption o) =>
+app.MapPost("/delivery-options", async (DeliveryOption o) =>
 {
     try
     {
         using (SqlConnection connection = new SqlConnection(connectionString))
         {
-            connection.Open();
+            await connection.OpenAsync();
 
             string query = @"INSERT INTO delivery_options(price_per_item, name, free_shipping_minimum_value)
                          VALUES(@price_per_item, @name, @free_shipping_minimum_value)";
@@ -311,7 +355,7 @@ app.MapPost("/delivery-options", (DeliveryOption o) =>
                 command.Parameters.AddWithValue("@name", o.name);
                 command.Parameters.AddWithValue("@free_shipping_minimum_value", o.free_shipping_minimum_value);
 
-                command.ExecuteNonQuery();
+                await command.ExecuteNonQueryAsync();
             }
         }
         return Results.Ok(new { success = true });
@@ -322,13 +366,13 @@ app.MapPost("/delivery-options", (DeliveryOption o) =>
     }
 });
 
-app.MapPut("/delivery-options", (DeliveryOption d) =>
+app.MapPut("/delivery-options", async (DeliveryOption d) =>
 {
     try
     {
         using (SqlConnection connection = new SqlConnection(connectionString))
         {
-            connection.Open();
+            await connection.OpenAsync();
 
             string query = @"UPDATE delivery_options
                              SET price_per_item = @price_per_item, name = @name, free_shipping_minimum_value = @free_shipping_minimum_value
@@ -341,7 +385,7 @@ app.MapPut("/delivery-options", (DeliveryOption d) =>
                 command.Parameters.AddWithValue("@free_shipping_minimum_value", d.free_shipping_minimum_value);
                 command.Parameters.AddWithValue("@id", d.id);
 
-                command.ExecuteNonQuery();
+                await command.ExecuteNonQueryAsync();
             }
         }
         return Results.Ok(new { success = true });
@@ -352,13 +396,13 @@ app.MapPut("/delivery-options", (DeliveryOption d) =>
     }
 });
 
-app.MapDelete("/delivery-options/{deliveryOptionID}", (int deliveryOptionID) =>
+app.MapDelete("/delivery-options/{deliveryOptionID}", async (int deliveryOptionID) =>
 {
     try
     {
         using (SqlConnection connection = new SqlConnection(connectionString))
         {
-            connection.Open();
+            await connection.OpenAsync();
 
             string query = @"DELETE FROM delivery_options 
                              WHERE id = @id";
@@ -367,7 +411,7 @@ app.MapDelete("/delivery-options/{deliveryOptionID}", (int deliveryOptionID) =>
             {
                 command.Parameters.AddWithValue("@id", deliveryOptionID);
 
-                int rowsAffected = command.ExecuteNonQuery();
+                int rowsAffected = await command.ExecuteNonQueryAsync();
 
                 if (rowsAffected == 0)
                 {
@@ -383,13 +427,13 @@ app.MapDelete("/delivery-options/{deliveryOptionID}", (int deliveryOptionID) =>
     }
 });
 
-app.MapGet("/orders", (int is_fulfilled) =>
+app.MapGet("/orders", async (int is_fulfilled) =>
 {
     List<Order> orders = new List<Order>();
 
     using (SqlConnection connection = new SqlConnection(connectionString))
     {
-        connection.Open();
+        await connection.OpenAsync();
 
         string query = @"SELECT orders.id, orders.name, surname, email, street, apartment_number, additional, city, delivery_method_id, created_at, is_fulfilled, phone_number, order_id, product_id, quantity, price_at_purchase, products.name AS product_name, image_url
                          FROM orders
@@ -401,11 +445,11 @@ app.MapGet("/orders", (int is_fulfilled) =>
         {
             command.Parameters.AddWithValue("@is_fulfilled", is_fulfilled);
 
-            using(SqlDataReader reader = command.ExecuteReader())
+            using(SqlDataReader reader = await command.ExecuteReaderAsync())
             {
                 Dictionary<int, Order> ordersDict = new Dictionary<int, Order>();
 
-                while (reader.Read())
+                while (await reader.ReadAsync())
                 {
                     int orderId = Convert.ToInt32(reader["id"]);
 
@@ -448,13 +492,13 @@ app.MapGet("/orders", (int is_fulfilled) =>
     return Results.Json(orders);
 });
 
-app.MapGet("/orders/{id}", (int id) =>
+app.MapGet("/orders/{id}", async (int id) =>
 {
     Order order = new Order();
 
     using (SqlConnection connection = new SqlConnection(connectionString))
     {
-        connection.Open();
+        await connection.OpenAsync();
 
         string query = @"SELECT orders.id, orders.name, surname, email, street, apartment_number, additional, city, delivery_method_id, created_at, is_fulfilled, phone_number, order_id, product_id, quantity, price_at_purchase, products.name AS product_name, image_url
                          FROM orders
@@ -466,9 +510,9 @@ app.MapGet("/orders/{id}", (int id) =>
         {
             command.Parameters.AddWithValue("@id", id);
 
-            using (SqlDataReader reader = command.ExecuteReader())
+            using (SqlDataReader reader = await command.ExecuteReaderAsync())
             {
-                if (reader.Read())
+                if (await reader.ReadAsync())
                 {
                     order.id = Convert.ToInt32(reader["id"]);
                     order.name = reader["name"].ToString();
@@ -494,7 +538,7 @@ app.MapGet("/orders/{id}", (int id) =>
                         reader["product_name"].ToString(),
                         reader["image_url"].ToString()));
                     }
-                    while (reader.Read());
+                    while (await reader.ReadAsync());
                 }
                 else
                 {
@@ -506,13 +550,13 @@ app.MapGet("/orders/{id}", (int id) =>
     return Results.Json(order);
 });
 
-app.MapPost("/orders", (Order o) =>
+app.MapPost("/orders", async (Order o) =>
 {
     if (o.orderItems == null) return Results.Json(new { success = false, errorMessage = "Order items are empty." });
 
     using (SqlConnection connection = new SqlConnection(connectionString))
     {
-        connection.Open();
+        await connection.OpenAsync();
 
         using (SqlTransaction transaction = connection.BeginTransaction())
         {
@@ -536,7 +580,7 @@ app.MapPost("/orders", (Order o) =>
                     command.Parameters.AddWithValue("@delivery_method_id", Convert.ToInt32(o.delivery_method_id));
                     command.Parameters.AddWithValue("@created_at", DateTime.Now);
 
-                    orderId = Convert.ToInt32(command.ExecuteScalar());
+                    orderId = Convert.ToInt32(await command.ExecuteScalarAsync());
                 }
 
                 foreach (OrderItem item in o.orderItems)
@@ -545,7 +589,7 @@ app.MapPost("/orders", (Order o) =>
                     using (SqlCommand command = new SqlCommand("SELECT MIN(COALESCE(price_on_sale, price_rsd)) FROM products WHERE id = @id", connection, transaction))
                     {
                         command.Parameters.AddWithValue("@id", item.productId);
-                        priceAtPurchase = Convert.ToInt32(command.ExecuteScalar());
+                        priceAtPurchase = Convert.ToInt32(command.ExecuteScalarAsync());
                     }
 
                     using (SqlCommand command = new SqlCommand("INSERT INTO order_items(product_id, order_id, quantity, price_at_purchase) VALUES(@product_id, @order_id , @quantity, @price_at_purchase)", connection, transaction))
@@ -555,7 +599,7 @@ app.MapPost("/orders", (Order o) =>
                         command.Parameters.AddWithValue("@quantity", Convert.ToInt32(item.quantity));
                         command.Parameters.AddWithValue("@price_at_purchase", priceAtPurchase);
 
-                        command.ExecuteNonQuery();
+                        await command.ExecuteNonQueryAsync();
                     }
                 }
 
@@ -572,13 +616,13 @@ app.MapPost("/orders", (Order o) =>
     }
 });
 
-app.MapPatch("/orders", (Order o) =>
+app.MapPatch("/orders", async (Order o) =>
 {
     try
     {
         using (SqlConnection connection = new SqlConnection(connectionString))
         {
-            connection.Open();
+            await connection.OpenAsync();
 
             string query = @"UPDATE orders 
                              SET is_fulfilled = 1
@@ -588,7 +632,7 @@ app.MapPatch("/orders", (Order o) =>
             {
                 command.Parameters.AddWithValue("@id", o.id);
 
-                command.ExecuteNonQuery();
+                await command.ExecuteNonQueryAsync();
             }
         }
         return Results.Ok(new { success = true });

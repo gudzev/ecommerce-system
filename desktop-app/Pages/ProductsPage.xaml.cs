@@ -1,4 +1,5 @@
 ﻿using Backend;
+using DesktopApp.Models;
 using System.Collections.ObjectModel;
 using System.Net.Http;
 using System.Net.Http.Json;
