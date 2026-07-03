@@ -8,11 +8,14 @@ import { formatPrice } from "../../utils/formatPrice";
 import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
+import axios from 'axios';
+
 import "./ProductDetails.css";
 
 export function Product({allCategories, allProducts, cart, setCart, setSearchText})
 {
     const [thisProduct, setThisProduct] = useState(null);
+    const [thisProductID, setThisProductID] = useState(null);
     const [addedText, setAddedText] = useState(false);
 
     const timeoutID = useRef(null);
@@ -26,10 +29,26 @@ export function Product({allCategories, allProducts, cart, setCart, setSearchTex
         {
             if(product.name.toLowerCase().replaceAll('-', ' ') == productName)
             {
-                setThisProduct(product);
+                setThisProductID(product.id);
             }
         });
     }, [allProducts, allCategories]);
+
+    useEffect(() =>
+    {
+        if(!thisProductID)
+        {
+            return;
+        }
+
+        const getThisProduct = async () =>
+        {
+            const request = await axios.get("https://localhost:7097/products/" + thisProductID);
+            const dbProduct = request.data;
+            setThisProduct(dbProduct);
+        }
+        getThisProduct();
+    }, [thisProductID]);
 
     useEffect(() =>
     {
@@ -47,20 +66,18 @@ export function Product({allCategories, allProducts, cart, setCart, setSearchTex
     const addToCart = () =>
     {
         let newCart = [...cart];
-        const foundItem = newCart.find((cartItem) => cartItem.productId == thisProduct.id);
+        const foundItem = newCart.find((cartItem) => cartItem.productId == thisProductID);
         console.log(foundItem);
 
         if(foundItem)
         {
-            console.log(newCart)
             foundItem.quantity++;
-            console.log(newCart);
         }
         else
         {
             newCart.push(
                 {
-                    productId: thisProduct.id,
+                    productId: thisProductID,
                     quantity: 1
                 })
         }
@@ -94,6 +111,17 @@ export function Product({allCategories, allProducts, cart, setCart, setSearchTex
                             <hr></hr>
                             <p className="product-container-article-description">{thisProduct?.description || "Nema opisa za ovaj proizvod."}</p>
 
+                        </div>
+                        <div className="product-detailed-specifications">
+                            <table>
+                                {
+                                    (thisProduct?.details)
+                                    ?
+                                    console.log("Uspeh")
+                                    :
+                                    console.log("Neuspeh")
+                                }
+                            </table>
                         </div>
                     </div>
                 </main>

@@ -1,4 +1,5 @@
 using Microsoft.Data.SqlClient;
+using Microsoft.AspNetCore.Http;
 using System.Collections.ObjectModel;
 using Backend.Models;
 using Backend.Endpoints;
@@ -25,6 +26,102 @@ string connectionString = builder.Configuration.GetConnectionString("DefaultConn
 
 //app.MapProductEndpoints(connectionString);
 
+app.MapGet("/products/{productId}", async (int productId) =>
+{
+    Product p = null;
+
+    using (SqlConnection connection = new SqlConnection(connectionString))
+    {
+        await connection.OpenAsync();
+
+        string query = @"SELECT products.id, products.name, image_url, price_rsd, price_on_sale, category_id, stock_quantity, is_active, description, categories.name AS category 
+                         FROM products
+                         JOIN categories ON categories.id = products.category_id
+                         WHERE products.id = @productId AND is_active = 1";
+
+        using (SqlCommand command = new SqlCommand(query, connection))
+        {
+            command.Parameters.AddWithValue("@productId", productId);
+
+            using (SqlDataReader reader = await command.ExecuteReaderAsync())
+            {
+                if(await reader.ReadAsync())
+                {
+                    p = new Product();
+                    p.id = Convert.ToInt32(reader["id"]);
+                    p.name = reader["name"].ToString();
+                    p.image_url = reader["image_url"].ToString();
+                    p.price_rsd = Convert.ToInt32(reader["price_rsd"]);
+                    p.price_on_sale = reader["price_on_sale"] != DBNull.Value ? Convert.ToInt32(reader["price_on_sale"]) : null;
+                    p.category_id = Convert.ToInt32(reader["category_id"]);
+                    p.stock_quantity = Convert.ToInt32(reader["stock_quantity"]);
+                    p.is_active = Convert.ToBoolean(reader["is_active"]);
+                    p.description = reader["description"].ToString();
+
+                    if (reader["category"].ToString() == "Grafička karta")
+                    {
+                        p.graphicsCardDetails = new GraphicsCardDetails().getDetails(connectionString, p.id);
+                    }
+                    else if (reader["category"].ToString() == "Procesor")
+                    {
+                        p.processorDetails = new ProcessorDetails().getDetails(connectionString, p.id);
+                    }
+                    else if (reader["category"].ToString() == "Matična ploča")
+                    {
+                        p.motherboardDetails = new MotherboardDetails().getDetails(connectionString, p.id);
+                    }
+                    else if (reader["category"].ToString() == "Memorija")
+                    {
+                        p.ramDetails = new RAMDetails().getDetails(connectionString, p.id);
+                    }
+                    else if (reader["category"].ToString() == "SSD")
+                    {
+                        p.ssdDetails = new SSDDetails().getDetails(connectionString, p.id);
+                    }
+                    else if (reader["category"].ToString() == "HDD")
+                    {
+                        p.hddDetails = new HDDDetails().getDetails(connectionString, p.id);
+                    }
+                    else if (reader["category"].ToString() == "Napajanje")
+                    {
+                        p.powerSupplyDetails = new PowerSupplyDetails().getDetails(connectionString, p.id);
+                    }
+                    else if (reader["category"].ToString() == "Kućište")
+                    {
+                        p.caseDetails = new CaseDetails().getDetails(connectionString, p.id);
+                    }
+                    else
+                    {
+                        // Product is not of a defined category
+                    }
+                }
+            }
+        }
+    }
+
+    return Results.Json(new
+    {
+        id = p.id,
+        name = p.name,
+        image_url = p.image_url,
+        price_rsd = p.price_rsd,
+        price_on_sale = p.price_on_sale,
+        category_id = p.category_id,
+        stock_quantity = p.stock_quantity,
+        is_active = p.is_active,
+        description = p.description,
+        details =
+        p.graphicsCardDetails ??
+        p.processorDetails ??
+        p.motherboardDetails ??
+        p.ramDetails ??
+        p.ssdDetails ??
+        p.hddDetails ??
+        (object?)p.powerSupplyDetails ??
+        p.caseDetails
+    });
+});
+
 app.MapGet("/products", async (bool? is_active) =>
 {
     List<Product> products = new List<Product>();
@@ -33,7 +130,8 @@ app.MapGet("/products", async (bool? is_active) =>
     {
         await connection.OpenAsync();
 
-        string query = @"SELECT * FROM products
+        string query = @"SELECT products.id, products.name, image_url, price_rsd, price_on_sale, category_id, stock_quantity, is_active, description, categories.name AS category 
+                         FROM products
                          JOIN categories ON categories.id = products.category_id";
 
         if (is_active == true)
@@ -64,43 +162,6 @@ app.MapGet("/products", async (bool? is_active) =>
                     p.stock_quantity = Convert.ToInt32(reader["stock_quantity"]);
                     p.is_active = Convert.ToBoolean(reader["is_active"]);
                     p.description = reader["description"].ToString();
-
-                    if (reader["name"].ToString() == "Graficka karta")
-                    {
-                        p.graphicsCardDetails = new GraphicsCardDetails().getDetails();
-                    }
-                    else if(reader["name"].ToString() == "Procesor")
-                    {
-                        p.processorDetails = new ProcessorDetails().getDetails();
-                    }
-                    else if (reader["name"].ToString() == "Matična ploča")
-                    {
-                        p.motherboardDetails = new MotherboardDetails().getDetails();
-                    }
-                    else if (reader["name"].ToString() == "Memorija")
-                    {
-                        p.ramDetails = new RAMDetails().getDetails();
-                    }
-                    else if (reader["name"].ToString() == "SSD")
-                    {
-                        p.ssdDetails = new SSDDetails().getDetails();
-                    }
-                    else if (reader["name"].ToString() == "HDD")
-                    {
-                        p.hddDetails = new HDDDetails().getDetails();
-                    }
-                    else if (reader["name"].ToString() == "Napajanje")
-                    {
-                        p.powerSupplyDetails = new PowerSupplyDetails().getDetails();
-                    }
-                    else if (reader["name"].ToString() == "Kućište")
-                    {
-                        p.caseDetails = new CaseDetails().getDetails();
-                    }
-                    else
-                    {
-                        // Product is not of a defined category
-                    }
 
                     products.Add(p);
                 }

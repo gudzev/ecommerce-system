@@ -43,6 +43,7 @@ All components communicate through a shared REST API.
 
 ### Products
 - GET `/products?is_active={bool?}`
+- GET `/products/{productId}`
 - POST `/products`
 - PUT `/products`
 - PATCH `/products/{productId}/status`

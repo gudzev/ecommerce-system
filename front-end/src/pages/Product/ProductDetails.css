@@ -13,6 +13,7 @@
     height: min(400px, 90vw);
     border: 1px solid var(--page-header-bg);
     border-radius: 15px;
+    margin-left: 20px !important;
 }
 
 .product-container-details
@@ -21,11 +22,13 @@
     padding: 20px;
     display: flex;
     justify-content: space-evenly;
+    flex-wrap: wrap;
 }
 
 .product-container-data
 {
     width: 600px;
+    padding: 20px;
 }
 
 .product-container-article-id
@@ -99,6 +102,17 @@
 .price-new
 {
     color: var(--saving-color);
+}
+
+.product-detailed-specifications
+{
+    width: 100%;
+    margin: 20px;
+}
+
+.product-detailed-specifications table
+{
+    border: 1px solid var(--header-links-bg-border);
 }
 
 /* Tablets */
