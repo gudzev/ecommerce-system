@@ -13,7 +13,7 @@
     height: min(400px, 90vw);
     border: 1px solid var(--page-header-bg);
     border-radius: 15px;
-    margin-left: 20px !important;
+    margin-right: auto;
 }
 
 .product-container-details
@@ -40,7 +40,7 @@
 .product-container-article-description
 {
     margin-top: 15px;
-    min-height: 200px;
+    min-height: 100px;
 }
 
 .product-container-add-to-cart-btn
@@ -107,12 +107,35 @@
 .product-detailed-specifications
 {
     width: 100%;
-    margin: 20px;
+    margin: 40px 0px;
 }
 
 .product-detailed-specifications table
 {
-    border: 1px solid var(--header-links-bg-border);
+    width: 100%;
+}
+
+.product-specification-header
+{
+    background-color: var(--accent-color);
+    border-radius: 5px;
+    padding: 10px 5px;
+}
+
+.product-specification-name, .product-specification-value
+{
+    text-align: left;
+    font-size: 1rem;
+    border-radius: 5px;
+    height: 30px;
+    padding: 5px 5px;
+    background-color: var(--header-links-bg);
+    color: var(--text-color);
+}
+
+.product-specification-no-results
+{
+    text-align: center;
 }
 
 /* Tablets */
@@ -156,6 +179,11 @@
     {
         font-size: .9rem;
     }
+
+    .product-container-article-description
+    {
+        min-height: 20px;
+    }
 }
 
 /* Mobile */
@@ -166,7 +194,6 @@
         width: 1280px;
         padding: 30px 10px;
         display: flex;
-        flex-direction: column;
         align-items: center;
     }
 
@@ -186,16 +213,56 @@
         height: 80vw;
         border: 1px solid var(--page-header-bg);
         border-radius: 15px;
+        margin-right: 0px;
     }
 
     .product-container-data
     {
         width: 90%;
-        margin-top: 30px;
+        margin-top: 10px;
     }
 
     .added-to-cart
     {
         font-size: .9rem;
+    }
+
+    .product-detailed-specifications
+    {
+        margin: 5px;
+    }
+
+    .product-detailed-specifications table
+    {
+        width: 100%;
+    }
+
+    .product-specification-header
+    {
+        background-color: var(--accent-color);
+        border-radius: 5px;
+        padding: 10px 5px;
+    }
+
+    .product-container-article-description
+    {
+        margin-top: 15px;
+        min-height: auto;
+    }
+
+    .product-specification-name, .product-specification-value
+    {
+        text-align: left;
+        font-size: 1rem;
+        border-radius: 5px;
+        height: 30px;
+        padding: 5px 5px;
+        background-color: var(--header-links-bg);
+        color: var(--text-color);
+    }
+
+    .product-specification-no-results
+    {
+        text-align: center;
     }
 }

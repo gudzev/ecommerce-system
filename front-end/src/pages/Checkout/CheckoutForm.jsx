@@ -136,7 +136,7 @@ export function CheckoutForm({cartProducts, shipmentPrice, orderPrice, cart, set
                 })
                 .then((response) => 
                 {
-                    console.log(response.status, response.text);
+                    console.log("Email status:" + response.status + " " + response.text);
                 },
                 (error) => 
                 {

@@ -4,6 +4,7 @@ import { Footer } from "../../components/Footer/Footer";
 import { useEffect, useState, useRef } from "react";
 
 import { formatPrice } from "../../utils/formatPrice";
+import {translateToSerbian} from "../../utils/translateToSerbian";
 
 import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -15,6 +16,7 @@ import "./ProductDetails.css";
 export function Product({allCategories, allProducts, cart, setCart, setSearchText})
 {
     const [thisProduct, setThisProduct] = useState(null);
+    const [thisProductDetails, setThisProductDetails] = useState(null);
     const [thisProductID, setThisProductID] = useState(null);
     const [addedText, setAddedText] = useState(false);
 
@@ -46,6 +48,7 @@ export function Product({allCategories, allProducts, cart, setCart, setSearchTex
             const request = await axios.get("https://localhost:7097/products/" + thisProductID);
             const dbProduct = request.data;
             setThisProduct(dbProduct);
+            setThisProductDetails(dbProduct.details);
         }
         getThisProduct();
     }, [thisProductID]);
@@ -67,7 +70,6 @@ export function Product({allCategories, allProducts, cart, setCart, setSearchTex
     {
         let newCart = [...cart];
         const foundItem = newCart.find((cartItem) => cartItem.productId == thisProductID);
-        console.log(foundItem);
 
         if(foundItem)
         {
@@ -94,7 +96,7 @@ export function Product({allCategories, allProducts, cart, setCart, setSearchTex
 
                 <main className="product-container">
                     <div className="product-container-details">
-                        <img src={thisProduct?.image_url} alt={thisProduct?.name + " slika"} className="product-img" />
+                        <img src={thisProduct?.image_url} alt={thisProduct?.name + " slika"} />
                         <div className="product-container-data">
                             <p className="product-container-article-id">Šifra artikla: {thisProduct?.id}</p>
                             <h1>{thisProduct?.name}</h1>
@@ -113,15 +115,34 @@ export function Product({allCategories, allProducts, cart, setCart, setSearchTex
 
                         </div>
                         <div className="product-detailed-specifications">
-                            <table>
-                                {
-                                    (thisProduct?.details)
-                                    ?
-                                    console.log("Uspeh")
-                                    :
-                                    console.log("Neuspeh")
-                                }
-                            </table>
+                            {
+                                (thisProductDetails)
+                                ?
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th className="product-specification-header">Specifikacija</th>
+                                            <th className="product-specification-header">Vrednost</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {
+                                            Object.entries(thisProductDetails).map((productDetail, index) =>
+                                            {
+                                                const [key, value] = productDetail;
+                                                return (
+                                                    <tr key={index}>
+                                                        <td className="product-specification-name">{translateToSerbian(key)}</td>
+                                                        <td className="product-specification-value">{value}</td>
+                                                    </tr>
+                                                )
+                                            })
+                                        }
+                                    </tbody>
+                                </table>
+                                :
+                                <h3 className="product-specification-no-results">Nema detaljnih specifikacija za ovaj proizvod.</h3>
+                            }    
                         </div>
                     </div>
                 </main>

@@ -118,7 +118,7 @@ function App()
 
       calculateProductsTotal();
       calculateDeliveryTotal();
-  }, [cartProducts, deliveryMethod]);
+  }, [cartProducts, deliveryMethod, deliveryOptions]);
 
   return (
       <Routes>
