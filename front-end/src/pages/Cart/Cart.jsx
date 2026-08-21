@@ -5,7 +5,7 @@ import { Footer } from "../../components/Footer/Footer";
 import { CartCheckout } from "./CartCheckout";
 import { CartPreview } from "./CartPreview";
 
-export function Cart({setSearchText, cart, setCart, cartProducts, shipmentPrice, orderPrice, allCategories})
+export default function Cart({setSearchText, cart, setCart, cartProducts, shipmentPrice, orderPrice, allCategories})
 {
     return <>
 

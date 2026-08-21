@@ -8,7 +8,7 @@ import { CheckoutForm } from "./CheckoutForm";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-export function Checkout({setSearchText, cart, cartProducts, shipmentPrice, orderPrice, setCart, deliveryMethod, setDeliveryMethod, deliveryOptions, allCategories})
+export default function Checkout({setSearchText, cart, cartProducts, shipmentPrice, orderPrice, setCart, deliveryMethod, setDeliveryMethod, deliveryOptions, allCategories})
 {
     const [orderID, setOrderID] = useState(null);
 

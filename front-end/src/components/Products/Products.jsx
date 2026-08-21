@@ -49,7 +49,7 @@ export function Products({searchText, cart, setCart, allProducts, allCategories}
         <section className="products">
             <div className="products-grid">
             {
-                (products.length > 0)
+                (products?.length > 0)
                 ?
                 products?.map((product) =>
                 {

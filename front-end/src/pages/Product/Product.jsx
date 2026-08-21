@@ -13,7 +13,7 @@ import axios from 'axios';
 
 import "./ProductDetails.css";
 
-export function Product({allCategories, allProducts, cart, setCart, setSearchText})
+export default function Product({allCategories, allProducts, cart, setCart, setSearchText})
 {
     const [thisProduct, setThisProduct] = useState(null);
     const [thisProductDetails, setThisProductDetails] = useState(null);

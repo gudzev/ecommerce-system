@@ -5,7 +5,7 @@ import { Footer } from "../../components/Footer/Footer";
 
 import { Link } from "react-router-dom";
 
-export function NotFound({allCategories})
+export default function NotFound({allCategories})
 {
     return <>
 

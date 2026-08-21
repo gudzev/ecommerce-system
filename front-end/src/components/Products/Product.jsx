@@ -91,5 +91,5 @@ export function Product({image_url, name, price_rsd, id, price_on_sale, cart, se
                     <FontAwesomeIcon icon={faShoppingCart} />Dodaj u korpu
                 </button>
                 <span className={isAddedToCart ? `cart-added active` : `cart-added`}><FontAwesomeIcon icon={faCheck} />Dodato</span>
-    </div>
+        </div>
 }

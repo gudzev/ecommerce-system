@@ -1,16 +1,18 @@
 import './App.css'
 
-import { Home } from "./pages/Home/Home";
-import { Cart } from './pages/Cart/Cart';
-import { NotFound } from "./pages/NotFound/NotFound";
-import { Checkout } from './pages/Checkout/Checkout';
-import { Product } from './pages/Product/Product';
-
 import { Route, Routes } from 'react-router-dom';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
+
+import { Loader } from "./components/Loader/Loader";
 
 import axios from 'axios';
+
+const Home = lazy(() => import('./pages/Home/Home'));
+const Cart = lazy(() => import('./pages/Cart/Cart'));
+const NotFound = lazy(() => import('./pages/NotFound/NotFound'));
+const Checkout = lazy(() => import('./pages/Checkout/Checkout'));
+const Product = lazy(() => import('./pages/Product/Product'));
 
 function App() 
 {
@@ -121,6 +123,7 @@ function App()
   }, [cartProducts, deliveryMethod, deliveryOptions]);
 
   return (
+    <Suspense fallback={<Loader/>}>
       <Routes>
         <Route path="/" element={<Home cart={cart}
                                        setCart={setCart}
@@ -159,6 +162,7 @@ function App()
 
         <Route path="*" element={<NotFound allCategories={allCategories} />} />
       </Routes>
+    </Suspense>
   )
 }
 

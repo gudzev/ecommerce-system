@@ -4,7 +4,7 @@ import { Header } from "../../components/Header/Header";
 import { Footer } from "../../components/Footer/Footer";
 import { Products } from "../../components/Products/Products";
 
-export function Home({cart, setCart, setSearchText, searchText, allProducts, allCategories})
+export default function Home({allProducts, allCategories, cart, setCart, searchText, setSearchText})
 {
     return <>
     
