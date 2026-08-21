@@ -3,7 +3,7 @@ import "./Cart.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { formatPrice } from "../../utils/formatPrice";
@@ -15,38 +15,58 @@ export function CartItem({cartItem, cart, setCart})
 
     const navigate = useNavigate();
 
-    const removeItemFromCart = (itemID) =>
+    useEffect(() =>
     {
-        const newCart = cart.filter((cartProduct) => itemID !== cartProduct.productId);
-        setCart(newCart);
-    }
-
-    const handleQtyInput = async (event) =>
-    {
-        const quantityInputValue = Number(event.target.value);
-
-        if(quantityInputValue <= 0 || quantityInputValue > 10)
+        const newCart = cart.map((_cartItem) =>
         {
-            return;
-        }
+            if(cartItem.id == _cartItem.productId)
+            {
+                return {
+                    productId: _cartItem.productId,
+                    quantity: quantity
+                }
+            }
+            else
+            {
+                return _cartItem;
+            }
+        });
+        setCart(newCart);
+    }, [quantity])
 
-        const newCart = [...cart];
-        const existingCartItem = newCart.find((cartProduct) => cartItem.id == cartProduct.productId);
-        existingCartItem.quantity = quantityInputValue;
-
-        setQuantity(Number(event.target.value));
+    const removeItemFromCart = () =>
+    {
+        const newCart = cart.filter((cartProduct) => cartItem.id !== cartProduct.productId);
         setCart(newCart);
     }
 
-    return <div className="cart-item">
-        <img src={cartItem.image_url} alt={cartItem.name + ' ' + "Image"} className="cart-item-img" onClick={() => viewProductDetails(navigate, cartItem.name)}/>
-        <h2 className="cart-item-name" onClick={() => viewProductDetails(navigate, cartItem.name)}>{cartItem.name}</h2>
-        <div className="cart-item-qty">
-            <input type="number" min="1" max="10" step="1" onChange={handleQtyInput} defaultValue={quantity} className="cart-item-qty-input"/>
-        </div>
-        <p className="cart-item-price">
-            {formatPrice(cartItem.price_on_sale ? cartItem.price_on_sale * quantity : cartItem.price_rsd * quantity) + ' ' + "RSD"}
-        </p>
-        <FontAwesomeIcon icon={faTrash} className="cart-item-delete-btn" onClick={() => removeItemFromCart(cartItem.id)}/>
-    </div>
+    const handleQtyChange = (changeType) =>
+    {
+        if(changeType === "increase")
+        {
+            if(quantity < 10)
+                setQuantity(prev => prev + 1);
+        }
+        else
+        {
+            if(quantity > 1)
+                setQuantity(prev => prev - 1);
+        }
+    }
+
+    return <tr className="cart-item">
+                <td className="cart-item-product-cell">
+                    <img src={cartItem.image_url} alt={cartItem.name + ' ' + "Image"} className="cart-item-img" onClick={() => viewProductDetails(navigate, cartItem.name)}/>
+                    <h2 onClick={() => viewProductDetails(navigate, cartItem.name)}>{cartItem.name}</h2>
+                </td>
+                <td>
+                    <div className="cart-item-qty-input">
+                        <button className="decrease-qty-btn" onClick={() => handleQtyChange("decrease")}>-</button>
+                        <span className="cart-item-qty">{quantity}</span>
+                        <button className="increase-qty-btn" onClick={() => handleQtyChange("increase")}>+</button>
+                    </div>
+                </td>
+                <td><h2>{formatPrice(cartItem.price_on_sale ? cartItem.price_on_sale * quantity : cartItem.price_rsd * quantity) + ' ' + "RSD"}</h2></td>
+                <td><FontAwesomeIcon icon={faTrash} className="cart-item-delete-btn" onClick={() => removeItemFromCart()}/></td>
+            </tr>
 }

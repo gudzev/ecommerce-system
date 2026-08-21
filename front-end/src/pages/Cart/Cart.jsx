@@ -16,7 +16,7 @@ export function Cart({setSearchText, cart, setCart, cartProducts, shipmentPrice,
         <section className="cart">
             <div className="cart-content">
 
-                <h1 className="cart-header">Korpa</h1>
+                <h1 className="cart-heading">Korpa</h1>
 
                 <div className="cart-flex-container">
                     <CartPreview cartProducts={cartProducts} cart={cart} setCart={setCart}/>

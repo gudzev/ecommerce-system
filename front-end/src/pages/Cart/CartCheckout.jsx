@@ -1,7 +1,11 @@
 import "./Cart.css";
+
 import { useNavigate } from "react-router-dom";
 
 import { formatPrice } from "../../utils/formatPrice";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLock } from "@fortawesome/free-solid-svg-icons";
 
 export function CartCheckout({cart, orderPrice, shipmentPrice})
 {
@@ -29,15 +33,17 @@ export function CartCheckout({cart, orderPrice, shipmentPrice})
                 <h2>Isporuka: </h2>
                 <h2>{formatPrice(shipmentPrice) + ' ' + "RSD"}</h2>
             </div>
-            <div className="cart-checkout-summary-row">
-                <h2>Ukupno: </h2>
-                <h2>{formatPrice(orderPrice + shipmentPrice) + ' ' + "RSD"}</h2>
-            </div>
+        </div>
+
+        <div className="cart-checkout-summary-row-total">
+            <h2>Ukupno: </h2>
+            <h2>{formatPrice(orderPrice + shipmentPrice) + ' ' + "RSD"}</h2>
         </div>
 
         <div className="cart-checkout-summary-row">
             <button className="checkout-btn" onClick={proceedToCheckout}>
                 Nastavi ka plaćanju
+                <FontAwesomeIcon icon={faLock} className="checkout-icon"/> 
             </button>
         </div>
     </div>
