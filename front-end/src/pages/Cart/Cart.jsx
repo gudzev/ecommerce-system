@@ -5,13 +5,14 @@ import { Footer } from "../../components/Footer/Footer";
 import { CartCheckout } from "./CartCheckout";
 import { CartPreview } from "./CartPreview";
 
-export default function Cart({setSearchText, cart, setCart, cartProducts, shipmentPrice, orderPrice, allCategories})
+export default function Cart({cartProducts, allCategories})
 {
+
     return <>
 
         <title>Prodavnica - korpa</title>
 
-        <Header setSearchText={setSearchText} cart={cart} allCategories={allCategories}/>
+        <Header allCategories={allCategories}/>
 
         <section className="cart">
             <div className="cart-content">
@@ -19,8 +20,8 @@ export default function Cart({setSearchText, cart, setCart, cartProducts, shipme
                 <h1 className="cart-heading">Korpa</h1>
 
                 <div className="cart-flex-container">
-                    <CartPreview cartProducts={cartProducts} cart={cart} setCart={setCart}/>
-                    <CartCheckout cart={cart} shipmentPrice={shipmentPrice} orderPrice={orderPrice}/>
+                    <CartPreview cartProducts={cartProducts}/>
+                    <CartCheckout/>
                 </div>
 
             </div>

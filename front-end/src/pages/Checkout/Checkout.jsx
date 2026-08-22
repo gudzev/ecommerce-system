@@ -4,14 +4,15 @@ import { Header } from "../../components/Header/Header";
 import { Footer } from "../../components/Footer/Footer";
 import { CheckoutForm } from "./CheckoutForm";
 
+import { CartContext } from "../../contexts/CartContext/CartContext";
 
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 
-export default function Checkout({setSearchText, cart, cartProducts, shipmentPrice, orderPrice, setCart, deliveryMethod, setDeliveryMethod, deliveryOptions, allCategories})
+export default function Checkout({cartProducts, allDeliveryOptions, allCategories})
 {
     const [orderID, setOrderID] = useState(null);
-
+    const {cart} = useContext(CartContext);
     const navigate = useNavigate();
 
     useEffect(() =>
@@ -26,17 +27,11 @@ export default function Checkout({setSearchText, cart, cartProducts, shipmentPri
         
         <title>Prodavnica - plaćanje</title>
         
-        <Header setSearchText={setSearchText} cart={cart} allCategories={allCategories} />
+        <Header allCategories={allCategories} />
         <section className="checkout">
             <div className="checkout-content">
                 <CheckoutForm cartProducts={cartProducts}
-                              orderPrice={orderPrice}
-                              shipmentPrice={shipmentPrice}
-                              cart={cart}
-                              setCart={setCart}
-                              deliveryMethod={deliveryMethod}
-                              setDeliveryMethod={setDeliveryMethod}
-                              deliveryOptions={deliveryOptions}
+                              allDeliveryOptions={allDeliveryOptions}
                               setOrderID={setOrderID}
                               orderID={orderID}
                 />

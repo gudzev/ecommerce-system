@@ -4,12 +4,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faMagnifyingGlass, faCartShopping, faHouse, faSuitcase, faPhoneVolume, faHeart } from "@fortawesome/free-solid-svg-icons";
 
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useContext } from "react";
 
+import { HeaderContext } from "../../contexts/HeaderContext/HeaderContext";
+import { CartContext } from "../../contexts/CartContext/CartContext";
 
-// TO-DO - use useContext hook to reduce amount of props needed each time header is displayed
-export function Header({setSearchText, cart, allCategories})
+export function Header({allCategories})
 {
+    const {setSearchText} = useContext(HeaderContext);
+    const {cart} = useContext(CartContext);
+
     const [inputText, setInputText] = useState("");
     const navigate = useNavigate();
 

@@ -1,10 +1,12 @@
 import { Header } from "../../components/Header/Header";
 import { Footer } from "../../components/Footer/Footer";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useContext } from "react";
 
 import { formatPrice } from "../../utils/formatPrice";
 import {translateToSerbian} from "../../utils/translateToSerbian";
+
+import { CartContext } from "../../contexts/CartContext/CartContext";
 
 import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -13,12 +15,14 @@ import axios from 'axios';
 
 import "./ProductDetails.css";
 
-export default function Product({allCategories, allProducts, cart, setCart, setSearchText})
+export default function Product({allCategories, allProducts})
 {
     const [thisProduct, setThisProduct] = useState(null);
     const [thisProductDetails, setThisProductDetails] = useState(null);
     const [thisProductID, setThisProductID] = useState(null);
     const [addedText, setAddedText] = useState(false);
+
+    const {cart, setCart} = useContext(CartContext);
 
     const timeoutID = useRef(null);
 
@@ -92,7 +96,7 @@ export default function Product({allCategories, allProducts, cart, setCart, setS
         <>
             <title>Prodavnica - {thisProduct?.name}</title>
 
-            <Header allCategories={allCategories} cart={cart} setSearchText={setSearchText}/>
+            <Header allCategories={allCategories}/>
 
                 <main className="product-container">
                     <div className="product-container-details">

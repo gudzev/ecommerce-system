@@ -228,6 +228,26 @@
     color: red;
 }
 
+.checkout-btn
+{
+    width: 100%;
+    background-color: var(--accent-color);
+    transition: all .3s;
+    border-radius: 6px;
+    text-transform: uppercase;
+    padding: 10px 15px;
+    font-size: 1rem;
+    color: var(--header-links-bg);
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
+
+.checkout-btn:hover
+{
+    background-color: var(--accent-hover);
+}
+
 /* Tablet */
 @media screen and ((min-width: 769px) and (max-width: 1279px))
 {

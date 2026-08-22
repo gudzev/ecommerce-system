@@ -2,12 +2,15 @@ import "./Products.css";
 
 import { Product } from "./Product";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useLocation } from "react-router-dom";
 
+import { HeaderContext } from "../../contexts/HeaderContext/HeaderContext";
 
-export function Products({searchText, cart, setCart, allProducts, allCategories})
+
+export function Products({allProducts, allCategories})
 {
+    const {searchText} = useContext(HeaderContext);
     const [products, setProducts] = useState([]);
     const location = useLocation();
 
@@ -55,7 +58,7 @@ export function Products({searchText, cart, setCart, allProducts, allCategories}
                 {
                     if(product.name.toLowerCase().includes(searchText))
                     {
-                        return <Product image_url={product.image_url} name={product.name} price_rsd={product.price_rsd} price_on_sale={product.price_on_sale} id={product.id} key={product.id} cart={cart} setCart={setCart}/>
+                        return <Product image_url={product.image_url} name={product.name} price_rsd={product.price_rsd} price_on_sale={product.price_on_sale} id={product.id} key={product.id}/>
                     }
                 })
                 :

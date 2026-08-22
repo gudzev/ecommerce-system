@@ -1,15 +1,21 @@
 import "./Cart.css";
 
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
 
 import { formatPrice } from "../../utils/formatPrice";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock } from "@fortawesome/free-solid-svg-icons";
 
-export function CartCheckout({cart, orderPrice, shipmentPrice})
+import { CartContext } from "../../contexts/CartContext/CartContext";
+import { CheckoutContext } from "../../contexts/CheckoutContext/CheckoutContext";
+
+export function CartCheckout()
 {
     const navigate = useNavigate();
+    const {cart} = useContext(CartContext);
+    const {orderPrice, shipmentPrice} = useContext(CheckoutContext);
 
     const proceedToCheckout = () =>
     {

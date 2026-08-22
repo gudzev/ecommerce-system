@@ -2,7 +2,10 @@ import './App.css'
 
 import { Route, Routes } from 'react-router-dom';
 
-import { useState, useEffect, lazy, Suspense } from 'react';
+import { useState, useEffect, useContext, lazy, Suspense } from 'react';
+
+import { CartContext } from './contexts/CartContext/CartContext';
+import { CheckoutContext } from './contexts/CheckoutContext/CheckoutContext';
 
 import { Loader } from "./components/Loader/Loader";
 
@@ -16,18 +19,13 @@ const Product = lazy(() => import('./pages/Product/Product'));
 
 function App() 
 {
-  const [orderPrice, setOrderPrice] = useState(0);
-  const [shipmentPrice, setShipmentPrice] = useState(0);
   const [cartProducts, setCartProducts] = useState([]);
-  const [deliveryOptions, setDeliveryOptions] = useState([]);
+  const [allDeliveryOptions, setAllDeliveryOptions] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
   const [allCategories, setAllCategories] = useState([]);
-  const [searchText, setSearchText] = useState("");
-  const [deliveryMethod, setDeliveryMethod] = useState(1);
-  const [cart, setCart] = useState(() =>
-  {
-    return JSON.parse(localStorage.getItem("cart")) || [];
-  });
+
+  const {cart} = useContext(CartContext);
+  const {deliveryMethod, setOrderPrice, setShipmentPrice} = useContext(CheckoutContext);
 
   useEffect(() =>
   {
@@ -42,7 +40,7 @@ function App()
     {
         const response = await axios.get("https://localhost:7097/delivery-options");
         const deliveryOptions = response.data;
-        setDeliveryOptions(deliveryOptions);
+        setAllDeliveryOptions(deliveryOptions);
     }
 
     const getAllCategories = async () =>
@@ -112,7 +110,7 @@ function App()
         cartProducts.forEach((product) => itemQuantity += product.quantity)
         setShipmentPrice(() =>
         {
-          const selectedOption = deliveryOptions?.find((option) => option.id == deliveryMethod) || 1;
+          const selectedOption = allDeliveryOptions?.find((option) => option.id == deliveryMethod) || 1;
           if(!selectedOption.price_per_item) return 0;
           return (price >= selectedOption.free_shipping_minimum_value) ? 0 : selectedOption.price_per_item * itemQuantity;
         });
@@ -120,44 +118,25 @@ function App()
 
       calculateProductsTotal();
       calculateDeliveryTotal();
-  }, [cartProducts, deliveryMethod, deliveryOptions]);
+  }, [cartProducts, deliveryMethod, allDeliveryOptions]);
 
   return (
     <Suspense fallback={<Loader/>}>
       <Routes>
-        <Route path="/" element={<Home cart={cart}
-                                       setCart={setCart}
-                                       searchText={searchText}
-                                       setSearchText={setSearchText}
-                                       allProducts={allProducts}
+        <Route path="/" element={<Home allProducts={allProducts}
                                        allCategories={allCategories}/>}
                                   />
-        <Route path="/cart" element={<Cart cart={cart}
-                                           setCart={setCart}
-                                           setSearchText={setSearchText}
-                                           cartProducts={cartProducts}
-                                           orderPrice={orderPrice}
-                                           shipmentPrice={shipmentPrice}
+        <Route path="/cart" element={<Cart cartProducts={cartProducts}
                                            allCategories={allCategories}/>} 
                                   />
 
-        <Route path="/checkout" element={<Checkout setSearchText={setSearchText}
-                                                   cart={cart}
-                                                   setCart={setCart}
-                                                   cartProducts={cartProducts}
-                                                   orderPrice={orderPrice}
-                                                   shipmentPrice={shipmentPrice}
-                                                   deliveryMethod={deliveryMethod}
-                                                   setDeliveryMethod={setDeliveryMethod}
-                                                   deliveryOptions={deliveryOptions}
+        <Route path="/checkout" element={<Checkout cartProducts={cartProducts}
+                                                   allDeliveryOptions={allDeliveryOptions}
                                                    allCategories={allCategories}/>}
                                     />
                                     
         <Route path="/proizvod/*" element={<Product allCategories={allCategories}
-                                                    allProducts={allProducts}
-                                                    cart={cart}
-                                                    setCart={setCart}
-                                                    setSearchText={setSearchText}/>}
+                                                    allProducts={allProducts}/>}
                                     />
 
         <Route path="*" element={<NotFound allCategories={allCategories} />} />

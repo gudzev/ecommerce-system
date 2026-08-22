@@ -33,7 +33,7 @@ All components communicate through a shared REST API.
 
 - [ ] Add secure authentication for API access
 - [ ] Add input validation on backend
-- [ ] Organize desktop-app and back-end code in a better way
+- [✓] Organize desktop-app and back-end code in a better way
 - [ ] Create a PC configurator using store's components for customers
 - [ ] Create separate table for storing multiple images for each product
 
@@ -42,7 +42,7 @@ All components communicate through a shared REST API.
 ## 🔌 API Endpoints
 
 ### Products
-- GET `/products?is_active={bool?}`
+- GET `/products?is_active={bool}`
 - GET `/products/{productId}`
 - POST `/products`
 - PUT `/products`

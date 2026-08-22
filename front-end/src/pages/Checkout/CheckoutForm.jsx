@@ -2,14 +2,17 @@ import "./Checkout.css";
 
 import { CheckoutSummary } from "./CheckoutSummary";
 
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 import axios from "axios";
 import emailjs from '@emailjs/browser';
 
 import { formatPrice } from "../../utils/formatPrice";
 
-export function CheckoutForm({cartProducts, shipmentPrice, orderPrice, cart, setCart, deliveryMethod, setDeliveryMethod, deliveryOptions, setOrderID, orderID})
+import { CartContext } from "../../contexts/CartContext/CartContext";
+import { CheckoutContext } from "../../contexts/CheckoutContext/CheckoutContext";
+
+export function CheckoutForm({cartProducts, allDeliveryOptions, setOrderID, orderID})
 {
     const [email, setEmail] = useState("");
     const [name, setName] = useState("");
@@ -21,6 +24,9 @@ export function CheckoutForm({cartProducts, shipmentPrice, orderPrice, cart, set
     const [phoneNumber, setPhoneNumber] = useState("");
     const [displayError, setDisplayError] = useState(false);
 
+    const {cart, setCart} = useContext(CartContext);
+    const {shipmentPrice, orderPrice, deliveryMethod, setDeliveryMethod} = useContext(CheckoutContext);
+
     emailjs.init({
     publicKey: 'Ce2FA7FiR-U2dyB3t',
     blockHeadless: true,
@@ -31,7 +37,7 @@ export function CheckoutForm({cartProducts, shipmentPrice, orderPrice, cart, set
     },
     });
 
-    const selectedOption = deliveryOptions?.find((option) => option.id == deliveryMethod);
+    const selectedOption = allDeliveryOptions?.find((option) => option.id == deliveryMethod);
 
     const validateEmail = (email) =>
     {
@@ -256,7 +262,7 @@ export function CheckoutForm({cartProducts, shipmentPrice, orderPrice, cart, set
                     <div className="checkout-row">
                         <h2 className="checkout-heading-h2">Metod plaćanja</h2>
                         {
-                            deliveryOptions?.map((option) =>
+                            allDeliveryOptions?.map((option) =>
                             {
                                 return <div className="delivery-options-row" key={option.id}>
                                             <input type="radio" id={"deliveryMethod" + option.id} name="delivery-options" checked={deliveryMethod == option.id ? true : false} onChange={() => setDeliveryMethod(option.id)}></input>
@@ -268,7 +274,7 @@ export function CheckoutForm({cartProducts, shipmentPrice, orderPrice, cart, set
                     </div>
 
                     <div className="checkout-row">
-                        <CheckoutSummary cartProducts={cartProducts} orderPrice={orderPrice} shipmentPrice={shipmentPrice} cart={cart} setCart={setCart} />
+                        <CheckoutSummary cartProducts={cartProducts} orderPrice={orderPrice} shipmentPrice={shipmentPrice}/>
                     </div>
 
                     <div className="checkout-row">

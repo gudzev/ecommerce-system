@@ -3,18 +3,24 @@ import "./Products.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShoppingCart, faCheck } from "@fortawesome/free-solid-svg-icons";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useContext } from "react";
 import { useNavigate } from 'react-router-dom';
 
 import { viewProductDetails } from "../../utils/viewProductDetails";
 import { formatPrice } from "../../utils/formatPrice";
 
+import { CartContext } from "../../contexts/CartContext/CartContext";
+
 let timeoutList = [];
 
-export function Product({image_url, name, price_rsd, id, price_on_sale, cart, setCart})
+export function Product({image_url, name, price_rsd, id, price_on_sale})
 {
     const navigate = useNavigate()
+
+    const {cart, setCart} = useContext(CartContext);
+
     const [isAddedToCart, setIsAddedToCart] = useState(false);
+
     const quantitySelect = useRef(1);
 
     const addToCart = (productId) =>

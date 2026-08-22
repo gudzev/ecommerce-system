@@ -3,16 +3,18 @@ import "./Cart.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { formatPrice } from "../../utils/formatPrice";
 import { viewProductDetails } from "../../utils/viewProductDetails";
 
-export function CartItem({cartItem, cart, setCart})
+import { CartContext } from "../../contexts/CartContext/CartContext";
+
+export function CartItem({cartItem})
 {
     const [quantity, setQuantity] = useState(cartItem.quantity);
-
+    const {cart, setCart} = useContext(CartContext);
     const navigate = useNavigate();
 
     useEffect(() =>

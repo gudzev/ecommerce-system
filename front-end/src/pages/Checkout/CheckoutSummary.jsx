@@ -6,11 +6,16 @@ import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { formatPrice } from "../../utils/formatPrice";
 
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+
 import { viewProductDetails } from "../../utils/viewProductDetails";
 
-export function CheckoutSummary({cartProducts, shipmentPrice, orderPrice, cart, setCart})
+import { CartContext } from "../../contexts/CartContext/CartContext";
+
+export function CheckoutSummary({cartProducts, shipmentPrice, orderPrice})
 {
     const navigate = useNavigate();
+    const {cart, setCart} = useContext(CartContext);
 
     const removeItemFromCart = (itemID) =>
     {
