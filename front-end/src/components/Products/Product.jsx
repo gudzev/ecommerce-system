@@ -69,7 +69,7 @@ export function Product({image_url, name, price_rsd, id, price_on_sale})
     }
 
     return <div className="product">
-                <img src={image_url} alt={name + " image"} className="product-img" onClick={() => viewProductDetails(navigate, name)}/>
+                <img src={image_url} loading="lazy" alt={name + " image"} className="product-img" onClick={() => viewProductDetails(navigate, name)}/>
 
                 <h2 className="product-name" onClick={() => viewProductDetails(navigate, name)}>{name}</h2>
 
