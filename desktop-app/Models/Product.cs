@@ -1,12 +1,13 @@
-﻿using Backend.Models;
-
-namespace DesktopApp.Models
+﻿namespace Backend.Models
 {
     public class Product
     {
         public int id { get; set; }
         public string? name { get; set; }
         public string? image_url { get; set; }
+
+        public List<Image>? other_images { get; set; }
+     
         public string? description { get; set; }
         public int price_rsd { get; set; }
         public int? price_on_sale { get; set; }

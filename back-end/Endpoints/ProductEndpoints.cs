@@ -17,9 +17,9 @@ namespace Backend.Endpoints
                     await connection.OpenAsync();
 
                     string query = @"SELECT products.id, products.name, image_url, price_rsd, price_on_sale, category_id, stock_quantity, is_active, description, categories.name AS category 
-                         FROM products
-                         JOIN categories ON categories.id = products.category_id
-                         WHERE products.id = @productId;";
+                                     FROM products
+                                     JOIN categories ON categories.id = products.category_id
+                                     WHERE products.id = @productId;";
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
@@ -161,22 +161,101 @@ namespace Backend.Endpoints
                     {
                         await connection.OpenAsync();
 
-                        string query = @"INSERT INTO products(name, image_url, price_rsd, price_on_sale, category_id, stock_quantity, description)
-                                          VALUES(@name, @image_url, @price_rsd, @price_on_sale, @category_id, @stock_quantity, @description)";
-
-                        using (SqlCommand command = new SqlCommand(query, connection))
+                        using (SqlTransaction transaction = connection.BeginTransaction())
                         {
-                            command.Parameters.AddWithValue("@name", p.name);
-                            command.Parameters.AddWithValue("@image_url", p.image_url);
-                            command.Parameters.AddWithValue("@price_rsd", Convert.ToInt32(p.price_rsd));
-                            command.Parameters.AddWithValue("@price_on_sale", (p.price_on_sale != null) ? Convert.ToInt32(p.price_on_sale) : DBNull.Value);
-                            command.Parameters.AddWithValue("@category_id", Convert.ToInt32(p.category_id));
-                            command.Parameters.AddWithValue("@stock_quantity", Convert.ToInt32(p.stock_quantity));
-                            command.Parameters.AddWithValue("@description", p.description);
+                            try
+                            {
+                                int productId;
+                                string query = @"INSERT INTO products(name, image_url, price_rsd, price_on_sale, category_id, stock_quantity, description)
+                                                 OUTPUT INSERTED.id
+                                                 VALUES(@name, @image_url, @price_rsd, @price_on_sale, @category_id, @stock_quantity, @description)";
 
-                            await command.ExecuteNonQueryAsync();
+                                using (SqlCommand command = new SqlCommand(query, connection, transaction))
+                                {
+                                    command.Parameters.AddWithValue("@name", p.name);
+                                    command.Parameters.AddWithValue("@image_url", p.image_url);
+                                    command.Parameters.AddWithValue("@price_rsd", Convert.ToInt32(p.price_rsd));
+                                    command.Parameters.AddWithValue("@price_on_sale", (p.price_on_sale != null) ? Convert.ToInt32(p.price_on_sale) : DBNull.Value);
+                                    command.Parameters.AddWithValue("@category_id", Convert.ToInt32(p.category_id));
+                                    command.Parameters.AddWithValue("@stock_quantity", Convert.ToInt32(p.stock_quantity));
+                                    command.Parameters.AddWithValue("@description", p.description);
+
+                                    productId = Convert.ToInt32(await command.ExecuteScalarAsync());
+                                }
+
+                                if (p.caseDetails == null && p.powerSupplyDetails == null && p.graphicsCardDetails == null && p.hddDetails == null && p.motherboardDetails == null && p.processorDetails == null && p.ramDetails == null && p.ssdDetails == null)
+                                {
+                                    transaction.Commit();
+                                    return Results.Ok(new { success = true, additionalMessage = "No specifications provided." });
+                                }
+
+                                string? categoryName = "";
+
+                                query = @"SELECT name FROM categories WHERE id = @id";
+
+                                using (SqlCommand command = new SqlCommand(query, connection, transaction))
+                                {
+                                    command.Parameters.AddWithValue("@id", p.category_id);
+
+                                    using(SqlDataReader reader = await command.ExecuteReaderAsync())
+                                    {
+                                        if(await reader.ReadAsync())
+                                        {
+                                            categoryName = reader["name"].ToString();
+                                        }
+                                    }
+                                }
+
+                                p.id = productId;
+                                switch (categoryName)
+                                {
+                                case "Grafička karta":
+                                    await p?.graphicsCardDetails.postDetails(connectionString, p);
+                                    break;
+
+                                case "Procesor":
+                                    await p?.processorDetails?.postDetails(connectionString, p);
+                                    break;
+
+                                case "Matična ploča":
+                                    await p?.motherboardDetails?.postDetails(connectionString, p);
+                                    break;
+
+                                case "Memorija":
+                                    await p?.ramDetails?.postDetails(connectionString, p);
+                                    break;
+
+                                case "SSD":
+                                    await p?.ssdDetails?.postDetails(connectionString, p);
+                                    break;
+
+                                case "HDD":
+                                    await p?.hddDetails?.postDetails(connectionString, p);
+                                    break;
+
+                                case "Napajanje":
+                                    await p?.powerSupplyDetails?.postDetails(connectionString, p);
+                                    break;
+
+                                case "Kućište":
+                                    await p?.caseDetails?.postDetails(connectionString, p);
+                                    break;
+
+                                default:
+                                    // There is no product details
+                                    break;
+                                }
+
+                                transaction.Commit();
+                            }
+                            catch(Exception ex)
+                            {
+                                transaction.Rollback();
+                                return Results.Problem(ex.Message);
+                            }
                         }
                     }
+
                     return Results.Ok(new { success = true });
                 }
                 catch (Exception ex)
@@ -193,25 +272,94 @@ namespace Backend.Endpoints
                     {
                         await connection.OpenAsync();
 
-                        string query = @"UPDATE products
-                             SET name = @name, image_url = @image_url, price_rsd = @price_rsd,
-                                 price_on_sale = @price_on_sale, category_id = @category_id,
-                                 stock_quantity = @stock_quantity, description = @description
-                             WHERE id = @id";
-
-                        using (SqlCommand command = new SqlCommand(query, connection))
+                        using (SqlTransaction transaction = connection.BeginTransaction())
                         {
-                            command.Parameters.AddWithValue("@name", p.name);
-                            command.Parameters.AddWithValue("@image_url", p.image_url);
-                            command.Parameters.AddWithValue("@price_rsd", p.price_rsd);
-                            command.Parameters.AddWithValue("@price_on_sale", (p.price_on_sale != null) ? Convert.ToInt32(p.price_on_sale) : DBNull.Value);
-                            command.Parameters.AddWithValue("@category_id", p.category_id);
-                            command.Parameters.AddWithValue("@stock_quantity", p.stock_quantity);
-                            command.Parameters.AddWithValue("@id", p.id);
-                            command.Parameters.AddWithValue("@description", p.description);
+                            string query = @"UPDATE products
+                                             SET name = @name, image_url = @image_url, price_rsd = @price_rsd,
+                                                price_on_sale = @price_on_sale, category_id = @category_id,
+                                                stock_quantity = @stock_quantity, description = @description
+                                             WHERE id = @id";
 
-                            await command.ExecuteNonQueryAsync();
+                            using (SqlCommand command = new SqlCommand(query, connection, transaction))
+                            {
+                                command.Parameters.AddWithValue("@name", p.name);
+                                command.Parameters.AddWithValue("@image_url", p.image_url);
+                                command.Parameters.AddWithValue("@price_rsd", p.price_rsd);
+                                command.Parameters.AddWithValue("@price_on_sale", (p.price_on_sale != null) ? Convert.ToInt32(p.price_on_sale) : DBNull.Value);
+                                command.Parameters.AddWithValue("@category_id", p.category_id);
+                                command.Parameters.AddWithValue("@stock_quantity", p.stock_quantity);
+                                command.Parameters.AddWithValue("@id", p.id);
+                                command.Parameters.AddWithValue("@description", p.description);
+
+                                await command.ExecuteNonQueryAsync();
+                            }
+
+                            if (p.caseDetails == null && p.powerSupplyDetails == null && p.graphicsCardDetails == null && p.hddDetails == null && p.motherboardDetails == null && p.processorDetails == null && p.ramDetails == null && p.ssdDetails == null)
+                            {
+                                transaction.Commit();
+                                return Results.Ok(new { success = true, additionalMessage = "No specifications provided." });
+                            }
+
+                            string? categoryName = "";
+
+                            query = @"SELECT name FROM categories WHERE id = @id";
+
+                            using (SqlCommand command = new SqlCommand(query, connection, transaction))
+                            {
+                                command.Parameters.AddWithValue("@id", p.category_id);
+
+                                using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                                {
+                                    if (await reader.ReadAsync())
+                                    {
+                                        categoryName = reader["name"].ToString();
+                                    }
+                                }
+                            }
+
+                            switch (categoryName)
+                            {
+                                case "Grafička karta":
+                                    await p?.graphicsCardDetails.putDetails(connectionString, p);
+                                    break;
+
+                                case "Procesor":
+                                    await p?.processorDetails?.putDetails(connectionString, p);
+                                    break;
+
+                                case "Matična ploča":
+                                    await p?.motherboardDetails?.putDetails(connectionString, p);
+                                    break;
+
+                                case "Memorija":
+                                    await p?.ramDetails?.putDetails(connectionString, p);
+                                    break;
+
+                                case "SSD":
+                                    await p?.ssdDetails?.putDetails(connectionString, p);
+                                    break;
+
+                                case "HDD":
+                                    await p?.hddDetails?.putDetails(connectionString, p);
+                                    break;
+
+                                case "Napajanje":
+                                    await p?.powerSupplyDetails?.putDetails(connectionString, p);
+                                    break;
+
+                                case "Kućište":
+                                    await p?.caseDetails?.putDetails(connectionString, p);
+                                    break;
+
+                                default:
+                                    // There is no product details
+                                    break;
+                            }
+
+                            transaction.Commit();
                         }
+
+
                     }
                     return Results.Ok(new { success = true });
                 }

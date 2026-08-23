@@ -39,7 +39,7 @@ namespace Backend.Models
             return null;
         }
 
-        public async void postDetails(string connectionString, Product p)
+        public async Task postDetails(string connectionString, Product p)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -60,7 +60,7 @@ namespace Backend.Models
             }
         }
 
-        public async void putDetails(string connectionString, Product p)
+        public async Task putDetails(string connectionString, Product p)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {

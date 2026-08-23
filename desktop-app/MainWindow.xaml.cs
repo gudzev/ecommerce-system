@@ -1,5 +1,4 @@
 ﻿using Backend.Models;
-using DesktopApp.Models;
 using DesktopApp.Pages;
 using System.Collections.ObjectModel;
 using System.Net.Http;
