@@ -9,13 +9,13 @@ namespace Backend.Models
         public string? dimensions { get; set; }
         public string? clockSpeed { get; set; }
 
-        public GraphicsCardDetails getDetails(string connectionString, int productId)
+        public async Task<GraphicsCardDetails> getDetails(string connectionString, int productId)
         {
             GraphicsCardDetails details;
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                connection.Open();
+                await connection.OpenAsync();
 
                 string query = @"SELECT * FROM graphics_cards WHERE product_id = @productId";
 
@@ -23,9 +23,9 @@ namespace Backend.Models
                 {
                     command.Parameters.AddWithValue("@productId", productId);
 
-                    using (SqlDataReader reader = command.ExecuteReader())
+                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
                     {
-                        if (reader.Read())
+                        if (await reader.ReadAsync())
                         {
                             details = new GraphicsCardDetails();
                             details.vram = reader["vram"].ToString();
@@ -39,6 +39,51 @@ namespace Backend.Models
                 }
             }
             return null;
+        }
+
+        public async void postDetails(string connectionString, Product p)
+        {
+            using(SqlConnection connection = new SqlConnection(connectionString))
+            {
+                await connection.OpenAsync();
+
+                string query = @"INSERT INTO graphics_cards(product_id, vram, interface, dimensions, clock_speed)
+                                 VALUES(@product_id, @vram, @interface, @dimensions, @clock_speed)";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@product_id", p.id);
+                    command.Parameters.AddWithValue("@vram", p?.graphicsCardDetails?.vram);
+                    command.Parameters.AddWithValue("@interface", p?.graphicsCardDetails?._interface);
+                    command.Parameters.AddWithValue("@dimensions", p?.graphicsCardDetails?.dimensions);
+                    command.Parameters.AddWithValue("@clock_speed", p?.graphicsCardDetails?.clockSpeed);
+
+                    await command.ExecuteNonQueryAsync();
+                }
+            }
+        }
+
+        public async void putDetails(string connectionString, Product p)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                await connection.OpenAsync();
+
+                string query = @"UPDATE graphics_cards
+                                 SET vram = @vram, interface = @interface, dimensions = @dimensions, clock_speed = @clock_speed
+                                 WHERE product_id = @product_id";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@product_id", p.id);
+                    command.Parameters.AddWithValue("@vram", p?.graphicsCardDetails?.vram);
+                    command.Parameters.AddWithValue("@interface", p?.graphicsCardDetails?._interface);
+                    command.Parameters.AddWithValue("@dimensions", p?.graphicsCardDetails?.dimensions);
+                    command.Parameters.AddWithValue("@clock_speed", p?.graphicsCardDetails?.clockSpeed);
+
+                    await command.ExecuteNonQueryAsync();
+                }
+            }
         }
     }
 }

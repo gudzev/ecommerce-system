@@ -42,35 +42,35 @@ namespace Backend.Endpoints
 
                                 if (reader["category"].ToString() == "Grafička karta")
                                 {
-                                    p.graphicsCardDetails = new GraphicsCardDetails().getDetails(connectionString, p.id);
+                                    p.graphicsCardDetails = await new GraphicsCardDetails().getDetails(connectionString, p.id);
                                 }
                                 else if (reader["category"].ToString() == "Procesor")
                                 {
-                                    p.processorDetails = new ProcessorDetails().getDetails(connectionString, p.id);
+                                    p.processorDetails = await new ProcessorDetails().getDetails(connectionString, p.id);
                                 }
                                 else if (reader["category"].ToString() == "Matična ploča")
                                 {
-                                    p.motherboardDetails = new MotherboardDetails().getDetails(connectionString, p.id);
+                                    p.motherboardDetails = await new MotherboardDetails().getDetails(connectionString, p.id);
                                 }
                                 else if (reader["category"].ToString() == "Memorija")
                                 {
-                                    p.ramDetails = new RAMDetails().getDetails(connectionString, p.id);
+                                    p.ramDetails = await new RAMDetails().getDetails(connectionString, p.id);
                                 }
                                 else if (reader["category"].ToString() == "SSD")
                                 {
-                                    p.ssdDetails = new SSDDetails().getDetails(connectionString, p.id);
+                                    p.ssdDetails = await new SSDDetails().getDetails(connectionString, p.id);
                                 }
                                 else if (reader["category"].ToString() == "HDD")
                                 {
-                                    p.hddDetails = new HDDDetails().getDetails(connectionString, p.id);
+                                    p.hddDetails = await new HDDDetails().getDetails(connectionString, p.id);
                                 }
                                 else if (reader["category"].ToString() == "Napajanje")
                                 {
-                                    p.powerSupplyDetails = new PowerSupplyDetails().getDetails(connectionString, p.id);
+                                    p.powerSupplyDetails = await new PowerSupplyDetails().getDetails(connectionString, p.id);
                                 }
                                 else if (reader["category"].ToString() == "Kućište")
                                 {
-                                    p.caseDetails = new CaseDetails().getDetails(connectionString, p.id);
+                                    p.caseDetails = await new CaseDetails().getDetails(connectionString, p.id);
                                 }
                                 else
                                 {
@@ -162,7 +162,7 @@ namespace Backend.Endpoints
                         await connection.OpenAsync();
 
                         string query = @"INSERT INTO products(name, image_url, price_rsd, price_on_sale, category_id, stock_quantity, description)
-                             VALUES(@name, @image_url, @price_rsd, @price_on_sale, @category_id, @stock_quantity, @description)";
+                                          VALUES(@name, @image_url, @price_rsd, @price_on_sale, @category_id, @stock_quantity, @description)";
 
                         using (SqlCommand command = new SqlCommand(query, connection))
                         {

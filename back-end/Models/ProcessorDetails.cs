@@ -12,13 +12,13 @@ namespace Backend.Models
         public string? socket { get; set; }
         public string? clockSpeed { get; set; }
 
-        public ProcessorDetails getDetails(string connectionString, int productId)
+        public async Task<ProcessorDetails> getDetails(string connectionString, int productId)
         {
             ProcessorDetails details;
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                connection.Open();
+                await connection.OpenAsync();
 
                 string query = @"SELECT * FROM processors WHERE product_id = @productId";
 
@@ -26,9 +26,9 @@ namespace Backend.Models
                 {
                     command.Parameters.AddWithValue("@productId", productId);
 
-                    using (SqlDataReader reader = command.ExecuteReader())
+                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
                     {
-                        if (reader.Read())
+                        if (await reader.ReadAsync())
                         {
                             details = new ProcessorDetails();
                             details.cores = reader["cores"].ToString();
@@ -45,6 +45,56 @@ namespace Backend.Models
                 }
             }
             return null;
+        }
+        public async void postDetails(string connectionString, Product p)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                await connection.OpenAsync();
+
+                string query = @"INSERT INTO processors(product_id, cores, threads, l1Cache, l2Cache, l3Cache, socket, clock_speed)
+                                 VALUES(@product_id, @cores, @threads, @l1Cache, @l2Cache, @l3Cache, @socket, @clock_speed)";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@product_id", p.id);
+                    command.Parameters.AddWithValue("@cores", p?.processorDetails?.cores);
+                    command.Parameters.AddWithValue("@threads", p?.processorDetails?.threads);
+                    command.Parameters.AddWithValue("@l1Cache", p?.processorDetails?.l1Cache);
+                    command.Parameters.AddWithValue("@l2Cache", p?.processorDetails?.l2Cache);
+                    command.Parameters.AddWithValue("@l3Cache", p?.processorDetails?.l3Cache);
+                    command.Parameters.AddWithValue("@socket", p?.processorDetails?.socket);
+                    command.Parameters.AddWithValue("@clock_speed", p?.processorDetails?.clockSpeed);
+
+                    await command.ExecuteNonQueryAsync();
+                }
+            }
+        }
+
+        public async void putDetails(string connectionString, Product p)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                await connection.OpenAsync();
+
+                string query = @"UPDATE processors
+                                 SET cores = @cores, threads = @threads, l1Cache = @l1Cache, l2Cache = @l2Cache, l3Cache = @l3Cache, socket = @socket, clock_speed = @clock_speed
+                                 WHERE product_id = @product_id";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@product_id", p.id);
+                    command.Parameters.AddWithValue("@cores", p?.processorDetails?.cores);
+                    command.Parameters.AddWithValue("@threads", p?.processorDetails?.threads);
+                    command.Parameters.AddWithValue("@l1Cache", p?.processorDetails?.l1Cache);
+                    command.Parameters.AddWithValue("@l2Cache", p?.processorDetails?.l2Cache);
+                    command.Parameters.AddWithValue("@l3Cache", p?.processorDetails?.l3Cache);
+                    command.Parameters.AddWithValue("@socket", p?.processorDetails?.socket);
+                    command.Parameters.AddWithValue("@clock_speed", p?.processorDetails?.clockSpeed);
+
+                    await command.ExecuteNonQueryAsync();
+                }
+            }
         }
     }
 }

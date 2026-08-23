@@ -11,11 +11,21 @@ import { Loader } from "./components/Loader/Loader";
 
 import axios from 'axios';
 
+
+import Home from "./pages/Home/Home";
+import Cart from './pages/Cart/Cart';
+import NotFound from "./pages/NotFound/NotFound";
+import Checkout from './pages/Checkout/Checkout';
+import Product from './pages/Product/Product';
+
+
+/*
 const Home = lazy(() => import('./pages/Home/Home'));
 const Cart = lazy(() => import('./pages/Cart/Cart'));
 const NotFound = lazy(() => import('./pages/NotFound/NotFound'));
 const Checkout = lazy(() => import('./pages/Checkout/Checkout'));
 const Product = lazy(() => import('./pages/Product/Product'));
+*/
 
 function App() 
 {
@@ -121,7 +131,7 @@ function App()
   }, [cartProducts, deliveryMethod, allDeliveryOptions]);
 
   return (
-    <Suspense fallback={<Loader/>}>
+    <Suspense fallback={<Loader />}>
       <Routes>
         <Route path="/" element={<Home allProducts={allProducts}
                                        allCategories={allCategories}/>}

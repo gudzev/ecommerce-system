@@ -15,13 +15,13 @@ namespace Backend.Models
         public int? pcieSlots { get; set; }
         public string? size { get; set; }
 
-        public MotherboardDetails getDetails(string connectionString, int productId)
+        public async Task<MotherboardDetails> getDetails(string connectionString, int productId)
         {
             MotherboardDetails details;
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                connection.Open();
+                await connection.OpenAsync();
 
                 string query = @"SELECT * FROM motherboards WHERE product_id = @productId";
 
@@ -29,9 +29,9 @@ namespace Backend.Models
                 {
                     command.Parameters.AddWithValue("@productId", productId);
 
-                    using (SqlDataReader reader = command.ExecuteReader())
+                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
                     {
-                        if (reader.Read())
+                        if (await reader.ReadAsync())
                         {
                             details = new MotherboardDetails();
                             details.socket = reader["socket"].ToString();
@@ -51,6 +51,64 @@ namespace Backend.Models
                 }
             }
             return null;
+        }
+
+        public async void postDetails(string connectionString, Product p)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                await connection.OpenAsync();
+
+                string query = @"INSERT INTO motherboards(product_id, socket, ram_type, chipset, bluetooth, wi_fi, ram_slots, sata_slots, m2_slots, pcie_slots, size)
+                                 VALUES(@product_id, @socket, @ram_type, @chipset, @bluetooth, @wi_fi, @ram_slots, @sata_slots, @m2_slots, @pcie_slots, @size)";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@product_id", p.id);
+                    command.Parameters.AddWithValue("@socket", p?.motherboardDetails?.socket);
+                    command.Parameters.AddWithValue("@ram_type", p?.motherboardDetails?.ramType);
+                    command.Parameters.AddWithValue("@chipset", p?.motherboardDetails?.chipset);
+                    command.Parameters.AddWithValue("@bluetooth", p?.motherboardDetails?.bluetooth);
+                    command.Parameters.AddWithValue("@wi_fi", p?.motherboardDetails?.wifi);
+                    command.Parameters.AddWithValue("@ram_slots", p?.motherboardDetails?.ramSlots);
+                    command.Parameters.AddWithValue("@sata_slots", p?.motherboardDetails?.sataSlots);
+                    command.Parameters.AddWithValue("@pcie_slots", p?.motherboardDetails?.pcieSlots);
+                    command.Parameters.AddWithValue("@size", p?.motherboardDetails?.size);
+                    command.Parameters.AddWithValue("@m2_slots", p?.motherboardDetails?.m2Slots);
+
+                    await command.ExecuteNonQueryAsync();
+                }
+            }
+        }
+
+        public async void putDetails(string connectionString, Product p)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                await connection.OpenAsync();
+
+                string query = @"UPDATE motherboards
+                                 SET product_id = @product_id, socket = @socket, ram_type = @ram_type, chipset = @chipset, bluetooth = @bluetooth,
+                                     wi_fi = @wi_fi, ram_slots = @ram_slots, sata_slots =  @sata_slots, m2_slots = @m2_slots, pcie_slots =  @pcie_slots, size = @size 
+                                 WHERE product_id = @product_id";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@product_id", p.id);
+                    command.Parameters.AddWithValue("@socket", p?.motherboardDetails?.socket);
+                    command.Parameters.AddWithValue("@ram_type", p?.motherboardDetails?.ramType);
+                    command.Parameters.AddWithValue("@chipset", p?.motherboardDetails?.chipset);
+                    command.Parameters.AddWithValue("@bluetooth", p?.motherboardDetails?.bluetooth);
+                    command.Parameters.AddWithValue("@wi_fi", p?.motherboardDetails?.wifi);
+                    command.Parameters.AddWithValue("@ram_slots", p?.motherboardDetails?.ramSlots);
+                    command.Parameters.AddWithValue("@sata_slots", p?.motherboardDetails?.sataSlots);
+                    command.Parameters.AddWithValue("@pcie_slots", p?.motherboardDetails?.pcieSlots);
+                    command.Parameters.AddWithValue("@size", p?.motherboardDetails?.size);
+                    command.Parameters.AddWithValue("@m2_slots", p?.motherboardDetails?.m2Slots);
+
+                    await command.ExecuteNonQueryAsync();
+                }
+            }
         }
     }
 }

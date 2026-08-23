@@ -10,13 +10,13 @@ namespace Backend.Models
         public string? form_factor { get; set; }
         public string? capacity { get; set; }
 
-        public HDDDetails getDetails(string connectionString, int productId)
+        public async Task<HDDDetails> getDetails(string connectionString, int productId)
         {
             HDDDetails details;
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                connection.Open();
+                await connection.OpenAsync();
 
                 string query = @"SELECT * FROM hdds WHERE product_id = @productId";
 
@@ -24,9 +24,9 @@ namespace Backend.Models
                 {
                     command.Parameters.AddWithValue("@productId", productId);
 
-                    using (SqlDataReader reader = command.ExecuteReader())
+                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
                     {
-                        if (reader.Read())
+                        if (await reader.ReadAsync())
                         {
                             details = new HDDDetails();
                             details.rpm = reader["rpm"].ToString();
@@ -41,6 +41,53 @@ namespace Backend.Models
                 }
             }
             return null;
+        }
+
+        public async void postDetails(string connectionString, Product p)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                await connection.OpenAsync();
+
+                string query = @"INSERT INTO hdds(product_id, rpm, form_factor, capacity, read_speed, write_speed) 
+                                 VALUES(@product_id, @rpm, @form_factor, @capacity, @read_speed, @write_speed)";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@product_id", p.id);
+                    command.Parameters.AddWithValue("@rpm", p?.hddDetails?.rpm);
+                    command.Parameters.AddWithValue("@form_factor", p?.hddDetails?.form_factor);
+                    command.Parameters.AddWithValue("@capacity", p?.hddDetails?.capacity);
+                    command.Parameters.AddWithValue("@read_speed", p?.hddDetails?.read_speed);
+                    command.Parameters.AddWithValue("@write_speed", p?.hddDetails?.write_speed);
+
+                    await command.ExecuteNonQueryAsync();
+                }
+            }
+        }
+
+        public async void putDetails(string connectionString, Product p)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                await connection.OpenAsync();
+
+                string query = @"UPDATE hdds 
+                                 SET rpm = @rpm, form_factor = @form_factor, capacity = @capacity, read_speed = @read_speed, write_speed = @write_speed
+                                 WHERE product_id = @product_id";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@product_id", p.id);
+                    command.Parameters.AddWithValue("@rpm", p?.hddDetails?.rpm);
+                    command.Parameters.AddWithValue("@form_factor", p?.hddDetails?.form_factor);
+                    command.Parameters.AddWithValue("@capacity", p?.hddDetails?.capacity);
+                    command.Parameters.AddWithValue("@read_speed", p?.hddDetails?.read_speed);
+                    command.Parameters.AddWithValue("@write_speed", p?.hddDetails?.write_speed);
+
+                    await command.ExecuteNonQueryAsync();
+                }
+            }
         }
     }
 }
