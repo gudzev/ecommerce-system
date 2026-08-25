@@ -79,6 +79,25 @@ namespace Backend.Endpoints
                             }
                         }
                     }
+
+                    query = "SELECT image_url FROM product_images WHERE product_id = @productId";
+
+                    using(SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@productId", p?.id);
+
+                        using(SqlDataReader reader = await command.ExecuteReaderAsync())
+                        {
+                            List<Image> secondaryImagesList = new List<Image>();
+                            while(await reader.ReadAsync())
+                            {
+                                Image image = new Image();
+                                image.url = reader["image_url"].ToString();
+                                secondaryImagesList.Add(image);
+                            }
+                            p?.other_images = secondaryImagesList;
+                        }
+                    }
                 }
 
                 return Results.Json(new
@@ -91,6 +110,7 @@ namespace Backend.Endpoints
                     category_id = p?.category_id,
                     stock_quantity = p?.stock_quantity,
                     is_active = p?.is_active,
+                    other_images = p?.other_images,
                     description = p?.description,
                     details =
                     p?.graphicsCardDetails ??

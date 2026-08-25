@@ -4,7 +4,7 @@
 
     <Style x:Key="Btn" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
         <Setter Property="Height" Value="35"/>
-        <Setter Property="Width" Value="200"/>
+        <Setter Property="Width" Value="220"/>
         <Setter Property="Background" Value="{StaticResource AccentColor}"/>
         <Setter Property="Foreground" Value="{StaticResource PageHeaderBg}"/>
         <Setter Property="BorderThickness" Value="0"/>

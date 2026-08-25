@@ -33,7 +33,7 @@
         <Label Content="Naziv proizvoda" Grid.Column="0" Grid.Row="0" Style="{StaticResource TextBoxLabel}"/>
         <TextBox x:Name="productNameTextBox" Grid.Column="1" Grid.Row="0" Style="{StaticResource TextBox}"/>
 
-        <Label Content="Link do slike" Grid.Column="0" Grid.Row="1" Style="{StaticResource TextBoxLabel}"/>
+        <Label Content="URL glavne slike" Grid.Column="0" Grid.Row="1" Style="{StaticResource TextBoxLabel}"/>
         <TextBox x:Name="imageURLTextBox" Grid.Column="1" Grid.Row="1" Style="{StaticResource TextBox}"/>
 
         <Label Content="Normalna cena" Grid.Column="0" Grid.Row="2" Style="{StaticResource TextBoxLabel}"/>

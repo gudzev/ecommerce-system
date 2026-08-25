@@ -4,9 +4,9 @@
     {
         public int id { get; set; }
         public string? name { get; set; }
-        public string? image_url { get; set; }
+        public string? image_url { get; set; } // Main image
 
-        public List<Image>? other_images { get; set; }
+        public List<Image>? other_images { get; set; } // List of secondary images
      
         public string? description { get; set; }
         public int price_rsd { get; set; }
