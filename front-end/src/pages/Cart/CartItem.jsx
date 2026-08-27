@@ -13,10 +13,13 @@ import { CartContext } from "../../contexts/CartContext/CartContext";
 
 export function CartItem({cartItem})
 {
-    const [quantity, setQuantity] = useState(cartItem.quantity);
-    const {cart, setCart} = useContext(CartContext);
+    const {cart, setCart, removeFromCart} = useContext(CartContext);
+
+    const [quantity, setQuantity] = useState(Number((cart.find((product) => product.productId == cartItem.id))?.quantity));
+
     const navigate = useNavigate();
 
+    // When quantity is increased, update quantity in cart
     useEffect(() =>
     {
         const newCart = cart.map((_cartItem) =>
@@ -36,12 +39,6 @@ export function CartItem({cartItem})
         setCart(newCart);
     }, [quantity])
 
-    const removeItemFromCart = () =>
-    {
-        const newCart = cart.filter((cartProduct) => cartItem.id !== cartProduct.productId);
-        setCart(newCart);
-    }
-
     const handleQtyChange = (changeType) =>
     {
         if(changeType === "increase")
@@ -59,7 +56,7 @@ export function CartItem({cartItem})
     return <tr className="cart-item">
                 <td className="cart-item-product-cell">
                     <img src={cartItem.image_url} alt={cartItem.name + ' ' + "Image"} className="cart-item-img" onClick={() => viewProductDetails(navigate, cartItem.name)}/>
-                    <h2 onClick={() => viewProductDetails(navigate, cartItem.name)}>{cartItem.name}</h2>
+                    <h2 onClick={() => viewProductDetails(navigate, cartItem.name, cartItem.id)}>{cartItem.name}</h2>
                 </td>
                 <td>
                     <div className="cart-item-qty-input">
@@ -69,6 +66,6 @@ export function CartItem({cartItem})
                     </div>
                 </td>
                 <td><h2>{formatPrice(cartItem.price_on_sale ? cartItem.price_on_sale * quantity : cartItem.price_rsd * quantity) + ' ' + "RSD"}</h2></td>
-                <td><FontAwesomeIcon icon={faTrash} className="cart-item-delete-btn" onClick={() => removeItemFromCart()}/></td>
+                <td><FontAwesomeIcon icon={faTrash} className="cart-item-delete-btn" onClick={() => removeFromCart(cartItem.id)}/></td>
             </tr>
 }

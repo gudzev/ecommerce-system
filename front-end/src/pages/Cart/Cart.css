@@ -268,6 +268,11 @@ td
     {
         min-width: 350px;
     }
+
+    .cart-heading
+    {
+        margin-top: 30px;
+    }
 }
 
 /* Mobile */
@@ -337,7 +342,7 @@ td
     .decrease-qty-btn, .increase-qty-btn
     {
         height: 40px;
-        width: 20px;
+        width: 30px;
     }
 
     .preview-product-heading

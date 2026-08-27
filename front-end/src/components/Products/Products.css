@@ -2,6 +2,8 @@
 {
     display: flex;
     justify-content: center;
+    align-items: center;
+    flex-direction: column;
     background-color: var(--bg-color);
     height: 100%;
     min-height: calc(100vh - 654px);
@@ -46,6 +48,7 @@
     height: 44px;
     font-size: 1.2rem;
     margin-bottom: 20px;
+    margin-top: 10px;
     cursor: pointer;
 }
 
@@ -69,6 +72,7 @@
     display: block;
     height: 2.5rem;
     font-size: 1rem;
+    margin-top: 15px;
 }
 
 .add-to-cart-btn:hover
@@ -126,18 +130,66 @@
     margin: 50px 0px;
 }
 
+.page-selector
+{
+    display: none;
+    width: 240px;
+    margin: 40px 0px;
+    gap: 10px;
+}
+
+.page-selector.active
+{
+    display: flex;
+    justify-content: center;
+}
+
+.page-number
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--header-links-bg);
+    color: var(--text-color);
+    transition: all .3s;
+    user-select: none;
+}
+
+.page-number:hover
+{
+    cursor: pointer;
+    background-color: var(--header-links-bg-border);
+}
+
+.page-number.active
+{
+    background-color: var(--accent-color);
+}
+
 /* Tablet */
 @media screen and ((min-width: 769px) and (max-width: 1279px)) 
 {
     .products-grid
     {
+        width: 100%;
         gap: 7px;
+        justify-content: center;
     }
 
     .product
     {
-        min-width: 248px;
-        padding: 10px;
+        min-width: 230px;
+        padding: 10px; 
+        justify-content: center;
+    }
+
+    .product-img
+    {
+        width: 150px;
+        height: 150px;
     }
 }
 
@@ -149,16 +201,25 @@
         flex-direction: row;
         gap: 10px;
         padding: 30px 10px;
+        max-width: 100%;
     }
 
     .product
     {
         width: 48%;
         padding: 10px;
+        min-height: 300px;
+    }
+
+    .product-img
+    {
+        width: 120px;
+        height: 120px;
     }
 
     .product-name
     {
+        margin-top: 0px;
         margin-bottom: 10px;
         font-size: 1rem;
     }
@@ -166,5 +227,11 @@
     .add-to-cart-btn
     {
         margin-top: 5px;
+    }
+
+    .product-details
+    {
+        flex-grow: 1;
+        max-height: 75px;
     }
 }

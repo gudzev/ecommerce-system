@@ -11,17 +11,14 @@ import { useContext } from "react";
 import { viewProductDetails } from "../../utils/viewProductDetails";
 
 import { CartContext } from "../../contexts/CartContext/CartContext";
+import { CheckoutContext } from "../../contexts/CheckoutContext/CheckoutContext";
 
-export function CheckoutSummary({cartProducts, shipmentPrice, orderPrice})
+export function CheckoutSummary({cartProducts})
 {
     const navigate = useNavigate();
-    const {cart, setCart} = useContext(CartContext);
+    const {removeFromCart} = useContext(CartContext);
+    const {shipmentPrice, orderPrice} = useContext(CheckoutContext);
 
-    const removeItemFromCart = (itemID) =>
-    {
-        const newCart = cart.filter((cartProduct) => itemID !== cartProduct.productId);
-        setCart(newCart);
-    }
 
     return <div className="checkout-summary">
         <h2 className="checkout-heading-h2 overview-heading">Pregled kupovine</h2>
@@ -31,16 +28,16 @@ export function CheckoutSummary({cartProducts, shipmentPrice, orderPrice})
                 cartProducts.map((cartProduct) => 
                 {
                     return <div className="checkout-items-item" key={cartProduct.id}>
-                            <img src={cartProduct.image_url} alt={cartProduct.name + ' ' + "Image"} className="checkout-item-img" onClick={() => viewProductDetails(navigate, cartProduct.name)}/>
+                            <img src={cartProduct.image_url} alt={cartProduct.name + ' ' + "Image"} className="checkout-item-img" onClick={() => viewProductDetails(navigate, cartProduct.name, cartProduct.id)}/>
                             
                             <div className="checkout-items-details">
-                                <h2 className="checkout-item-name" onClick={() => viewProductDetails(navigate, cartProduct.name)}>{cartProduct.name}</h2>
+                                <h2 className="checkout-item-name" onClick={() => viewProductDetails(navigate, cartProduct.name, cartProduct.id)}>{cartProduct.name}</h2>
                                 <h3 className="checkout-item-quantity">Količina: {cartProduct.quantity}</h3>
                             </div>
 
                             <span className="checkout-item-price">{formatPrice((cartProduct.price_on_sale || cartProduct.price_rsd) * cartProduct.quantity) + ' ' + "RSD"}</span>
 
-                            <FontAwesomeIcon icon={faTrash} className="checkout-delete-item-btn fa-icon-2x" onClick={() => removeItemFromCart(cartProduct.id)}/>
+                            <FontAwesomeIcon icon={faTrash} className="checkout-delete-item-btn fa-icon-2x" onClick={() => removeFromCart(cartProduct.id)}/>
                     </div>
                 })
             }

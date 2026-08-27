@@ -29,9 +29,17 @@ export function Header({allCategories})
 
     const listenForEnterKeyPress = (event) =>
     {
-        if(event.key == "Enter")
+        if(event.key != "Enter")
         {
-            searchProducts(event.target.value);
+            return;
+        }
+
+        setSearchText(event.target.value);
+        setInputText("");
+
+        if(window.location.pathname != "/")
+        {
+            navigate("/");
         }
     }
 

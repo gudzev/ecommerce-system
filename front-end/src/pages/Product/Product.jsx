@@ -4,58 +4,47 @@ import { Footer } from "../../components/Footer/Footer";
 import { useEffect, useState, useRef, useContext } from "react";
 
 import { formatPrice } from "../../utils/formatPrice";
-import {translateToSerbian} from "../../utils/translateToSerbian";
+import { translateToSerbian } from "../../utils/translateToSerbian";
+import { API_URL } from "../../App";
 
 import { CartContext } from "../../contexts/CartContext/CartContext";
 
 import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
+import { useLocation } from "react-router-dom";
+
 import axios from 'axios';
 
 import "./ProductDetails.css";
 
-export default function Product({allCategories, allProducts})
+export default function Product()
 {
-    const [thisProduct, setThisProduct] = useState(null);
-    const [thisProductDetails, setThisProductDetails] = useState(null);
-    const [thisProductID, setThisProductID] = useState(null);
+    const location = useLocation();
+
+    const [thisProduct, setThisProduct] = useState(location.state);
     const [addedText, setAddedText] = useState(false);
 
-    const {cart, setCart} = useContext(CartContext);
+    const { addToCart } = useContext(CartContext);
 
     const timeoutID = useRef(null);
 
     useEffect(() =>
     {
-        const encodedProductName = window.location.pathname;
-        const productName = encodedProductName.substring(10, window.location.pathname.length).replaceAll('-', ' ');
-
-        allProducts?.forEach((product) =>
-        {
-            if(product.name.toLowerCase().replaceAll('-', ' ') == productName)
-            {
-                setThisProductID(product.id);
-            }
-        });
-    }, [allProducts, allCategories]);
-
-    useEffect(() =>
-    {
-        if(!thisProductID)
+        if(!thisProduct.id)
         {
             return;
         }
 
         const getThisProduct = async () =>
         {
-            const request = await axios.get("https://localhost:7097/products/" + thisProductID);
+            const request = await axios.get(API_URL + "/products/" + thisProduct.id);
             const dbProduct = request.data;
             setThisProduct(dbProduct);
-            setThisProductDetails(dbProduct.details);
         }
         getThisProduct();
-    }, [thisProductID]);
+
+    }, [thisProduct.id]);
 
     useEffect(() =>
     {
@@ -70,25 +59,9 @@ export default function Product({allCategories, allProducts})
         }, 1500);
     }, [addedText]);
 
-    const addToCart = () =>
+    const handleAddToCart = () =>
     {
-        let newCart = [...cart];
-        const foundItem = newCart.find((cartItem) => cartItem.productId == thisProductID);
-
-        if(foundItem)
-        {
-            foundItem.quantity++;
-        }
-        else
-        {
-            newCart.push(
-                {
-                    productId: thisProductID,
-                    quantity: 1
-                })
-        }
-
-        setCart(newCart);
+        addToCart(thisProduct.id, 1);
         setAddedText(true);
     }
 
@@ -96,7 +69,7 @@ export default function Product({allCategories, allProducts})
         <>
             <title>Prodavnica - {thisProduct?.name}</title>
 
-            <Header allCategories={allCategories}/>
+            <Header/>
 
                 <main className="product-container">
                     <div className="product-container-details">
@@ -112,7 +85,7 @@ export default function Product({allCategories, allProducts})
                                 <><span className="price-old">{formatPrice(thisProduct?.price_rsd) + " RSD"}</span><span className="price-new">{formatPrice(thisProduct?.price_on_sale) + " RSD"}</span></>}
                             </h2>
 
-                            <button className="product-container-add-to-cart-btn" disabled={addedText} onClick={() => addToCart()}><span className="center-items"><FontAwesomeIcon icon={faShoppingCart} className="fa-icon-1x"/>Dodaj u korpu</span></button>
+                            <button className="product-container-add-to-cart-btn" disabled={addedText} onClick={() => handleAddToCart()}><span className="center-items"><FontAwesomeIcon icon={faShoppingCart} className="fa-icon-1x"/>Dodaj u korpu</span></button>
                             <p className="added-to-cart">{addedText ? ("Artikal je uspešno dodat u korpu.") : ""}</p>
                             <hr></hr>
                             <p className="product-container-article-description">{thisProduct?.description || "Nema opisa za ovaj proizvod."}</p>
@@ -120,7 +93,7 @@ export default function Product({allCategories, allProducts})
                         </div>
                         <div className="product-detailed-specifications">
                             {
-                                (thisProductDetails)
+                                (thisProduct.details)
                                 ?
                                 <table>
                                     <thead>
@@ -131,7 +104,7 @@ export default function Product({allCategories, allProducts})
                                     </thead>
                                     <tbody>
                                         {
-                                            Object.entries(thisProductDetails).map((productDetail, index) =>
+                                            Object.entries(thisProduct.details).map((productDetail, index) =>
                                             {
                                                 const [key, value] = productDetail;
                                                 return (

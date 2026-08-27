@@ -7,6 +7,7 @@ import { useState, useRef, useContext } from "react";
 import { useNavigate } from 'react-router-dom';
 
 import { viewProductDetails } from "../../utils/viewProductDetails";
+
 import { formatPrice } from "../../utils/formatPrice";
 
 import { CartContext } from "../../contexts/CartContext/CartContext";
@@ -17,33 +18,15 @@ export function Product({image_url, name, price_rsd, id, price_on_sale})
 {
     const navigate = useNavigate()
 
-    const {cart, setCart} = useContext(CartContext);
+    const {addToCart} = useContext(CartContext);
 
     const [isAddedToCart, setIsAddedToCart] = useState(false);
 
     const quantitySelect = useRef(1);
 
-    const addToCart = (productId) =>
+    const handleAddToCart = (productId) =>
     {
-        const quantity = Number(quantitySelect.current.value);
-        const newCart = [...cart];
-
-        const existingItem = newCart.find((cartItem) => cartItem.productId == productId);
-        if(!existingItem)
-        {
-            newCart.push(
-                {
-                    productId: productId,
-                    quantity: quantity
-                }
-            )
-        }
-        else
-        {
-            existingItem.quantity += quantity;
-        }
-
-        setCart(newCart);
+        addToCart(id, Number(quantitySelect.current.value));
         displayAddedToCartText(productId);
     }
 
@@ -69,9 +52,9 @@ export function Product({image_url, name, price_rsd, id, price_on_sale})
     }
 
     return <div className="product">
-                <img src={image_url} loading="lazy" alt={name + " image"} className="product-img" onClick={() => viewProductDetails(navigate, name)}/>
+                <img src={image_url} loading="lazy" alt={name + " image"} className="product-img" onClick={() => viewProductDetails(navigate, name, id)}/>
 
-                <h2 className="product-name" onClick={() => viewProductDetails(navigate, name)}>{name}</h2>
+                <h2 className="product-name" onClick={() => viewProductDetails(navigate, name, id)}>{name}</h2>
 
                 <div className="product-details">
                     <div className="product-quantity">
@@ -93,7 +76,7 @@ export function Product({image_url, name, price_rsd, id, price_on_sale})
                     <span className="product-price-sale"> {price_on_sale ? formatPrice(price_on_sale) + ' ' + "RSD" : ""}</span>
                 </div>
 
-                <button className="add-to-cart-btn" onClick={() => { addToCart(id)}}>
+                <button className="add-to-cart-btn" onClick={() => { handleAddToCart()}}>
                     <FontAwesomeIcon icon={faShoppingCart} />Dodaj u korpu
                 </button>
                 <span className={isAddedToCart ? `cart-added active` : `cart-added`}><FontAwesomeIcon icon={faCheck} />Dodato</span>

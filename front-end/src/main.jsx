@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { HeaderContextProvider } from './contexts/HeaderContext/HeaderContextProvider.jsx';
 import { CheckoutContextProvider} from "./contexts/CheckoutContext/CheckoutContextProvider.jsx";
 import { CartContextProvider } from './contexts/CartContext/CartContextProvider.jsx';
+import { PageContextProvider } from './contexts/PageContext/PageContextProvider.jsx';
 
 import './index.css'
 
@@ -17,9 +18,11 @@ createRoot(document.getElementById('root')).render(
   <BrowserRouter>
     <CartContextProvider>
       <CheckoutContextProvider>
-        <HeaderContextProvider> 
-          <App />
-        </HeaderContextProvider>
+        <PageContextProvider>
+          <HeaderContextProvider> 
+            <App />
+          </HeaderContextProvider>
+        </PageContextProvider>
       </CheckoutContextProvider>
     </CartContextProvider>
   </BrowserRouter>,

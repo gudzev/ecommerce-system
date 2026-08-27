@@ -11,6 +11,7 @@ import { formatPrice } from "../../utils/formatPrice";
 
 import { CartContext } from "../../contexts/CartContext/CartContext";
 import { CheckoutContext } from "../../contexts/CheckoutContext/CheckoutContext";
+import { API_URL } from "../../App";
 
 export function CheckoutForm({cartProducts, allDeliveryOptions, setOrderID, orderID})
 {
@@ -25,7 +26,7 @@ export function CheckoutForm({cartProducts, allDeliveryOptions, setOrderID, orde
     const [displayError, setDisplayError] = useState(false);
 
     const {cart, setCart} = useContext(CartContext);
-    const {shipmentPrice, orderPrice, deliveryMethod, setDeliveryMethod} = useContext(CheckoutContext);
+    const {deliveryMethod, setDeliveryMethod} = useContext(CheckoutContext);
 
     emailjs.init({
     publicKey: 'Ce2FA7FiR-U2dyB3t',
@@ -129,7 +130,7 @@ export function CheckoutForm({cartProducts, allDeliveryOptions, setOrderID, orde
                 delivery_method_id: deliveryMethod,
                 orderItems: cart
             }
-            const request = await axios.post("https://localhost:7097/orders", order);
+            const request = await axios.post(API_URL + "/orders", order);
             setOrderID(request.data.orderId);
             setCart([]);
 
@@ -274,7 +275,7 @@ export function CheckoutForm({cartProducts, allDeliveryOptions, setOrderID, orde
                     </div>
 
                     <div className="checkout-row">
-                        <CheckoutSummary cartProducts={cartProducts} orderPrice={orderPrice} shipmentPrice={shipmentPrice}/>
+                        <CheckoutSummary cartProducts={cartProducts}/>
                     </div>
 
                     <div className="checkout-row">

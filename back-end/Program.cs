@@ -28,5 +28,6 @@ app.MapProductEndpoints(connectionString);
 app.MapCategoryEndpoints(connectionString);
 app.MapDeliveryOptionEndpoints(connectionString);
 app.MapOrderEndpoints(connectionString);
+app.MapProductPagesEndpoints(connectionString);
 
 app.Run();

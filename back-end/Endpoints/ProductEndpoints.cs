@@ -1,6 +1,7 @@
 ﻿using Backend.Models;
 using Microsoft.Data.SqlClient;
 using System.Collections.ObjectModel;
+using System.Text.Json;
 
 namespace Backend.Endpoints
 {
@@ -124,7 +125,7 @@ namespace Backend.Endpoints
                 });
             });
 
-            app.MapGet("/products", async (bool? is_active) =>
+            app.MapGet("/products", async (bool? is_active = true, int? category_id = null, string? search_text = "%", int[]? product_ids = null, int? page = null, int? products_per_page = null) =>
             {
                 List<Product> products = new List<Product>();
 
@@ -132,24 +133,60 @@ namespace Backend.Endpoints
                 {
                     await connection.OpenAsync();
 
-                    string query = @"SELECT products.id, products.name, image_url, price_rsd, price_on_sale, category_id, stock_quantity, is_active, description, categories.name AS category 
-                         FROM products
-                         JOIN categories ON categories.id = products.category_id";
+                    string query = @"SELECT products.id, products.name, image_url, price_rsd, price_on_sale, category_id, stock_quantity, is_active, description, categories.name AS category
+                                     FROM products
+                                     JOIN categories ON categories.id = products.category_id
+                                     WHERE products.name LIKE @searchText";
 
                     if (is_active == true)
                     {
-                        query += " WHERE is_active = 1";
+                        query += " AND is_active = 1 ";
                     }
 
                     if (is_active == false)
                     {
-                        query += " WHERE is_active = 0";
+                        query += " AND is_active = 0 ";
+                    }
+
+                    if(category_id.HasValue)
+                    {
+                        query += " AND category_id = @category_id ";
+                    }
+
+                    if (!page.HasValue && !products_per_page.HasValue && product_ids?.Length > 0)
+                    {
+                        query += " AND (";
+                        for (int i = 0; i < product_ids?.Length; i++)
+                        {
+                            query += " products.id = " + product_ids[i];
+
+                            if(i != product_ids?.Length - 1)
+                            {
+                                query += " OR ";
+                            }
+                        }
+                        query += ")";
+                    }
+
+                    if (page.HasValue && products_per_page.HasValue)
+                    {
+                        // OFFSET and FETCH are used for pagination in SQL SERVER and must be used with ORDER BY statement
+                        query += @"ORDER BY products.id
+                               OFFSET " + page * products_per_page + @" ROWS
+                               FETCH NEXT " + products_per_page + " ROWS ONLY";
                     }
 
                     Product p;
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
+                        if(category_id.HasValue)
+                        {
+                            command.Parameters.AddWithValue("@category_id", category_id);
+                        }
+
+                        command.Parameters.AddWithValue("@searchText", search_text == "%" ? search_text : search_text + "%");
+
                         using (SqlDataReader reader = await command.ExecuteReaderAsync())
                         {
                             while (await reader.ReadAsync())

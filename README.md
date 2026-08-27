@@ -36,6 +36,7 @@ All components communicate through a shared REST API.
 - [✓] Organize desktop-app and back-end code in a better way
 - [ ] Create a PC configurator using store's components for customers
 - [ ] Create separate table for storing multiple images for each product
+- [✓] Add product pagination
 
 ---
 

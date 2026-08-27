@@ -18,20 +18,19 @@ import Cart from './pages/Cart/Cart';
 import Checkout from './pages/Checkout/Checkout';
 import Product from './pages/Product/Product';
 
-
-
 // const Home = lazy(() => import('./pages/Home/Home'));
 // const Cart = lazy(() => import('./pages/Cart/Cart'));
 const NotFound = lazy(() => import('./pages/NotFound/NotFound'));
 // const Checkout = lazy(() => import('./pages/Checkout/Checkout'));
 //const Product = lazy(() => import('./pages/Product/Product'));
 
+export const API_URL = "https://localhost:7097";
+export const PRODUCTS_PER_PAGE = 16;
 
 function App() 
 {
   const [cartProducts, setCartProducts] = useState([]);
   const [allDeliveryOptions, setAllDeliveryOptions] = useState([]);
-  const [allProducts, setAllProducts] = useState([]);
   const [allCategories, setAllCategories] = useState([]);
 
   const {cart} = useContext(CartContext);
@@ -39,61 +38,67 @@ function App()
 
   useEffect(() =>
   {
-    const getAllProducts = async () =>
-    {
-      const response = await axios.get("https://localhost:7097/products?is_active=true");
-      const products = response.data;
-      setAllProducts(products);
-    }
-
     const getAllDeliveryOptions = async () =>
     {
-        const response = await axios.get("https://localhost:7097/delivery-options");
+        const response = await axios.get(API_URL + "/delivery-options");
         const deliveryOptions = response.data;
         setAllDeliveryOptions(deliveryOptions);
     }
 
     const getAllCategories = async () =>
     {
-      const response = await axios.get("https://localhost:7097/categories");
+      const response = await axios.get(API_URL + "/categories");
       const categories = response.data;
       setAllCategories(categories);
     }
-
-    getAllProducts();
-    getAllDeliveryOptions();
     getAllCategories();
+    getAllDeliveryOptions();
   }, []);
-
+  
   useEffect(() =>
   {
-    const getCartProducts = () =>
+    const getCartProducts = async () =>
     {
-        const newProducts = [];
-        cart.forEach((cartProduct) =>
+      const cartProductList = cart.map((cartProduct) => cartProduct.productId);
+      const response = await axios.get("https://localhost:7097/products", 
         {
-            allProducts?.forEach((existingProduct) =>
+          params: 
+          {
+              is_active: true,
+              product_ids: cartProductList
+          },
+          // indexes: null separates indexes in the following way: product_ids=1&product_ids=2&...
+          paramsSerializer: 
+          {
+            indexes: null
+          }
+        });
+
+      const allProducts = response.data;
+      const cartProducts = [];
+
+      allProducts?.map((product) =>
+      {
+        const existingProduct = cart.find((cartProduct) => cartProduct.productId == product.id);
+
+        if(existingProduct)
+        {
+          cartProducts.push(
             {
-                if(cartProduct.productId == existingProduct.id)
-                {
-                    newProducts.push(
-                        {
-                            id: existingProduct.id,
-                            name: existingProduct.name,
-                            image_url: existingProduct.image_url,
-                            price_rsd: existingProduct.price_rsd,
-                            price_on_sale: existingProduct.price_on_sale,
-                            quantity: Number(cartProduct.quantity)
-                        });
-                }
+              id: product.id,
+              name: product.name,
+              image_url: product.image_url,
+              price_rsd: product.price_rsd,
+              price_on_sale: product.price_on_sale,
+              quantity: Number(existingProduct.quantity)
             })
-        })
-        setCartProducts(newProducts);
+        }
+      });
+      setCartProducts(cartProducts);
     }
-    
-    localStorage.setItem("cart", JSON.stringify(cart));
     getCartProducts();
-  }, [cart, allProducts]);
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }, [cart]);
 
   useEffect(() =>
   {
@@ -133,8 +138,7 @@ function App()
   return (
     <Suspense fallback={<Loader />}>
       <Routes>
-        <Route path="/" element={<Home allProducts={allProducts}
-                                       allCategories={allCategories}/>}
+        <Route path="/" element={<Home allCategories={allCategories}/>}
                                   />
         <Route path="/cart" element={<Cart cartProducts={cartProducts}
                                            allCategories={allCategories}/>} 
@@ -145,11 +149,9 @@ function App()
                                                    allCategories={allCategories}/>}
                                     />
                                     
-        <Route path="/proizvod/*" element={<Product allCategories={allCategories}
-                                                    allProducts={allProducts}/>}
-                                    />
+        <Route path="/proizvod/*" element={<Product/>}/>
 
-        <Route path="*" element={<NotFound allCategories={allCategories} />} />
+        <Route path="*" element={<NotFound/>} />
       </Routes>
     </Suspense>
   )
