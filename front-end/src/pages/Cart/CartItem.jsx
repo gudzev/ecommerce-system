@@ -43,7 +43,7 @@ export function CartItem({cartItem})
     {
         if(changeType === "increase")
         {
-            if(quantity < 10)
+            if(quantity < 10 && cartItem.stock_quantity > quantity)
                 setQuantity(prev => prev + 1);
         }
         else

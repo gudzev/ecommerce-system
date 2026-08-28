@@ -14,7 +14,7 @@ export default function Cart({cartProducts, allCategories})
 
         <Header allCategories={allCategories}/>
 
-        <section className="cart">
+        <main className="cart">
             <div className="cart-content">
 
                 <h1 className="cart-heading">Korpa</h1>
@@ -25,7 +25,7 @@ export default function Cart({cartProducts, allCategories})
                 </div>
 
             </div>
-        </section>
+        </main>
 
         <Footer />
     </>

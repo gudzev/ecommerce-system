@@ -60,7 +60,7 @@ function App()
     const getCartProducts = async () =>
     {
       const cartProductList = cart.map((cartProduct) => cartProduct.productId);
-      const response = await axios.get("https://localhost:7097/products", 
+      const response = await axios.get(API_URL + "/products", 
         {
           params: 
           {
@@ -77,7 +77,7 @@ function App()
       const allProducts = response.data;
       const cartProducts = [];
 
-      allProducts?.map((product) =>
+      allProducts?.forEach((product) =>
       {
         const existingProduct = cart.find((cartProduct) => cartProduct.productId == product.id);
 
@@ -90,7 +90,8 @@ function App()
               image_url: product.image_url,
               price_rsd: product.price_rsd,
               price_on_sale: product.price_on_sale,
-              quantity: Number(existingProduct.quantity)
+              quantity: Number(existingProduct.quantity),
+              stock_quantity: product.stock_quantity
             })
         }
       });
@@ -125,7 +126,7 @@ function App()
         cartProducts.forEach((product) => itemQuantity += product.quantity)
         setShipmentPrice(() =>
         {
-          const selectedOption = allDeliveryOptions?.find((option) => option.id == deliveryMethod) || 1;
+          const selectedOption = allDeliveryOptions?.find((option) => option.id == deliveryMethod) || {};
           if(!selectedOption.price_per_item) return 0;
           return (price >= selectedOption.free_shipping_minimum_value) ? 0 : selectedOption.price_per_item * itemQuantity;
         });
@@ -149,9 +150,9 @@ function App()
                                                    allCategories={allCategories}/>}
                                     />
                                     
-        <Route path="/proizvod/*" element={<Product/>}/>
+        <Route path="/proizvod/*" element={<Product allCategories={allCategories}/>}/>
 
-        <Route path="*" element={<NotFound/>} />
+        <Route path="*" element={<NotFound allCategories={allCategories}/>} />
       </Routes>
     </Suspense>
   )

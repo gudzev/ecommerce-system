@@ -115,7 +115,13 @@ export function Products({allCategories})
                 {
                     if(product.name.toLowerCase().includes(searchText))
                     {
-                        return <Product image_url={product.image_url} name={product.name} price_rsd={product.price_rsd} price_on_sale={product.price_on_sale} id={product.id} key={product.id}/>
+                        return <Product image_url={product.image_url}
+                                        name={product.name}
+                                        price_rsd={product.price_rsd}
+                                        price_on_sale={product.price_on_sale}
+                                        id={product.id}
+                                        stock_quantity={product.stock_quantity}
+                                        key={product.id}/>
                     }
                 })
                 :

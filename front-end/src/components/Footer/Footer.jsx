@@ -12,7 +12,7 @@ export function Footer()
         <div className="footer-content">
             <div className="footer-info">
                 <Link className="header-img-wrapper footer-img-wrapper" to="/">
-                    <img src="/logo.png" className="header-img" alt="Prodavnica logo"/>
+                    <img src="/images/logo.png" className="header-img" alt="Prodavnica logo"/>
                 </Link>
 
                 <div className="working-time">
@@ -91,7 +91,7 @@ export function Footer()
             </div>
 
             <div className="footer-image">
-                <img src="/prodavnica.png" alt="Ljudi sa paketom iz prodavnice" className="footer-img"/>
+                <img src="/images/prodavnica.png" alt="Ljudi sa paketom iz prodavnice" className="footer-img"/>
             </div>
         </div>
     </footer>

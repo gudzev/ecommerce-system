@@ -60,7 +60,7 @@ namespace DesktopApp.Pages
             priceTextBox.Text = product.price_rsd.ToString();
             salePriceTextBox.Text = product.price_on_sale.ToString() ?? "";
             quantityTextBox.Text = product.stock_quantity.ToString();
-            descriptionRichTextBox.AppendText(product.description.ToString() ?? "");
+            descriptionRichTextBox.AppendText(product?.description?.ToString() ?? "");
 
             foreach (var category in MainWindow.categories)
             {
@@ -111,7 +111,7 @@ namespace DesktopApp.Pages
             if (categoryId == -1) return;
 
             newProduct.name = productNameTextBox.Text;
-            newProduct.image_url = imageURLTextBox.Text;
+            newProduct.images.Add(new Backend.Models.Image(imageURLTextBox.Text)); // TO-DO: Let user add multiple images through the app
             newProduct.price_rsd = Convert.ToInt32(priceTextBox.Text);
             newProduct.price_on_sale = (salePriceTextBox.Text == "") ? null : Convert.ToInt32(salePriceTextBox.Text);
             newProduct.category_id = categoryId;
@@ -156,7 +156,7 @@ namespace DesktopApp.Pages
             if (categoryId == -1) return;
 
             existingProduct.name = productNameTextBox.Text;
-            existingProduct.image_url = imageURLTextBox.Text;
+            existingProduct.images.Add(new Backend.Models.Image(imageURLTextBox.Text)); // TO-DO: Let user add multiple images through the app
             existingProduct.price_rsd = Convert.ToInt32(priceTextBox.Text);
             existingProduct.price_on_sale = (salePriceTextBox.Text == "") ? null : Convert.ToInt32(salePriceTextBox.Text);
             existingProduct.category_id = categoryId;

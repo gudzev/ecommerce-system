@@ -56,7 +56,7 @@ export function Header({allCategories})
     return <header>
         <div className="header-main">
             <Link className="header-img-wrapper" to="/">
-                <img src="/logo.png" className="header-img" alt="Prodavnica logo"/>
+                <img src="/images/logo.png" className="header-img" alt="Prodavnica logo"/>
             </Link>
 
             <button className="header-categories">

@@ -18,12 +18,13 @@ import axios from 'axios';
 
 import "./ProductDetails.css";
 
-export default function Product()
+export default function Product({allCategories})
 {
     const location = useLocation();
 
     const [thisProduct, setThisProduct] = useState(location.state);
-    const [addedText, setAddedText] = useState(false);
+    const [addedText, setAddedText] = useState(thisProduct.stock_quantity > 0);
+    const [activeImage, setActiveImage] = useState(null);
 
     const { addToCart } = useContext(CartContext);
 
@@ -41,6 +42,7 @@ export default function Product()
             const request = await axios.get(API_URL + "/products/" + thisProduct.id);
             const dbProduct = request.data;
             setThisProduct(dbProduct);
+            setActiveImage(dbProduct?.images?.find((image) => image.is_main_image == true))
         }
         getThisProduct();
 
@@ -61,19 +63,33 @@ export default function Product()
 
     const handleAddToCart = () =>
     {
-        addToCart(thisProduct.id, 1);
-        setAddedText(true);
+        if(thisProduct?.stock_quantity > 0)
+        {
+            addToCart(thisProduct.id, 1);
+            setAddedText(true);
+        }
     }
 
     return (
         <>
             <title>Prodavnica - {thisProduct?.name}</title>
 
-            <Header/>
-
+            <Header allCategories={allCategories}/>
                 <main className="product-container">
                     <div className="product-container-details">
-                        <img src={thisProduct?.image_url} alt={thisProduct?.name + " slika"} />
+
+                        <div className="alternative-images-container">
+                        {
+                            thisProduct?.images?.map((image) =>
+                            {
+                                const active = image.id == activeImage.id;
+                                return <img key={image.id} src={image.url} alt={thisProduct?.name + " slika"} className={active ? "alternative-img active" : "alternative-img"} onClick={() => setActiveImage(image)}/>
+                            })
+                        }
+                        </div>
+
+                        <img src={activeImage?.url} alt={thisProduct?.name + " slika"} className="product-container-main-img" />
+
                         <div className="product-container-data">
                             <p className="product-container-article-id">Šifra artikla: {thisProduct?.id}</p>
                             <h1>{thisProduct?.name}</h1>
@@ -84,6 +100,10 @@ export default function Product()
                                 : 
                                 <><span className="price-old">{formatPrice(thisProduct?.price_rsd) + " RSD"}</span><span className="price-new">{formatPrice(thisProduct?.price_on_sale) + " RSD"}</span></>}
                             </h2>
+
+                            {
+                                thisProduct?.stock_quantity > 0 ? <span className="stock-quantity">&#9989; Na stanju</span> : <span className="stock-quantity">&#10060; Nije na stanju</span>
+                            }
 
                             <button className="product-container-add-to-cart-btn" disabled={addedText} onClick={() => handleAddToCart()}><span className="center-items"><FontAwesomeIcon icon={faShoppingCart} className="fa-icon-1x"/>Dodaj u korpu</span></button>
                             <p className="added-to-cart">{addedText ? ("Artikal je uspešno dodat u korpu.") : ""}</p>

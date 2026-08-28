@@ -3,7 +3,7 @@ import "./Products.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShoppingCart, faCheck } from "@fortawesome/free-solid-svg-icons";
 
-import { useState, useRef, useContext } from "react";
+import { useState, useRef, useContext, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 
 import { viewProductDetails } from "../../utils/viewProductDetails";
@@ -14,20 +14,41 @@ import { CartContext } from "../../contexts/CartContext/CartContext";
 
 let timeoutList = [];
 
-export function Product({image_url, name, price_rsd, id, price_on_sale})
+export function Product({image_url, name, price_rsd, id, price_on_sale, stock_quantity})
 {
     const navigate = useNavigate()
 
-    const {addToCart} = useContext(CartContext);
+    const {addToCart, cart} = useContext(CartContext);
 
     const [isAddedToCart, setIsAddedToCart] = useState(false);
+    const [onStock, setOnStock] = useState(false);
 
     const quantitySelect = useRef(1);
 
+    useEffect(() =>
+    {
+        const fn = async () =>
+        {
+            setOnStock(stock_quantity > 0);
+        }
+        fn();
+    }, [])
+
     const handleAddToCart = (productId) =>
     {
-        addToCart(id, Number(quantitySelect.current.value));
-        displayAddedToCartText(productId);
+        const selectedQuantity = Number(quantitySelect.current.value);
+        const cartQuantity = (cart?.find((cartItem) => cartItem.productId == id))?.quantity || 0;
+
+        if((cartQuantity + selectedQuantity) <= stock_quantity)
+        {
+            setOnStock((cartQuantity + selectedQuantity) < stock_quantity);
+            addToCart(id, selectedQuantity);
+            displayAddedToCartText(productId);
+        }
+        else
+        {
+            setOnStock(false);
+        }
     }
 
     const displayAddedToCartText = (productId) =>
@@ -76,8 +97,8 @@ export function Product({image_url, name, price_rsd, id, price_on_sale})
                     <span className="product-price-sale"> {price_on_sale ? formatPrice(price_on_sale) + ' ' + "RSD" : ""}</span>
                 </div>
 
-                <button className="add-to-cart-btn" onClick={() => { handleAddToCart()}}>
-                    <FontAwesomeIcon icon={faShoppingCart} />Dodaj u korpu
+                <button className="add-to-cart-btn" disabled={!onStock} onClick={() => handleAddToCart()}>
+                    <FontAwesomeIcon icon={faShoppingCart} />{onStock ? "Dodaj u korpu" : "Nema na stanju"}
                 </button>
                 <span className={isAddedToCart ? `cart-added active` : `cart-added`}><FontAwesomeIcon icon={faCheck} />Dodato</span>
         </div>

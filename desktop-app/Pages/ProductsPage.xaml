@@ -49,7 +49,7 @@
         <TextBox x:Name="quantityTextBox" Grid.Column="1" Grid.Row="5" Style="{StaticResource TextBox}"/>
 
         <Label Content="Opis" Grid.Column="0" Grid.Row="6" Style="{StaticResource TextBoxLabel}"/>
-        <RichTextBox x:Name="descriptionRichTextBox" Grid.Column="1" Grid.Row="6" Grid.ColumnSpan="2" Style="{StaticResource RichTextBox}" />
+        <RichTextBox x:Name="descriptionRichTextBox" Grid.Column="1" Grid.Row="6" Grid.ColumnSpan="2" Style="{StaticResource RichTextBox}" SpellCheck.IsEnabled="False"  VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled"/>
 
         <DataGrid x:Name="ProductsTable" SelectionUnit="FullRow" AutoGenerateColumns="False" Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="7" IsReadOnly="True" SelectionMode="Single" HorizontalAlignment="Stretch" SelectionChanged="LoadProductsRow">
             <DataGrid.Columns>

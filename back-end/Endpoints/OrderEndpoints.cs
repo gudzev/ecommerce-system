@@ -16,11 +16,12 @@ namespace Backend.Endpoints
                 {
                     await connection.OpenAsync();
 
-                    string query = @"SELECT orders.id, orders.name, surname, email, street, apartment_number, additional, city, delivery_method_id, created_at, is_fulfilled, phone_number, order_id, product_id, quantity, price_at_purchase, products.name AS product_name, image_url
+                    string query = @"SELECT orders.id, orders.name, surname, email, street, apartment_number, additional, city, delivery_method_id, created_at, is_fulfilled, phone_number, order_id, order_items.product_id, quantity, price_at_purchase, products.name AS product_name, product_images.image_url
                          FROM orders
                          JOIN order_items ON order_items.order_id = orders.id
                          JOIN products ON products.id = order_items.product_id
-                         WHERE is_fulfilled = @is_fulfilled";
+                         JOIN product_images ON products.id = product_images.product_id
+                         WHERE product_images.is_main_image = 1 AND is_fulfilled = @is_fulfilled";
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {

@@ -17,10 +17,10 @@ namespace Backend.Endpoints
                 {
                     await connection.OpenAsync();
 
-                    string query = @"SELECT products.id, products.name, image_url, price_rsd, price_on_sale, category_id, stock_quantity, is_active, description, categories.name AS category 
+                    string query = @"SELECT products.id, products.name, price_rsd, price_on_sale, category_id, stock_quantity, is_active, description, categories.name AS category 
                                      FROM products
                                      JOIN categories ON categories.id = products.category_id
-                                     WHERE products.id = @productId;";
+                                     WHERE products.id = @productId";
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
@@ -33,7 +33,6 @@ namespace Backend.Endpoints
                                 p = new Product();
                                 p.id = Convert.ToInt32(reader["id"]);
                                 p.name = reader["name"].ToString();
-                                p.image_url = reader["image_url"].ToString();
                                 p.price_rsd = Convert.ToInt32(reader["price_rsd"]);
                                 p.price_on_sale = reader["price_on_sale"] != DBNull.Value ? Convert.ToInt32(reader["price_on_sale"]) : null;
                                 p.category_id = Convert.ToInt32(reader["category_id"]);
@@ -81,7 +80,10 @@ namespace Backend.Endpoints
                         }
                     }
 
-                    query = "SELECT image_url FROM product_images WHERE product_id = @productId";
+                    query = @"SELECT image_url, is_main_image, image_id
+                              FROM product_images 
+                              WHERE product_id = @productId
+                              ORDER BY is_main_image DESC";
 
                     using(SqlCommand command = new SqlCommand(query, connection))
                     {
@@ -89,14 +91,16 @@ namespace Backend.Endpoints
 
                         using(SqlDataReader reader = await command.ExecuteReaderAsync())
                         {
-                            List<Image> secondaryImagesList = new List<Image>();
+                            List<Image> imagesList = new List<Image>();
                             while(await reader.ReadAsync())
                             {
                                 Image image = new Image();
+                                image.id = Convert.ToInt32(reader["image_id"]);
                                 image.url = reader["image_url"].ToString();
-                                secondaryImagesList.Add(image);
+                                image.is_main_image = Convert.ToBoolean(reader["is_main_image"]);
+                                imagesList.Add(image);
                             }
-                            p?.other_images = secondaryImagesList;
+                            p?.images = imagesList;
                         }
                     }
                 }
@@ -105,13 +109,12 @@ namespace Backend.Endpoints
                 {
                     id = p?.id,
                     name = p?.name,
-                    image_url = p?.image_url,
                     price_rsd = p?.price_rsd,
                     price_on_sale = p?.price_on_sale,
                     category_id = p?.category_id,
                     stock_quantity = p?.stock_quantity,
                     is_active = p?.is_active,
-                    other_images = p?.other_images,
+                    images = p?.images,
                     description = p?.description,
                     details =
                     p?.graphicsCardDetails ??
@@ -133,10 +136,11 @@ namespace Backend.Endpoints
                 {
                     await connection.OpenAsync();
 
-                    string query = @"SELECT products.id, products.name, image_url, price_rsd, price_on_sale, category_id, stock_quantity, is_active, description, categories.name AS category
+                    string query = @"SELECT products.id, product_images.image_url, products.name, price_rsd, price_on_sale, category_id, stock_quantity, is_active, description, categories.name AS category
                                      FROM products
                                      JOIN categories ON categories.id = products.category_id
-                                     WHERE products.name LIKE @searchText";
+                                     JOIN product_images ON product_images.product_id = products.id
+                                     WHERE product_images.is_main_image = 1 AND products.name LIKE @searchText";
 
                     if (is_active == true)
                     {
@@ -223,14 +227,13 @@ namespace Backend.Endpoints
                             try
                             {
                                 int productId;
-                                string query = @"INSERT INTO products(name, image_url, price_rsd, price_on_sale, category_id, stock_quantity, description)
+                                string query = @"INSERT INTO products(name, price_rsd, price_on_sale, category_id, stock_quantity, description)
                                                  OUTPUT INSERTED.id
-                                                 VALUES(@name, @image_url, @price_rsd, @price_on_sale, @category_id, @stock_quantity, @description)";
+                                                 VALUES(@name, @price_rsd, @price_on_sale, @category_id, @stock_quantity, @description)";
 
                                 using (SqlCommand command = new SqlCommand(query, connection, transaction))
                                 {
                                     command.Parameters.AddWithValue("@name", p.name);
-                                    command.Parameters.AddWithValue("@image_url", p.image_url);
                                     command.Parameters.AddWithValue("@price_rsd", Convert.ToInt32(p.price_rsd));
                                     command.Parameters.AddWithValue("@price_on_sale", (p.price_on_sale != null) ? Convert.ToInt32(p.price_on_sale) : DBNull.Value);
                                     command.Parameters.AddWithValue("@category_id", Convert.ToInt32(p.category_id));
@@ -238,6 +241,23 @@ namespace Backend.Endpoints
                                     command.Parameters.AddWithValue("@description", p.description);
 
                                     productId = Convert.ToInt32(await command.ExecuteScalarAsync());
+                                }
+
+                                p.id = productId;
+
+                                query = @"INSERT INTO product_images(product_id, image_url, is_main_image)
+                                          VALUES(@product_id, @image_url, @is_main_image)";
+
+                                foreach(Image image in p.images)
+                                {
+                                    using (SqlCommand command = new SqlCommand(query, connection, transaction))
+                                    {
+                                        command.Parameters.AddWithValue("@product_id", p.id);
+                                        command.Parameters.AddWithValue("@image_url", image.url);
+                                        command.Parameters.AddWithValue("@is_main_image", image.is_main_image);
+
+                                        await command.ExecuteNonQueryAsync();
+                                    }
                                 }
 
                                 if (p.caseDetails == null && p.powerSupplyDetails == null && p.graphicsCardDetails == null && p.hddDetails == null && p.motherboardDetails == null && p.processorDetails == null && p.ramDetails == null && p.ssdDetails == null)
@@ -263,11 +283,10 @@ namespace Backend.Endpoints
                                     }
                                 }
 
-                                p.id = productId;
                                 switch (categoryName)
                                 {
                                 case "Grafička karta":
-                                    await p?.graphicsCardDetails.postDetails(connectionString, p);
+                                    await p?.graphicsCardDetails.postDetails(connectionString, p); // TO-DO: Pass transaction as a parameter to postDetails
                                     break;
 
                                 case "Procesor":
@@ -332,7 +351,7 @@ namespace Backend.Endpoints
                         using (SqlTransaction transaction = connection.BeginTransaction())
                         {
                             string query = @"UPDATE products
-                                             SET name = @name, image_url = @image_url, price_rsd = @price_rsd,
+                                             SET name = @name, price_rsd = @price_rsd,
                                                 price_on_sale = @price_on_sale, category_id = @category_id,
                                                 stock_quantity = @stock_quantity, description = @description
                                              WHERE id = @id";
@@ -340,7 +359,6 @@ namespace Backend.Endpoints
                             using (SqlCommand command = new SqlCommand(query, connection, transaction))
                             {
                                 command.Parameters.AddWithValue("@name", p.name);
-                                command.Parameters.AddWithValue("@image_url", p.image_url);
                                 command.Parameters.AddWithValue("@price_rsd", p.price_rsd);
                                 command.Parameters.AddWithValue("@price_on_sale", (p.price_on_sale != null) ? Convert.ToInt32(p.price_on_sale) : DBNull.Value);
                                 command.Parameters.AddWithValue("@category_id", p.category_id);
