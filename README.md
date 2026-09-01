@@ -1,4 +1,4 @@
-# EcommerceSystem
+# E-Commerce System
 
 ## 🔗 Try out the App
 
@@ -10,10 +10,10 @@ Test the live app here:
 
 ## 📋 Description
 
-This is a full e-commerce system for PC hardware consisting of:
+This is a full e-commerce system consisting of:
 - React web application for customers
 - WPF desktop application for store management
-- ASP.NET Minimal API
+- .NET Minimal API
 - SQL Server database
 
 All components communicate through a shared REST API.
@@ -23,7 +23,7 @@ All components communicate through a shared REST API.
 ## 🛠️ Tech Stack
 
 - React
-- C# (ASP.NET Minimal API)
+- C# (.NET Minimal API)
 - WPF (.NET)
 - SQL Server
 
@@ -32,10 +32,9 @@ All components communicate through a shared REST API.
 ## 🚧 To Do
 
 - [ ] Add secure authentication for API access
-- [ ] Add input validation on backend
 - [✓] Organize desktop-app and back-end code in a better way
 - [ ] Create a PC configurator using store's components for customers
-- [ ] Create separate table for storing multiple images for each product
+- [✓] Create separate table for storing multiple images for each product
 - [✓] Add product pagination
 
 ---
@@ -43,32 +42,44 @@ All components communicate through a shared REST API.
 ## 🔌 API Endpoints
 
 ### Products
-- GET `/products?is_active={bool}`
-- GET `/products/{productId}`
-- POST `/products`
-- PUT `/products`
-- PATCH `/products/{productId}/status`
+
+* GET `/products?is_active={bool}&category_id={int}&search_text={string}&product_ids={int[]}&page={int}&products_per_page={int}`
+* GET `/products/{productId}`
+* POST `/products`
+* PUT `/products`
+* PATCH `/products/{productId}/status?isActive={bool}`
+
+### Product Pages
+
+* GET `/product-pages?products_per_page={int}&category_id={int}&search_text={string}`
 
 ### Categories
-- GET `/categories`
-- POST `/categories`
-- PUT `/categories`
-- DELETE `/categories/{categoryId}`
+
+* GET `/categories`
+* POST `/categories`
+* PUT `/categories`
+* DELETE `/categories/{categoryId}`
 
 ### Delivery Options
-- GET `/delivery-options`
-- POST `/delivery-options`
-- PUT `/delivery-options`
-- DELETE `/delivery-options/{deliveryOptionID}`
+
+* GET `/delivery-options`
+* POST `/delivery-options`
+* PUT `/delivery-options`
+* DELETE `/delivery-options/{deliveryOptionID}`
 
 ### Orders
-- GET `/orders?is_fulfilled={int}`
-- GET `/orders/{id}`
-- POST `/orders`
-- PATCH `/orders`
+
+* GET `/orders?is_fulfilled={int}`
+* GET `/orders/{id}`
+* POST `/orders`
+* PATCH `/orders`
 
 ---
 
 ## Setup instructions
 
-- If you want to test out the website, along with the desktop application, you will have to import web_store.bacpac file in SQL server, and change the corresponding ConnectionStrings in desktop-app/appsettings.json and back-end/appsettings.json
+1. Run command "git clone https://github.com/gudzev/ecommerce-system.git" or download project files in a different way.
+2. Import ecommerce-system .bacpac file from ecommerce-system/db/ directory in SQL server.
+3. Open ecommerce-system/front-end and run command "npm install" (Node.JS must be installed for this to work).
+4. Change connection strings in ecommerce-system/back-end/appsettings.json and ecommerce-system/desktop-app/appsettings.json to valid ones.
+5. Using Visual Studio (or any other IDE), run .NET Minimal API (back-end) and run command "npm run dev" inside ecommerce-system/front-end, after which website will be displayed.
