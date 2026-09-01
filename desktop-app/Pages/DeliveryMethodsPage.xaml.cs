@@ -72,7 +72,8 @@ namespace DesktopApp.Pages
         {
             DeliveryOption deliveryOption = (DeliveryOption)MethodsTable.SelectedItem;
 
-            if (deliveryOption == null) deliveryOption = (DeliveryOption)MethodsTable.Items[0];
+            if (deliveryOption == null) 
+                deliveryOption = (DeliveryOption)MethodsTable.Items[0];
 
             minimumValueTextBox.Text = deliveryOption.free_shipping_minimum_value.ToString();
             optionNameTextBox.Text = deliveryOption.name;

@@ -124,13 +124,19 @@ export default function Product({allCategories})
                                     </thead>
                                     <tbody>
                                         {
-                                            Object.entries(thisProduct.details).map((productDetail, index) =>
+                                            /*
+                                                    <tr key={index}>
+                                                        <td className="product-specification-name">{key}</td>
+                                                        <td className="product-specification-value">{value}</td>
+                                                    </tr>
+                                            */
+
+                                            thisProduct.details.map((detail, index) =>
                                             {
-                                                const [key, value] = productDetail;
                                                 return (
                                                     <tr key={index}>
-                                                        <td className="product-specification-name">{translateToSerbian(key)}</td>
-                                                        <td className="product-specification-value">{value}</td>
+                                                        <td className="product-specification-name">{translateToSerbian(detail.name, {capitalize: true})}</td>
+                                                        <td className="product-specification-value">{translateToSerbian(detail.value, {capitalize: true})}</td>
                                                     </tr>
                                                 )
                                             })

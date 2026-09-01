@@ -17,6 +17,10 @@ namespace DesktopApp.Pages
             InitializeComponent();
         }
 
+        Product selectedProduct = new Product();
+
+        // FIX PUT not working
+
         private async void ProductsPageLoaded(object sender, RoutedEventArgs e)
         {
             await fillCategoriesComboBox();
@@ -37,7 +41,7 @@ namespace DesktopApp.Pages
             {
                 HttpResponseMessage response = await MainWindow.client.GetAsync("https://localhost:7097/products");
                 response.EnsureSuccessStatusCode();
-                MainWindow.products = await response.Content.ReadFromJsonAsync<ObservableCollection<Product>>();
+                MainWindow.products = await response.Content.ReadFromJsonAsync<ObservableCollection<Product>>() ?? [];
 
                 ProductsTable.ItemsSource = MainWindow.products;
                 LoadFirstProductsRow();
@@ -48,23 +52,30 @@ namespace DesktopApp.Pages
             }
         }
 
-        private void LoadProductsRow(object sender, SelectionChangedEventArgs e)
+        private async void LoadProductsRow(object sender, SelectionChangedEventArgs e)
         {
-            Product product = (Product)ProductsTable.SelectedItem;
+            if(ProductsTable.SelectedItem is not Product p)
+            {
+                return;
+            }
 
-            if (product == null) product = (Product)ProductsTable.Items[0];
+            Product product = (Product)ProductsTable.SelectedItem;
+            selectedProduct = await MainWindow.client.GetFromJsonAsync<Product>("https://localhost:7097/products/" + product.id) ?? product;
+
+            if (product == null) 
+                product = (Product)ProductsTable.Items[0];
 
             clearTextBoxes();
-            productNameTextBox.Text = product.name;
-            imageURLTextBox.Text = product.image_url;
-            priceTextBox.Text = product.price_rsd.ToString();
-            salePriceTextBox.Text = product.price_on_sale.ToString() ?? "";
-            quantityTextBox.Text = product.stock_quantity.ToString();
-            descriptionRichTextBox.AppendText(product?.description?.ToString() ?? "");
+            productNameTextBox.Text = selectedProduct.name;
+            imageURLTextBox.Text = (selectedProduct.images.Find(image => image.is_main_image == true))?.url;
+            priceTextBox.Text = selectedProduct.price_rsd.ToString();
+            salePriceTextBox.Text = selectedProduct.price_on_sale.ToString() ?? "";
+            quantityTextBox.Text = selectedProduct.stock_quantity.ToString();
+            descriptionRichTextBox.AppendText(selectedProduct?.description?.ToString() ?? "");
 
             foreach (var category in MainWindow.categories)
             {
-                if (category.id == product.category_id)
+                if (category.id == selectedProduct?.category_id)
                 {
                     categoryComboBox.SelectedItem = category;
                     break;
@@ -132,40 +143,9 @@ namespace DesktopApp.Pages
 
         private async void productUpdateBtn_Click(object sender, RoutedEventArgs e)
         {
-            Product existingProduct = new Product();
-
-            if (ProductsTable.SelectedItem is Product selectedProduct)
-            {
-                existingProduct.id = selectedProduct.id;
-            }
-            else
-            {
-                return;
-            }
-
-            int categoryId = -1;
-            foreach (var category in MainWindow.categories)
-            {
-                if (categoryComboBox.SelectedItem == category)
-                {
-                    categoryId = category.id;
-                    break;
-                }
-            }
-
-            if (categoryId == -1) return;
-
-            existingProduct.name = productNameTextBox.Text;
-            existingProduct.images.Add(new Backend.Models.Image(imageURLTextBox.Text)); // TO-DO: Let user add multiple images through the app
-            existingProduct.price_rsd = Convert.ToInt32(priceTextBox.Text);
-            existingProduct.price_on_sale = (salePriceTextBox.Text == "") ? null : Convert.ToInt32(salePriceTextBox.Text);
-            existingProduct.category_id = categoryId;
-            existingProduct.stock_quantity = Convert.ToInt32(quantityTextBox.Text);
-            existingProduct.description = new TextRange(descriptionRichTextBox.Document.ContentStart, descriptionRichTextBox.Document.ContentEnd).Text;
-
             try
             {
-                HttpResponseMessage response = await MainWindow.client.PutAsJsonAsync("https://localhost:7097/products/", existingProduct);
+                HttpResponseMessage response = await MainWindow.client.PutAsJsonAsync("https://localhost:7097/products/", selectedProduct);
                 response.EnsureSuccessStatusCode();
                 LoadProductsTable();
             }
