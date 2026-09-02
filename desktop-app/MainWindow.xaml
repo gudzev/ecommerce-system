@@ -23,6 +23,7 @@
                 <Button x:Name="NarudzbineBtn" Content="Narudžbine" Style="{StaticResource SidebarButton}" Click="NarudzbineBtn_Click"/>
                 <Button x:Name="DostavaBtn" Content="Metode dostave" Style="{StaticResource SidebarButton}" Click="DostavaBtn_Click"/>
                 <Button x:Name="KategorijaBtn" Content="Kategorije" Style="{StaticResource SidebarButton}" Click="KategorijaBtn_Click"/>
+                <Button x:Name="SpecifikacijeBtn" Content="Specifikacije" Style="{StaticResource SidebarButton}" Click="SpecifikacijeBtn_Click"/>
             </StackPanel>
         </Border>
 

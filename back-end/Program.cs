@@ -29,5 +29,6 @@ app.MapCategoryEndpoints(connectionString);
 app.MapDeliveryOptionEndpoints(connectionString);
 app.MapOrderEndpoints(connectionString);
 app.MapProductPagesEndpoints(connectionString);
+app.MapCategorySpecificationEndpoints(connectionString);
 
 app.Run();

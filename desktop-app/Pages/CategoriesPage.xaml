@@ -9,7 +9,7 @@
 
     <Grid x:Name="Kategorije" Grid.Column="1" Grid.Row="1" Background="{StaticResource HeaderLinksBg}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="150"></ColumnDefinition>
+            <ColumnDefinition Width="200"></ColumnDefinition>
             <ColumnDefinition Width="300"></ColumnDefinition>
             <ColumnDefinition Width="300"></ColumnDefinition>
             <ColumnDefinition Width="*"></ColumnDefinition>
@@ -21,12 +21,12 @@
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <Label Content="Naziv kategorije" Grid.Column="0" Grid.Row="0" Style="{StaticResource TextBoxLabel}"/>
+        <Label Content="Kategorija" Grid.Column="0" Grid.Row="0" Style="{StaticResource TextBoxLabel}"/>
         <TextBox x:Name="categoryNameTextBox" Grid.Row="0" Grid.Column="1" Style="{StaticResource TextBox}"/>
 
-        <Button x:Name="addCategoryBtn" Content="Dodaj kategoriju" Grid.Column="2" Grid.Row="0" Style="{StaticResource Btn}" Click="addCategoryBtn_Click"/>
-        <Button x:Name="updateCategoryBtn" Content="Izmeni kategoriju" Grid.Column="2" Grid.Row="1" Style="{StaticResource Btn}" Click="updateCategoryBtn_Click"/>
-        <Button x:Name="removeCategoryBtn" Content="Obriši kategoriju" Grid.Column="2" Grid.Row="2" Style="{StaticResource Btn}" Click="removeCategoryBtn_Click"/>
+        <Button x:Name="addCategoryBtn" Content="Dodaj kategoriju" Grid.Column="3" Grid.Row="0" Style="{StaticResource Btn}" Click="addCategoryBtn_Click"/>
+        <Button x:Name="updateCategoryBtn" Content="Izmeni kategoriju" Grid.Column="3" Grid.Row="1" Style="{StaticResource Btn}" Click="updateCategoryBtn_Click"/>
+        <Button x:Name="removeCategoryBtn" Content="Obriši kategoriju" Grid.Column="3" Grid.Row="2" Style="{StaticResource Btn}" Click="removeCategoryBtn_Click"/>
 
         <DataGrid x:Name="CategoriesTable" SelectionUnit="FullRow" AutoGenerateColumns="False" Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="3" IsReadOnly="True" SelectionMode="Single" HorizontalAlignment="Stretch" SelectionChanged="LoadCategoriesRow">
             <DataGrid.Columns>

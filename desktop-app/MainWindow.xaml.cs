@@ -22,7 +22,8 @@ namespace WebStoreManagementApp
             ["productsPage"] = new ProductsPage(),
             ["ordersPage"] = new OrdersPage(),
             ["deliveryMethodsPage"] = new DeliveryMethodsPage(),
-            ["categoriesPage"] = new CategoriesPage()
+            ["categoriesPage"] = new CategoriesPage(),
+            ["specificationsPage"] = new SpecificationsPage()
         };
 
         public static bool shouldRefreshCategories = true;
@@ -37,6 +38,11 @@ namespace WebStoreManagementApp
         {
             CurrentGridLabel.Content = "Kategorije";
             MainFrame.Navigate(pages["categoriesPage"]);
+        }
+        private void SpecifikacijeBtn_Click(object sender, RoutedEventArgs e)
+        {
+            CurrentGridLabel.Content = "Specifikacije";
+            MainFrame.Navigate(pages["specificationsPage"]);
         }
 
         private async void ProizvodiBtn_Click(object sender, RoutedEventArgs e)
@@ -69,11 +75,11 @@ namespace WebStoreManagementApp
             {
                 HttpResponseMessage response = await client.GetAsync("https://localhost:7097/delivery-options");
                 response.EnsureSuccessStatusCode();
-                deliveryOptions = await response.Content.ReadFromJsonAsync<ObservableCollection<DeliveryOption>>();
+                deliveryOptions = await response.Content.ReadFromJsonAsync<ObservableCollection<DeliveryOption>>() ?? [];
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                MessageBox.Show(ex.Message);
             }
         }
 
@@ -90,11 +96,11 @@ namespace WebStoreManagementApp
             {
                 HttpResponseMessage response = await client.GetAsync("https://localhost:7097/categories");
                 response.EnsureSuccessStatusCode();
-                categories = await response.Content.ReadFromJsonAsync<ObservableCollection<Category>>();
+                categories = await response.Content.ReadFromJsonAsync<ObservableCollection<Category>>() ?? [];
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                MessageBox.Show(ex.Message);
             }
         }
     }

@@ -62,7 +62,7 @@
 
         <DataGrid x:Name="OrdersTable" SelectionUnit="FullRow" AutoGenerateColumns="False" Grid.ColumnSpan="6" Grid.Row="7" IsReadOnly="True" SelectionMode="Single" HorizontalAlignment="Stretch" SelectionChanged="LoadOrdersRow">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Binding="{Binding id}" Width="50"/>
+                <DataGridTextColumn Header="ID" Binding="{Binding id}" Width="100"/>
                 <DataGridTextColumn Header="Email" Binding="{Binding email}" Width="*"/>
                 <DataGridTextColumn Header="Ime" Binding="{Binding name}" Width="*"/>
                 <DataGridTextColumn Header="Prezime" Binding="{Binding surname}" Width="*"/>

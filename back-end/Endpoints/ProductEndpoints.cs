@@ -86,6 +86,7 @@ namespace Backend.Endpoints
                                 productSpecification.category_specification_id = Convert.ToInt32(reader["_category_specification_id"]);
                                 productSpecification.name = reader["name"].ToString();
                                 productSpecification.value = reader["value"].ToString();
+                                productSpecification.product_id = p?.id;
                                 specifications.Add(productSpecification);
                             }
                             p?.specifications = specifications;

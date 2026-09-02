@@ -25,10 +25,10 @@
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <Button x:Name="productAddBtn" Content="Dodaj proizvod" Grid.Column="2" Grid.Row="0" Style="{StaticResource Btn}" Click="productAddBtn_Click"/>
-        <Button x:Name="productUpdateBtn" Content="Izmeni proizvod" Grid.Column="2" Grid.Row="1" Style="{StaticResource Btn}" Click="productUpdateBtn_Click"/>
-        <Button x:Name="productDeactivateBtn" Content="Deaktiviraj proizvod" Grid.Column="2" Grid.Row="2" Style="{StaticResource Btn}" Click="productDeactivateBtn_Click" />
-        <Button x:Name="productActivateBtn" Content="Aktiviraj proizvod" Grid.Column="2" Grid.Row="3" Style="{StaticResource Btn}" Click="productActivateBtn_Click"/>
+        <Button x:Name="productAddBtn" Content="Dodaj proizvod" Grid.Column="3" Grid.Row="0" Style="{StaticResource Btn}" Click="productAddBtn_Click"/>
+        <Button x:Name="productUpdateBtn" Content="Izmeni proizvod" Grid.Column="3" Grid.Row="1" Style="{StaticResource Btn}" Click="productUpdateBtn_Click"/>
+        <Button x:Name="productDeactivateBtn" Content="Deaktiviraj proizvod" Grid.Column="3" Grid.Row="2" Style="{StaticResource Btn}" Click="productDeactivateBtn_Click" />
+        <Button x:Name="productActivateBtn" Content="Aktiviraj proizvod" Grid.Column="3" Grid.Row="3" Style="{StaticResource Btn}" Click="productActivateBtn_Click"/>
 
         <Label Content="Naziv proizvoda" Grid.Column="0" Grid.Row="0" Style="{StaticResource TextBoxLabel}"/>
         <TextBox x:Name="productNameTextBox" Grid.Column="1" Grid.Row="0" Style="{StaticResource TextBox}"/>
@@ -49,7 +49,7 @@
         <TextBox x:Name="quantityTextBox" Grid.Column="1" Grid.Row="5" Style="{StaticResource TextBox}"/>
 
         <Label Content="Opis" Grid.Column="0" Grid.Row="6" Style="{StaticResource TextBoxLabel}"/>
-        <RichTextBox x:Name="descriptionRichTextBox" Grid.Column="1" Grid.Row="6" Grid.ColumnSpan="2" Style="{StaticResource RichTextBox}" SpellCheck.IsEnabled="False"  VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled"/>
+        <TextBox x:Name="descriptionTextBox" Grid.Column="1" Grid.Row="6" Grid.ColumnSpan="1" Style="{StaticResource TextBox}"/>
 
         <DataGrid x:Name="ProductsTable" SelectionUnit="FullRow" AutoGenerateColumns="False" Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="7" IsReadOnly="True" SelectionMode="Single" HorizontalAlignment="Stretch" SelectionChanged="LoadProductsRow">
             <DataGrid.Columns>

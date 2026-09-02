@@ -10,30 +10,24 @@ Test the live app here:
 
 ## 📋 Description
 
-This is a full e-commerce system consisting of:
-- React web application for customers
-- WPF desktop application for store management
-- .NET Minimal API
-- SQL Server database
-
-All components communicate through a shared REST API.
+This is a full e-commerce system that includes a website for customers to make orders on, desktop app for management of products, categories, orders and more, shared REST API and a database.
 
 ---
 
 ## 🛠️ Tech Stack
 
-- React
-- C# (.NET Minimal API)
-- WPF (.NET)
-- SQL Server
+- React as front end
+- .NET Minimal API as back end
+- WPF as a desktop app
+- SQL Server for database
 
 ---
 
 ## 🚧 To Do
 
-- [ ] Add secure authentication for API access
-- [✓] Organize desktop-app and back-end code in a better way
+- [ ] Add secure authentication and rate limiting to API
 - [ ] Create a PC configurator using store's components for customers
+- [✓] Organize desktop-app and back-end code in a better way
 - [✓] Create separate table for storing multiple images for each product
 - [✓] Add product pagination
 
@@ -65,14 +59,21 @@ All components communicate through a shared REST API.
 * GET `/delivery-options`
 * POST `/delivery-options`
 * PUT `/delivery-options`
-* DELETE `/delivery-options/{deliveryOptionID}`
+* DELETE `/delivery-options/{int}`
 
 ### Orders
 
 * GET `/orders?is_fulfilled={int}`
-* GET `/orders/{id}`
+* GET `/orders/{int}`
 * POST `/orders`
 * PATCH `/orders`
+
+### Category Specifications
+
+* GET `/category_specifications?category_id={int}`
+* POST `/category_specifications`
+* PUT `/category_specifications`
+* DELETE `/category_specifications?category_specification_id={int}`
 
 ---
 

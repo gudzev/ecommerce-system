@@ -19,8 +19,6 @@ namespace DesktopApp.Pages
 
         Product selectedProduct = new Product();
 
-        // FIX PUT not working
-
         private async void ProductsPageLoaded(object sender, RoutedEventArgs e)
         {
             await fillCategoriesComboBox();
@@ -48,7 +46,7 @@ namespace DesktopApp.Pages
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                MessageBox.Show(ex.Message);
             }
         }
 
@@ -71,7 +69,7 @@ namespace DesktopApp.Pages
             priceTextBox.Text = selectedProduct.price_rsd.ToString();
             salePriceTextBox.Text = selectedProduct.price_on_sale.ToString() ?? "";
             quantityTextBox.Text = selectedProduct.stock_quantity.ToString();
-            descriptionRichTextBox.AppendText(selectedProduct?.description?.ToString() ?? "");
+            descriptionTextBox.Text = selectedProduct?.description?.ToString();
 
             foreach (var category in MainWindow.categories)
             {
@@ -94,11 +92,11 @@ namespace DesktopApp.Pages
             priceTextBox.Text = product.price_rsd.ToString();
             salePriceTextBox.Text = product.price_on_sale.ToString() ?? "";
             quantityTextBox.Text = product.stock_quantity.ToString();
-            descriptionRichTextBox.AppendText(product?.description?.ToString() ?? "");
+            descriptionTextBox.Text = product?.description?.ToString();
 
             foreach (var category in MainWindow.categories)
             {
-                if (category.id == product.category_id)
+                if (category.id == product?.category_id)
                 {
                     categoryComboBox.SelectedItem = category;
                 }
@@ -122,12 +120,12 @@ namespace DesktopApp.Pages
             if (categoryId == -1) return;
 
             newProduct.name = productNameTextBox.Text;
-            newProduct.images.Add(new Backend.Models.Image(imageURLTextBox.Text)); // TO-DO: Let user add multiple images through the app
+            newProduct.images.Add(new Backend.Models.Image(imageURLTextBox.Text));
             newProduct.price_rsd = Convert.ToInt32(priceTextBox.Text);
             newProduct.price_on_sale = (salePriceTextBox.Text == "") ? null : Convert.ToInt32(salePriceTextBox.Text);
             newProduct.category_id = categoryId;
             newProduct.stock_quantity = Convert.ToInt32(quantityTextBox.Text);
-            newProduct.description = new TextRange(descriptionRichTextBox.Document.ContentStart, descriptionRichTextBox.Document.ContentEnd).Text;
+            newProduct.description = descriptionTextBox.Text;
 
             try
             {
@@ -137,7 +135,7 @@ namespace DesktopApp.Pages
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                MessageBox.Show(ex.Message);
             }
         }
 
@@ -145,13 +143,35 @@ namespace DesktopApp.Pages
         {
             try
             {
+                Product newProduct = selectedProduct;
+
+                int categoryId = -1;
+
+                foreach(var category in MainWindow.categories)
+                {
+                    if(categoryComboBox.SelectedItem == category)
+                    {
+                        categoryId = category.id;
+                        break;
+                    }
+                }
+
+                if (categoryId == -1) return;
+
+                newProduct.name = productNameTextBox.Text;
+                newProduct.price_rsd = Convert.ToInt32(priceTextBox.Text);
+                newProduct.price_on_sale = (salePriceTextBox.Text == "") ? null : Convert.ToInt32(salePriceTextBox.Text);
+                newProduct.stock_quantity = Convert.ToInt32(quantityTextBox.Text);
+                newProduct.description = descriptionTextBox.Text;
+                newProduct.category_id = categoryId;
+
                 HttpResponseMessage response = await MainWindow.client.PutAsJsonAsync("https://localhost:7097/products/", selectedProduct);
                 response.EnsureSuccessStatusCode();
                 LoadProductsTable();
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                MessageBox.Show(ex.Message);
             }
         }
 
@@ -188,7 +208,7 @@ namespace DesktopApp.Pages
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                MessageBox.Show(ex.Message);
             }
         }
 
@@ -199,7 +219,7 @@ namespace DesktopApp.Pages
             priceTextBox.Clear();
             salePriceTextBox.Clear();
             quantityTextBox.Clear();
-            descriptionRichTextBox.Document.Blocks.Clear();
+            descriptionTextBox.Clear();
         }
     }
 }
