@@ -43,9 +43,9 @@ namespace DesktopApp.Pages
 
             try
             {
-                HttpResponseMessage response = await MainWindow.client.GetAsync("https://localhost:7097/categories");
+                HttpResponseMessage response = await MainWindow.client.GetAsync(MainWindow.API_URL + "/categories");
                 response.EnsureSuccessStatusCode();
-                MainWindow.categories = await response.Content.ReadFromJsonAsync<ObservableCollection<Category>>();
+                MainWindow.categories = await response.Content.ReadFromJsonAsync<ObservableCollection<Category>>() ?? [];
             }
             catch (Exception ex)
             {
@@ -94,7 +94,7 @@ namespace DesktopApp.Pages
 
             try
             {
-                HttpResponseMessage response = await MainWindow.client.PostAsJsonAsync("https://localhost:7097/categories", newCategory);
+                HttpResponseMessage response = await MainWindow.client.PostAsJsonAsync(MainWindow.API_URL + "/categories", newCategory);
                 response.EnsureSuccessStatusCode();
                 await LoadCategoriesTable();
             }
@@ -115,7 +115,7 @@ namespace DesktopApp.Pages
 
             try
             {
-                HttpResponseMessage response = await MainWindow.client.PutAsJsonAsync("https://localhost:7097/categories", existingCategory);
+                HttpResponseMessage response = await MainWindow.client.PutAsJsonAsync(MainWindow.API_URL + "/categories", existingCategory);
                 response.EnsureSuccessStatusCode();
                 await LoadCategoriesTable();
             }
@@ -134,7 +134,7 @@ namespace DesktopApp.Pages
 
             try
             {
-                HttpResponseMessage response = await MainWindow.client.DeleteAsync("https://localhost:7097/categories/" + selectedCategory.id);
+                HttpResponseMessage response = await MainWindow.client.DeleteAsync(MainWindow.API_URL + "/categories/" + selectedCategory.id);
                 response.EnsureSuccessStatusCode();
                 await LoadCategoriesTable();
             }

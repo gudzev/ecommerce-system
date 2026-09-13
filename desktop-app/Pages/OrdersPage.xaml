@@ -5,6 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:DesktopApp.Pages"
       mc:Ignorable="d" 
+      d:DesignHeight="745" d:DesignWidth="1240"
       Title="OrdersPage" Loaded="OrdersPageLoaded">
 
     <Grid x:Name="Narudzbine" Grid.Column="1" Grid.Row="1" Background="{StaticResource HeaderLinksBg}">

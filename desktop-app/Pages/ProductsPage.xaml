@@ -4,7 +4,8 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:DesktopApp.Pages"
-      mc:Ignorable="d" 
+      mc:Ignorable="d"
+      d:DesignHeight="745" d:DesignWidth="1240"
       Title="ProductsPage" Loaded="ProductsPageLoaded">
 
     <Grid x:Name="Proizvodi" Grid.Column="1" Grid.Row="1" Background="{StaticResource HeaderLinksBg}">

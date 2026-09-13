@@ -47,10 +47,10 @@ namespace DesktopApp.Pages
         {
             try
             {
-                HttpResponseMessage response = await MainWindow.client.GetAsync("https://localhost:7097/orders?is_fulfilled=" + is_fulfilled);
+                HttpResponseMessage response = await MainWindow.client.GetAsync(MainWindow.API_URL + "/orders?is_fulfilled=" + is_fulfilled);
                 response.EnsureSuccessStatusCode();
 
-                MainWindow.orders = await response.Content.ReadFromJsonAsync<ObservableCollection<Order>>();
+                MainWindow.orders = await response.Content.ReadFromJsonAsync<ObservableCollection<Order>>() ?? [];
                 OrdersTable.ItemsSource = MainWindow.orders;
             }
             catch (Exception ex)
@@ -124,7 +124,7 @@ namespace DesktopApp.Pages
 
             try
             {
-                HttpResponseMessage response = await MainWindow.client.PatchAsJsonAsync("https://localhost:7097/orders/", selectedOrder);
+                HttpResponseMessage response = await MainWindow.client.PatchAsJsonAsync(MainWindow.API_URL + "/orders/", selectedOrder);
                 response.EnsureSuccessStatusCode();
                 await LoadOrdersTable(0);
             }

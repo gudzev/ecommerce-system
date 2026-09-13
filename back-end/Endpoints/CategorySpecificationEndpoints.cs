@@ -105,7 +105,7 @@ namespace Backend.Endpoints
                 }
             });
 
-            app.MapDelete("/category-specifications", async (int category_specification_id) =>
+            app.MapDelete("/category-specifications/{category_specification_id}", async (int category_specification_id) =>
             {
                 using(SqlConnection connection = new SqlConnection(connectionString))
                 {

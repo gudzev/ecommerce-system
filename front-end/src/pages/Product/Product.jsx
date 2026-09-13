@@ -124,13 +124,6 @@ export default function Product({allCategories})
                                     </thead>
                                     <tbody>
                                         {
-                                            /*
-                                                    <tr key={index}>
-                                                        <td className="product-specification-name">{key}</td>
-                                                        <td className="product-specification-value">{value}</td>
-                                                    </tr>
-                                            */
-
                                             thisProduct.details.map((detail, index) =>
                                             {
                                                 return (

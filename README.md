@@ -52,7 +52,7 @@ This is a full e-commerce system that includes a website for customers to make o
 * GET `/categories`
 * POST `/categories`
 * PUT `/categories`
-* DELETE `/categories/{categoryId}`
+* DELETE `/categories/{int}`
 
 ### Delivery Options
 
@@ -73,7 +73,7 @@ This is a full e-commerce system that includes a website for customers to make o
 * GET `/category_specifications?category_id={int}`
 * POST `/category_specifications`
 * PUT `/category_specifications`
-* DELETE `/category_specifications?category_specification_id={int}`
+* DELETE `/category_specifications/{int}`
 
 ---
 
@@ -82,5 +82,5 @@ This is a full e-commerce system that includes a website for customers to make o
 1. Run command "git clone https://github.com/gudzev/ecommerce-system.git" or download project files in a different way.
 2. Import ecommerce-system .bacpac file from ecommerce-system/db/ directory in SQL server.
 3. Open ecommerce-system/front-end and run command "npm install" (Node.JS must be installed for this to work).
-4. Change connection strings in ecommerce-system/back-end/appsettings.json and ecommerce-system/desktop-app/appsettings.json to valid ones.
+4. Change connection string in ecommerce-system/back-end/appsettings.json to valid one.
 5. Using Visual Studio (or any other IDE), run .NET Minimal API (back-end) and run command "npm run dev" inside ecommerce-system/front-end, after which website will be displayed.

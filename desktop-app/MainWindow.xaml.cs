@@ -10,6 +10,8 @@ namespace WebStoreManagementApp
 {
     public partial class MainWindow : Window
     {
+        public static string API_URL = "https://localhost:7097"; // USED AS AN API REQUEST LINK IN WHOLE PROGRAM
+
         public static HttpClient client = new HttpClient();
 
         public static ObservableCollection<DeliveryOption> deliveryOptions = new ObservableCollection<DeliveryOption>();
@@ -73,7 +75,7 @@ namespace WebStoreManagementApp
 
             try
             {
-                HttpResponseMessage response = await client.GetAsync("https://localhost:7097/delivery-options");
+                HttpResponseMessage response = await client.GetAsync(API_URL + "/delivery-options");
                 response.EnsureSuccessStatusCode();
                 deliveryOptions = await response.Content.ReadFromJsonAsync<ObservableCollection<DeliveryOption>>() ?? [];
             }
@@ -94,7 +96,7 @@ namespace WebStoreManagementApp
 
             try
             {
-                HttpResponseMessage response = await client.GetAsync("https://localhost:7097/categories");
+                HttpResponseMessage response = await client.GetAsync(API_URL + "/categories");
                 response.EnsureSuccessStatusCode();
                 categories = await response.Content.ReadFromJsonAsync<ObservableCollection<Category>>() ?? [];
             }

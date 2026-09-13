@@ -37,7 +37,7 @@ namespace DesktopApp.Pages
         {
             try
             {
-                HttpResponseMessage response = await MainWindow.client.GetAsync("https://localhost:7097/products");
+                HttpResponseMessage response = await MainWindow.client.GetAsync(MainWindow.API_URL + "/products");
                 response.EnsureSuccessStatusCode();
                 MainWindow.products = await response.Content.ReadFromJsonAsync<ObservableCollection<Product>>() ?? [];
 
@@ -58,10 +58,11 @@ namespace DesktopApp.Pages
             }
 
             Product product = (Product)ProductsTable.SelectedItem;
-            selectedProduct = await MainWindow.client.GetFromJsonAsync<Product>("https://localhost:7097/products/" + product.id) ?? product;
+            selectedProduct = await MainWindow.client.GetFromJsonAsync<Product>(MainWindow.API_URL + "/products/" + product.id) ?? product;
 
-            if (product == null) 
-                product = (Product)ProductsTable.Items[0];
+
+            //if (product == null) 
+              //  product = (Product)ProductsTable.Items[0];
 
             clearTextBoxes();
             productNameTextBox.Text = selectedProduct.name;
@@ -129,7 +130,7 @@ namespace DesktopApp.Pages
 
             try
             {
-                HttpResponseMessage response = await MainWindow.client.PostAsJsonAsync("https://localhost:7097/products/", newProduct);
+                HttpResponseMessage response = await MainWindow.client.PostAsJsonAsync(MainWindow.API_URL + "/products/", newProduct);
                 response.EnsureSuccessStatusCode();
                 LoadProductsTable();
             }
@@ -165,7 +166,7 @@ namespace DesktopApp.Pages
                 newProduct.description = descriptionTextBox.Text;
                 newProduct.category_id = categoryId;
 
-                HttpResponseMessage response = await MainWindow.client.PutAsJsonAsync("https://localhost:7097/products/", selectedProduct);
+                HttpResponseMessage response = await MainWindow.client.PutAsJsonAsync(MainWindow.API_URL + "/products/", selectedProduct);
                 response.EnsureSuccessStatusCode();
                 LoadProductsTable();
             }
@@ -201,7 +202,7 @@ namespace DesktopApp.Pages
                     return;
                 }
 
-                HttpResponseMessage response = await MainWindow.client.PatchAsync("https://localhost:7097/products/" + productId + "/status?isActive=" + status,
+                HttpResponseMessage response = await MainWindow.client.PatchAsync(MainWindow.API_URL + "/products/" + productId + "/status?isActive=" + status,
                     null
                     );
                 response.EnsureSuccessStatusCode();

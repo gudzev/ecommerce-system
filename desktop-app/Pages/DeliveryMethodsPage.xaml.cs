@@ -46,9 +46,9 @@ namespace DesktopApp.Pages
 
             try
             {
-                HttpResponseMessage response = await MainWindow.client.GetAsync("https://localhost:7097/delivery-options");
+                HttpResponseMessage response = await MainWindow.client.GetAsync(MainWindow.API_URL + "/delivery-options");
                 response.EnsureSuccessStatusCode();
-                MainWindow.deliveryOptions = await response.Content.ReadFromJsonAsync<ObservableCollection<DeliveryOption>>();
+                MainWindow.deliveryOptions = await response.Content.ReadFromJsonAsync<ObservableCollection<DeliveryOption>>() ?? [];
             }
             catch (Exception ex)
             {
@@ -104,7 +104,7 @@ namespace DesktopApp.Pages
 
             try
             {
-                HttpResponseMessage response = await MainWindow.client.DeleteAsync("https://localhost:7097/delivery-options/" + deliveryMethodId);
+                HttpResponseMessage response = await MainWindow.client.DeleteAsync(MainWindow.API_URL + "/delivery-options/" + deliveryMethodId);
                 response.EnsureSuccessStatusCode();
                 await LoadMethodsTable();
             }
@@ -121,7 +121,7 @@ namespace DesktopApp.Pages
 
             try
             {
-                HttpResponseMessage response = await MainWindow.client.PutAsJsonAsync("https://localhost:7097/delivery-options/", deliveryOption);
+                HttpResponseMessage response = await MainWindow.client.PutAsJsonAsync(MainWindow.API_URL + "/delivery-options/", deliveryOption);
                 response.EnsureSuccessStatusCode();
                 await LoadMethodsTable();
             }
@@ -138,7 +138,7 @@ namespace DesktopApp.Pages
 
             try
             {
-                HttpResponseMessage response = await MainWindow.client.PostAsJsonAsync("https://localhost:7097/delivery-options/", deliveryOption);
+                HttpResponseMessage response = await MainWindow.client.PostAsJsonAsync(MainWindow.API_URL + "/delivery-options/", deliveryOption);
                 response.EnsureSuccessStatusCode();
                 await LoadMethodsTable();
             }

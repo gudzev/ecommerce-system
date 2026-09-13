@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:DesktopApp.Pages"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="745" d:DesignWidth="1240"
       Title="SpecificationsPage">
 
     <Grid x:Name="Specifikacije" Grid.Column="1" Grid.Row="1" Background="{StaticResource HeaderLinksBg}" Loaded="Specifikacije_Loaded">
@@ -28,9 +28,9 @@
         <Label Content="Specifikacija" Style="{StaticResource TextBoxLabel}" Grid.Column="0" Grid.Row="1" />
         <TextBox Style="{StaticResource TextBox}" Grid.Row="1" Grid.Column="1" x:Name="specificationNameTextBox"/>
 
-        <Button Style="{StaticResource Btn}" Content="Dodaj specifikaciju" Grid.Column="3" Grid.Row="0" x:Name="addSpecificationBtn"/>
-        <Button Style="{StaticResource Btn}" Content="Ažuriraj specifikaciju" Grid.Column="3" Grid.Row="1" x:Name="updateSpecificationBtn"/>
-        <Button Style="{StaticResource Btn}" Content="Obriši specifikaciju" Grid.Column="3" Grid.Row="2" x:Name="deleteSpecificationBtn"/>
+        <Button Style="{StaticResource Btn}" Content="Dodaj specifikaciju" Grid.Column="3" Grid.Row="0" x:Name="addSpecificationBtn" Click="addSpecificationBtn_Click"/>
+        <Button Style="{StaticResource Btn}" Content="Ažuriraj specifikaciju" Grid.Column="3" Grid.Row="1" x:Name="updateSpecificationBtn" Click="updateSpecificationBtn_Click"/>
+        <Button Style="{StaticResource Btn}" Content="Obriši specifikaciju" Grid.Column="3" Grid.Row="2" x:Name="deleteSpecificationBtn" Click="deleteSpecificationBtn_Click"/>
 
         <DataGrid Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="3" AutoGenerateColumns="False" x:Name="CategorySpecificationsTable" SelectionUnit="FullRow" IsReadOnly="True" SelectionMode="Single" HorizontalAlignment="Stretch" SelectionChanged="CategorySpecificationsTable_SelectionChanged">
             <DataGrid.Columns>
