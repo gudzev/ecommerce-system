@@ -25,11 +25,11 @@ This is a full e-commerce system that includes a website for customers to make o
 
 ## 🚧 To Do
 
-- [ ] Add secure authentication and rate limiting to API
-- [ ] Create a PC configurator using store's components for customers
-- [✓] Organize desktop-app and back-end code in a better way
-- [✓] Create separate table for storing multiple images for each product
-- [✓] Add product pagination
+[ ] Add secure authentication and rate limiting to API
+[ ] Create a PC configurator using store's components for customers
+[✓] Organize desktop-app and back-end code in a better way
+[✓] Create separate table for storing multiple images for each product
+[✓] Add product pagination
 
 ---
 
