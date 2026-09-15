@@ -104,7 +104,7 @@ namespace Backend.Endpoints
                         description = p?.description,
                         is_active = p?.is_active,
                         images = p?.images,
-                        details = p?.specifications
+                        specifications = p?.specifications
                     });
             });
 

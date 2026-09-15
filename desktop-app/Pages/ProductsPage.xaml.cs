@@ -1,11 +1,9 @@
-﻿using Backend;
-using Backend.Models;
+﻿using Backend.Models;
 using System.Collections.ObjectModel;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using WebStoreManagementApp;
 
 namespace DesktopApp.Pages
@@ -18,11 +16,13 @@ namespace DesktopApp.Pages
         }
 
         Product selectedProduct = new Product();
+        List<Label> labels = new List<Label>();
+        List<TextBox> textBoxes = new List<TextBox>();
 
         private async void ProductsPageLoaded(object sender, RoutedEventArgs e)
         {
             await fillCategoriesComboBox();
-            LoadProductsTable();
+            await LoadProductsTable();
         }
 
         private async Task fillCategoriesComboBox()
@@ -33,7 +33,7 @@ namespace DesktopApp.Pages
             categoryComboBox.DisplayMemberPath = "name";
         }
 
-        private async void LoadProductsTable()
+        private async Task LoadProductsTable()
         {
             try
             {
@@ -42,7 +42,7 @@ namespace DesktopApp.Pages
                 MainWindow.products = await response.Content.ReadFromJsonAsync<ObservableCollection<Product>>() ?? [];
 
                 ProductsTable.ItemsSource = MainWindow.products;
-                LoadFirstProductsRow();
+                await LoadFirstProductsRow();
             }
             catch (Exception ex)
             {
@@ -60,10 +60,6 @@ namespace DesktopApp.Pages
             Product product = (Product)ProductsTable.SelectedItem;
             selectedProduct = await MainWindow.client.GetFromJsonAsync<Product>(MainWindow.API_URL + "/products/" + product.id) ?? product;
 
-
-            //if (product == null) 
-              //  product = (Product)ProductsTable.Items[0];
-
             clearTextBoxes();
             productNameTextBox.Text = selectedProduct.name;
             imageURLTextBox.Text = (selectedProduct.images.Find(image => image.is_main_image == true))?.url;
@@ -80,9 +76,11 @@ namespace DesktopApp.Pages
                     break;
                 }
             }
+
+            await getProductSpecifications(product.id);
         }
 
-        private void LoadFirstProductsRow()
+        private async Task LoadFirstProductsRow()
         {
             if (ProductsTable.Items.Count == 0) return;
 
@@ -102,6 +100,8 @@ namespace DesktopApp.Pages
                     categoryComboBox.SelectedItem = category;
                 }
             }
+
+            await getProductSpecifications(product.id);
         }
 
         private async void productAddBtn_Click(object sender, RoutedEventArgs e)
@@ -132,7 +132,7 @@ namespace DesktopApp.Pages
             {
                 HttpResponseMessage response = await MainWindow.client.PostAsJsonAsync(MainWindow.API_URL + "/products/", newProduct);
                 response.EnsureSuccessStatusCode();
-                LoadProductsTable();
+                await LoadProductsTable();
             }
             catch (Exception ex)
             {
@@ -168,7 +168,7 @@ namespace DesktopApp.Pages
 
                 HttpResponseMessage response = await MainWindow.client.PutAsJsonAsync(MainWindow.API_URL + "/products/", selectedProduct);
                 response.EnsureSuccessStatusCode();
-                LoadProductsTable();
+                await LoadProductsTable();
             }
             catch (Exception ex)
             {
@@ -179,13 +179,13 @@ namespace DesktopApp.Pages
         private async void productDeactivateBtn_Click(object sender, RoutedEventArgs e)
         {
             await setProductStatus(false);
-            LoadProductsTable();
+            await LoadProductsTable();
         }
 
         private async void productActivateBtn_Click(object sender, RoutedEventArgs e)
         {
             await setProductStatus(true);
-            LoadProductsTable();
+            await LoadProductsTable();
         }
 
         async Task setProductStatus(bool status)
@@ -211,6 +211,78 @@ namespace DesktopApp.Pages
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        async Task getProductSpecifications(int productId)
+        {
+            clearProductSpecifications();
+            Product? p;
+
+            try
+            {
+                HttpResponseMessage response = await MainWindow.client.GetAsync(MainWindow.API_URL + "/products/" + productId);
+                p = await response.Content.ReadFromJsonAsync<Product>() ?? null;
+
+                if (p == null) return;
+
+                int row = 0;
+                int labelColumn = 0;
+                int textBoxColumn = 1;
+
+                Translator t = new Translator();
+
+                for(int i = 0; i < p.specifications.Count + 10; i++)
+                {
+                    RowDefinition rowDefinition = new RowDefinition();
+                    rowDefinition.Height = new GridLength(60);
+
+                    SpecificationsGrid.RowDefinitions.Add(rowDefinition);
+                }
+
+                p.specifications.ForEach(specification =>
+                {
+                    Label label = new Label();
+                    label.Content = t.TranslateToSerbian(specification.name.ToLower(), true);
+                    label.Style = (Style)Application.Current.FindResource("TextBoxLabel");
+                    labels.Add(label);
+                    Grid.SetRow(label, row);
+                    Grid.SetColumn(label, labelColumn);
+                    SpecificationsGrid.Children.Add(label);
+
+                    
+                    TextBox textBox = new TextBox();
+                    textBox.Style = (Style)Application.Current.FindResource("TextBox");
+                    textBox.Text = specification.value;
+                    textBoxes.Add(textBox);
+                    Grid.SetRow(textBox, row);
+                    Grid.SetColumn(textBox, textBoxColumn);
+                    SpecificationsGrid.Children.Add(textBox);
+
+                    row++; 
+                });
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        void clearProductSpecifications()
+        {
+            labels.ForEach((label) =>
+            {
+                SpecificationsGrid.Children.Remove(label);
+            });
+
+            textBoxes.ForEach((textBox) =>
+            {
+                SpecificationsGrid.Children.Remove(textBox);
+            });
+
+            labels.Clear();
+            textBoxes.Clear();
+
+            SpecificationsGrid.RowDefinitions.Clear();
         }
 
         void clearTextBoxes()

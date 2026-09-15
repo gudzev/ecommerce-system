@@ -2,7 +2,7 @@
     {
         navigate(
             {
-                pathname: `/proizvod/${encodeURIComponent(name.toLowerCase().replaceAll(' ', '-'))}`
+                pathname: `/proizvod/${id}`
             },
             {
                 state: 

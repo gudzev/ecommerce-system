@@ -23,7 +23,7 @@ export default function Product({allCategories})
     const location = useLocation();
 
     const [thisProduct, setThisProduct] = useState(location.state);
-    const [addedText, setAddedText] = useState(thisProduct.stock_quantity > 0);
+    const [addedText, setAddedText] = useState(thisProduct?.stock_quantity > 0);
     const [activeImage, setActiveImage] = useState(null);
 
     const { addToCart } = useContext(CartContext);
@@ -32,21 +32,16 @@ export default function Product({allCategories})
 
     useEffect(() =>
     {
-        if(!thisProduct.id)
-        {
-            return;
-        }
-
         const getThisProduct = async () =>
         {
-            const request = await axios.get(API_URL + "/products/" + thisProduct.id);
+            const request = await axios.get(API_URL + "/products/" + location.pathname.slice(10, 11));
             const dbProduct = request.data;
             setThisProduct(dbProduct);
             setActiveImage(dbProduct?.images?.find((image) => image.is_main_image == true))
         }
         getThisProduct();
 
-    }, [thisProduct.id]);
+    }, [location]);
 
     useEffect(() =>
     {
@@ -63,6 +58,7 @@ export default function Product({allCategories})
 
     const handleAddToCart = () =>
     {
+        if(!thisProduct) return;
         if(thisProduct?.stock_quantity > 0)
         {
             addToCart(thisProduct.id, 1);
@@ -76,15 +72,22 @@ export default function Product({allCategories})
 
             <Header allCategories={allCategories}/>
                 <main className="product-container">
-                    <div className="product-container-details">
 
+                    {
+                        (thisProduct != null)
+                        ?
+                    <div className="product-container-details">
                         <div className="alternative-images-container">
                         {
-                            thisProduct?.images?.map((image) =>
+                            (thisProduct.images?.length > 0)
+                            ?
+                            thisProduct.images.map((image) =>
                             {
                                 const active = image.id == activeImage.id;
                                 return <img key={image.id} src={image.url} alt={thisProduct?.name + " slika"} className={active ? "alternative-img active" : "alternative-img"} onClick={() => setActiveImage(image)}/>
                             })
+                            :
+                            ""
                         }
                         </div>
 
@@ -105,7 +108,7 @@ export default function Product({allCategories})
                                 thisProduct?.stock_quantity > 0 ? <span className="stock-quantity">&#9989; Na stanju</span> : <span className="stock-quantity">&#10060; Nije na stanju</span>
                             }
 
-                            <button className="product-container-add-to-cart-btn" disabled={addedText} onClick={() => handleAddToCart()}><span className="center-items"><FontAwesomeIcon icon={faShoppingCart} className="fa-icon-1x"/>Dodaj u korpu</span></button>
+                            <button className="product-container-add-to-cart-btn" disabled={!thisProduct.stock_quantity > 0} onClick={() => handleAddToCart()}><span className="center-items"><FontAwesomeIcon icon={faShoppingCart} className="fa-icon-1x"/>Dodaj u korpu</span></button>
                             <p className="added-to-cart">{addedText ? ("Artikal je uspešno dodat u korpu.") : ""}</p>
                             <hr></hr>
                             <p className="product-container-article-description">{thisProduct?.description || "Nema opisa za ovaj proizvod."}</p>
@@ -113,7 +116,7 @@ export default function Product({allCategories})
                         </div>
                         <div className="product-detailed-specifications">
                             {
-                                (thisProduct.details)
+                                (thisProduct.specifications)
                                 ?
                                 <table>
                                     <thead>
@@ -124,12 +127,12 @@ export default function Product({allCategories})
                                     </thead>
                                     <tbody>
                                         {
-                                            thisProduct.details.map((detail, index) =>
+                                            thisProduct.specifications.map((specification, index) =>
                                             {
                                                 return (
                                                     <tr key={index}>
-                                                        <td className="product-specification-name">{translateToSerbian(detail.name, {capitalize: true})}</td>
-                                                        <td className="product-specification-value">{translateToSerbian(detail.value, {capitalize: true})}</td>
+                                                        <td className="product-specification-name">{translateToSerbian(specification.name, {capitalize: true})}</td>
+                                                        <td className="product-specification-value">{translateToSerbian(specification.value, {capitalize: true})}</td>
                                                     </tr>
                                                 )
                                             })
@@ -141,6 +144,11 @@ export default function Product({allCategories})
                             }    
                         </div>
                     </div>
+                        :
+                        ""
+                    }
+
+
                 </main>
 
             <Footer />
