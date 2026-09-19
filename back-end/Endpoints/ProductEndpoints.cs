@@ -169,7 +169,7 @@ namespace Backend.Endpoints
                             command.Parameters.AddWithValue("@category_id", category_id);
                         }
 
-                        command.Parameters.AddWithValue("@searchText", search_text == "%" ? search_text : search_text + "%");
+                        command.Parameters.AddWithValue("@searchText", search_text == "%" ? search_text : "%" + search_text + "%");
 
                         using (SqlDataReader reader = await command.ExecuteReaderAsync())
                         {

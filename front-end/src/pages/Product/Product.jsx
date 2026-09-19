@@ -23,10 +23,12 @@ export default function Product({allCategories})
     const location = useLocation();
 
     const [thisProduct, setThisProduct] = useState(location.state);
-    const [addedText, setAddedText] = useState(thisProduct?.stock_quantity > 0);
+    const [isTextAdded, setIsTextAdded] = useState(thisProduct?.stock_quantity > 0);
+    const [stockQuantity, setStockQuantity] = useState(thisProduct?.stock_quantity);
+    const [messageForBuyer, setMessageForBuyer] = useState("");
     const [activeImage, setActiveImage] = useState(null);
 
-    const { addToCart } = useContext(CartContext);
+    const { addToCart, cart } = useContext(CartContext);
 
     const timeoutID = useRef(null);
 
@@ -34,10 +36,11 @@ export default function Product({allCategories})
     {
         const getThisProduct = async () =>
         {
-            const request = await axios.get(API_URL + "/products/" + location.pathname.slice(10, 11));
+            const request = await axios.get(API_URL + "/products/" + location.pathname.slice(10, location.pathname.length));
             const dbProduct = request.data;
             setThisProduct(dbProduct);
-            setActiveImage(dbProduct?.images?.find((image) => image.is_main_image == true))
+            setActiveImage(dbProduct?.images?.find((image) => image.is_main_image == true));
+            setStockQuantity(dbProduct?.stock_quantity);
         }
         getThisProduct();
 
@@ -45,24 +48,58 @@ export default function Product({allCategories})
 
     useEffect(() =>
     {
-        if(!addedText)
+        if(!isTextAdded)
         {
             return;
         }
 
         timeoutID.current = setTimeout(() =>
         {
-            setAddedText(false);
+            setIsTextAdded(false);
         }, 1500);
-    }, [addedText]);
+    }, [isTextAdded]);
 
     const handleAddToCart = () =>
     {
-        if(!thisProduct) return;
-        if(thisProduct?.stock_quantity > 0)
+        if(stockQuantity == null || stockQuantity == undefined) return;
+
+        const cartItem = cart.find((cartItem) => cartItem.productId == thisProduct?.id);
+
+        if(cartItem?.quantity >= 10)
+        {
+            return;
+        }
+
+        // If product is already in cart
+        if(Number(stockQuantity) - Number(cartItem?.quantity + 1) >= 0)
         {
             addToCart(thisProduct.id, 1);
-            setAddedText(true);
+            setIsTextAdded(true);
+            setStockQuantity(prev => prev - 1);
+            setMessageForBuyer("✅ Na stanju");
+        }
+        // If product is not in cart
+        else if(!cartItem && stockQuantity > 0)
+        {
+            addToCart(thisProduct.id, 1);
+            setIsTextAdded(true);
+            setStockQuantity(prev => prev - 1);
+            setMessageForBuyer("✅ Na stanju");
+        }
+        else
+        {
+            console.log(cartItem && stockQuantity != 0);
+            if(cartItem && stockQuantity != 0)
+            {
+                setMessageForBuyer("❌ Svi dostupni proizvodi su već u korpi.");
+                setStockQuantity(0);
+                return;
+            }
+            else(stockQuantity != 0)
+            {
+                setStockQuantity(0);
+                setMessageForBuyer("❌ Nema dovoljno proizvoda na stanju.");
+            }
         }
     }
 
@@ -104,12 +141,10 @@ export default function Product({allCategories})
                                 <><span className="price-old">{formatPrice(thisProduct?.price_rsd) + " RSD"}</span><span className="price-new">{formatPrice(thisProduct?.price_on_sale) + " RSD"}</span></>}
                             </h2>
 
-                            {
-                                thisProduct?.stock_quantity > 0 ? <span className="stock-quantity">&#9989; Na stanju</span> : <span className="stock-quantity">&#10060; Nije na stanju</span>
-                            }
+                            <span className="stock-quantity">{messageForBuyer}</span>
 
-                            <button className="product-container-add-to-cart-btn" disabled={!thisProduct.stock_quantity > 0} onClick={() => handleAddToCart()}><span className="center-items"><FontAwesomeIcon icon={faShoppingCart} className="fa-icon-1x"/>Dodaj u korpu</span></button>
-                            <p className="added-to-cart">{addedText ? ("Artikal je uspešno dodat u korpu.") : ""}</p>
+                            <button className="product-container-add-to-cart-btn" disabled={!stockQuantity > 0} onClick={() => handleAddToCart()}><span className="center-items"><FontAwesomeIcon icon={faShoppingCart} className="fa-icon-1x"/>Dodaj u korpu</span></button>
+                            <p className="added-to-cart">{isTextAdded ? ("Artikal je uspešno dodat u korpu.") : ""}</p>
                             <hr></hr>
                             <p className="product-container-article-description">{thisProduct?.description || "Nema opisa za ovaj proizvod."}</p>
 

@@ -156,6 +156,12 @@
     color: var(--text-color);
 }
 
+.stock-quantity
+{
+    display: block;
+    height: 20px;
+}
+
 .product-specification-no-results
 {
     text-align: center;

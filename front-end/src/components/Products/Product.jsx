@@ -12,8 +12,6 @@ import { formatPrice } from "../../utils/formatPrice";
 
 import { CartContext } from "../../contexts/CartContext/CartContext";
 
-let timeoutList = [];
-
 export function Product({image_url, name, price_rsd, id, price_on_sale, stock_quantity})
 {
     const navigate = useNavigate()
@@ -22,6 +20,7 @@ export function Product({image_url, name, price_rsd, id, price_on_sale, stock_qu
 
     const [isAddedToCart, setIsAddedToCart] = useState(false);
     const [onStock, setOnStock] = useState(false);
+    const [isMax, setIsMax] = useState(false);
 
     const quantitySelect = useRef(1);
 
@@ -34,16 +33,23 @@ export function Product({image_url, name, price_rsd, id, price_on_sale, stock_qu
         fn();
     }, [])
 
-    const handleAddToCart = (productId) =>
+    const handleAddToCart = () =>
     {
         const selectedQuantity = Number(quantitySelect.current.value);
         const cartQuantity = (cart?.find((cartItem) => cartItem.productId == id))?.quantity || 0;
+
+        if(cartQuantity + selectedQuantity > 10)
+        {
+            handleMaxAddedToCart();
+            return;
+        }
 
         if((cartQuantity + selectedQuantity) <= stock_quantity)
         {
             setOnStock((cartQuantity + selectedQuantity) < stock_quantity);
             addToCart(id, selectedQuantity);
-            displayAddedToCartText(productId);
+            displayAddedToCartText();
+            return;
         }
         else
         {
@@ -51,25 +57,25 @@ export function Product({image_url, name, price_rsd, id, price_on_sale, stock_qu
         }
     }
 
-    const displayAddedToCartText = (productId) =>
+    const handleMaxAddedToCart = () =>
     {
-        timeoutList.forEach((productTimeOut) =>
-        {
-            if(productId == productTimeOut.productId)
-            {
-                clearTimeout(productTimeOut.timeout);
-            }
-        })
+        setIsMax(true);
 
+        setTimeout(() =>
+        {
+            setIsMax(false);
+        }, 1500);
+        return;
+    }
+
+    const displayAddedToCartText = () =>
+    {
         setIsAddedToCart(true);
-        const timeout = setTimeout(() =>
+
+        setTimeout(() =>
         {
             setIsAddedToCart(false);
-        }, 2500);
-        timeoutList.push({
-            timeout: timeout,
-            productId: productId
-        });
+        }, 1500);
     }
 
     return <div className="product">
@@ -97,9 +103,14 @@ export function Product({image_url, name, price_rsd, id, price_on_sale, stock_qu
                     <span className="product-price-sale"> {price_on_sale ? formatPrice(price_on_sale) + ' ' + "RSD" : ""}</span>
                 </div>
 
-                <button className="add-to-cart-btn" disabled={!onStock} onClick={() => handleAddToCart()}>
+                <button className="add-to-cart-btn" disabled={!onStock || isMax} onClick={() => handleAddToCart()}>
                     <FontAwesomeIcon icon={faShoppingCart} />{onStock ? "Dodaj u korpu" : "Nema na stanju"}
                 </button>
-                <span className={isAddedToCart ? `cart-added active` : `cart-added`}><FontAwesomeIcon icon={faCheck} />Dodato</span>
+
+                {
+                    (isMax && <span className="cart-max">❌ Max. količina je 10</span>)
+                    ||
+                    <span className={isAddedToCart ? `cart-added active` : `cart-added`}><FontAwesomeIcon icon={faCheck} />Dodato</span>
+                }
         </div>
 }

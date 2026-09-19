@@ -20,6 +20,7 @@
         <Border Background="{StaticResource PageHeaderBg}" Grid.Column="0" Grid.Row="1">
             <StackPanel>
                 <Button x:Name="ProizvodiBtn" Content="Proizvodi" Style="{StaticResource SidebarButton}" Click="ProizvodiBtn_Click"/>
+                <Button x:Name="SlikeBtn" Content="Slike Proizvoda" Style="{StaticResource SidebarButton}" Click="SlikeBtn_Click" />
                 <Button x:Name="NarudzbineBtn" Content="Narudžbine" Style="{StaticResource SidebarButton}" Click="NarudzbineBtn_Click"/>
                 <Button x:Name="DostavaBtn" Content="Metode dostave" Style="{StaticResource SidebarButton}" Click="DostavaBtn_Click"/>
                 <Button x:Name="KategorijaBtn" Content="Kategorije" Style="{StaticResource SidebarButton}" Click="KategorijaBtn_Click"/>

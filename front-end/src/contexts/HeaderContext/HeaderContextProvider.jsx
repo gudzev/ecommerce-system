@@ -4,7 +4,7 @@ import { HeaderContext } from "./HeaderContext";
 
 export function HeaderContextProvider({children})
 {
-    const [searchText, setSearchText] = useState("");
+  const [searchText, setSearchText] = useState("");
 
   return <HeaderContext value={{searchText, setSearchText}}>
     {children}

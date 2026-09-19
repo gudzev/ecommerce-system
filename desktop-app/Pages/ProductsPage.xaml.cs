@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using WebStoreManagementApp;
 
 namespace DesktopApp.Pages
@@ -16,8 +17,12 @@ namespace DesktopApp.Pages
         }
 
         Product selectedProduct = new Product();
+
+        List<ProductSpecification> specifications = new List<ProductSpecification>();
         List<Label> labels = new List<Label>();
         List<TextBox> textBoxes = new List<TextBox>();
+
+        Translator t = new Translator();
 
         private async void ProductsPageLoaded(object sender, RoutedEventArgs e)
         {
@@ -31,6 +36,63 @@ namespace DesktopApp.Pages
             await MainWindow.getCategories(); // fill combobox on products (default) grid
             categoryComboBox.ItemsSource = MainWindow.categories;
             categoryComboBox.DisplayMemberPath = "name";
+        }
+
+        private async void categoryComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selectedCategory = (Category)categoryComboBox.SelectedItem;
+
+            HttpResponseMessage response = await MainWindow.client.GetAsync(MainWindow.API_URL + "/category-specifications?categoryId=" + selectedCategory.id);
+            response.EnsureSuccessStatusCode();
+
+            var categorySpecifications = await response.Content.ReadFromJsonAsync<List<CategorySpecification>>() ?? [];
+
+            if (categorySpecifications.Count <= 0) return;
+
+            clearProductSpecifications();
+
+            for (int i = 0; i < categorySpecifications.Count; i++)
+            {
+                RowDefinition rowDefinition = new RowDefinition();
+                rowDefinition.Height = new GridLength(60);
+
+                SpecificationsGrid.RowDefinitions.Add(rowDefinition);
+            }
+
+            int row = 0;
+            int labelColumn = 0;
+            int textBoxColumn = 1;
+
+            categorySpecifications.ForEach((categorySpecification) =>
+            {
+                Label label = new Label();
+
+                if(categorySpecification.name != null)
+                    label.Content = t.TranslateToSerbian(categorySpecification.name.ToLower(), true);
+
+                label.Style = (Style)Application.Current.FindResource("TextBoxLabel");
+                labels.Add(label);
+                Grid.SetRow(label, row);
+                Grid.SetColumn(label, labelColumn);
+                SpecificationsGrid.Children.Add(label);
+
+
+                TextBox textBox = new TextBox();
+                textBox.Style = (Style)Application.Current.FindResource("TextBox");
+                textBox.Text = "";
+                textBoxes.Add(textBox);
+                Grid.SetRow(textBox, row);
+                Grid.SetColumn(textBox, textBoxColumn);
+                SpecificationsGrid.Children.Add(textBox);
+
+                ProductSpecification newSpec = new ProductSpecification();
+                newSpec.category_specification_id = categorySpecification.category_specification_id;
+                newSpec.name = categorySpecification.name;
+
+                specifications.Add(newSpec);
+
+                row++;
+            });
         }
 
         private async Task LoadProductsTable()
@@ -84,7 +146,9 @@ namespace DesktopApp.Pages
         {
             if (ProductsTable.Items.Count == 0) return;
 
-            Product product = (Product)ProductsTable.Items[0];
+            Product? product = (Product)ProductsTable.Items[0] ?? null;
+
+            if (product == null) return;
 
             productNameTextBox.Text = product.name;
             imageURLTextBox.Text = product.image_url;
@@ -127,6 +191,7 @@ namespace DesktopApp.Pages
             newProduct.category_id = categoryId;
             newProduct.stock_quantity = Convert.ToInt32(quantityTextBox.Text);
             newProduct.description = descriptionTextBox.Text;
+            newProduct.specifications = getUpdatedSpecifications(specifications);
 
             try
             {
@@ -165,6 +230,8 @@ namespace DesktopApp.Pages
                 newProduct.stock_quantity = Convert.ToInt32(quantityTextBox.Text);
                 newProduct.description = descriptionTextBox.Text;
                 newProduct.category_id = categoryId;
+                newProduct.specifications = specifications;
+                newProduct.specifications = getUpdatedSpecifications(specifications);
 
                 HttpResponseMessage response = await MainWindow.client.PutAsJsonAsync(MainWindow.API_URL + "/products/", selectedProduct);
                 response.EnsureSuccessStatusCode();
@@ -225,13 +292,13 @@ namespace DesktopApp.Pages
 
                 if (p == null) return;
 
+                specifications = p.specifications;
+
                 int row = 0;
                 int labelColumn = 0;
                 int textBoxColumn = 1;
 
-                Translator t = new Translator();
-
-                for(int i = 0; i < p.specifications.Count + 10; i++)
+                for(int i = 0; i < p.specifications.Count; i++)
                 {
                     RowDefinition rowDefinition = new RowDefinition();
                     rowDefinition.Height = new GridLength(60);
@@ -242,8 +309,11 @@ namespace DesktopApp.Pages
                 p.specifications.ForEach(specification =>
                 {
                     Label label = new Label();
-                    label.Content = t.TranslateToSerbian(specification.name.ToLower(), true);
+
+                    if (specification.name != null)
+                        label.Content = t.TranslateToSerbian(specification.name.ToLower(), true);
                     label.Style = (Style)Application.Current.FindResource("TextBoxLabel");
+
                     labels.Add(label);
                     Grid.SetRow(label, row);
                     Grid.SetColumn(label, labelColumn);
@@ -267,6 +337,18 @@ namespace DesktopApp.Pages
             }
         }
 
+        List<ProductSpecification> getUpdatedSpecifications(List<ProductSpecification> specificationList)
+        {
+            int i = 0;
+            specificationList.ForEach(spec =>
+            {
+                spec.value = textBoxes[i].Text;
+                i++;
+            });
+
+            return specifications;
+        }
+
         void clearProductSpecifications()
         {
             labels.ForEach((label) =>
@@ -281,6 +363,8 @@ namespace DesktopApp.Pages
 
             labels.Clear();
             textBoxes.Clear();
+
+            specifications.Clear();
 
             SpecificationsGrid.RowDefinitions.Clear();
         }

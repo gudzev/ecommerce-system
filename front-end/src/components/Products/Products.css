@@ -82,9 +82,18 @@
 
 .cart-added
 {
+    display: block;
     color: var(--success-color);
     margin-top: 8px;
     visibility: hidden;
+    height: 21px;
+}
+
+.cart-max
+{
+    display: block;
+    height: 21px;
+    margin-top: 8px;
 }
 
 .cart-added.active

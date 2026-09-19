@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faMagnifyingGlass, faCartShopping, faHouse, faSuitcase, faPhoneVolume, faHeart } from "@fortawesome/free-solid-svg-icons";
 
 import { Link, useNavigate } from "react-router-dom";
-import { useState, useContext } from "react";
+import { useState, useContext, useRef } from "react";
 
 import { HeaderContext } from "../../contexts/HeaderContext/HeaderContext";
 import { CartContext } from "../../contexts/CartContext/CartContext";
@@ -15,7 +15,10 @@ export function Header({allCategories})
     const {cart} = useContext(CartContext);
 
     const [inputText, setInputText] = useState("");
+
     const navigate = useNavigate();
+
+    const searchInputRef = useRef(null);
 
     const searchProducts = (inputText) =>
     {
@@ -35,7 +38,7 @@ export function Header({allCategories})
         }
 
         setSearchText(event.target.value);
-        setInputText("");
+        searchInputRef.current.value = "";
 
         if(window.location.pathname != "/")
         {
@@ -56,7 +59,7 @@ export function Header({allCategories})
     return <header>
         <div className="header-main">
             <Link className="header-img-wrapper" to="/">
-                <img src="/images/logo.png" className="header-img" alt="Prodavnica logo"/>
+                <img src="/images/logo.png" className="header-img" alt="Prodavnica logo" onClick={() => setSearchText("")}/>
             </Link>
 
             <button className="header-categories">
@@ -64,7 +67,7 @@ export function Header({allCategories})
             </button>
 
             <div className="header-search-container">
-                <input type="text" className="header-search" placeholder="Pronađite proizvod" onChange={(event) => setInputText(event.target.value)} onKeyDown={listenForEnterKeyPress} />
+                <input type="text" className="header-search" placeholder="Pronađite proizvod" ref={searchInputRef} onChange={(event) => setInputText(event.target.value)} onKeyDown={listenForEnterKeyPress} />
                 <button className="header-search-btn" onClick={() => searchProducts(inputText)}>
                     <FontAwesomeIcon icon={faMagnifyingGlass} className="fa-icon-1x" />
                 </button>
