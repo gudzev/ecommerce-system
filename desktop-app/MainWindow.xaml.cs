@@ -26,7 +26,6 @@ namespace WebStoreManagementApp
             ["deliveryMethodsPage"] = new DeliveryMethodsPage(),
             ["categoriesPage"] = new CategoriesPage(),
             ["specificationsPage"] = new SpecificationsPage(),
-            ["imagesPage"] = new ImagesPage()
         };
 
         public static bool shouldRefreshCategories = true;
@@ -63,12 +62,6 @@ namespace WebStoreManagementApp
         {
             CurrentGridLabel.Content = "Dostava";
             MainFrame.Navigate(pages["deliveryMethodsPage"]);
-        }
-
-        private void SlikeBtn_Click(object sender, RoutedEventArgs e)
-        {
-            CurrentGridLabel.Content = "Slike";
-            MainFrame.Navigate(pages["imagesPage"]);
         }
 
         public static async Task getDeliveryOptions()

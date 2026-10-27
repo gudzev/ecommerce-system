@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using WebStoreManagementApp;
+using Image = Backend.Models.Image;
 
 namespace DesktopApp.Pages
 {
@@ -21,8 +22,11 @@ namespace DesktopApp.Pages
         List<ProductSpecification> specifications = new List<ProductSpecification>();
         List<Label> labels = new List<Label>();
         List<TextBox> textBoxes = new List<TextBox>();
+        List<Image> images = new List<Image>();
 
         Translator t = new Translator();
+
+        bool isLoadingProduct = false;
 
         private async void ProductsPageLoaded(object sender, RoutedEventArgs e)
         {
@@ -40,6 +44,10 @@ namespace DesktopApp.Pages
 
         private async void categoryComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (isLoadingProduct) return;
+
+            clearProductDetails();
+
             var selectedCategory = (Category)categoryComboBox.SelectedItem;
 
             HttpResponseMessage response = await MainWindow.client.GetAsync(MainWindow.API_URL + "/category-specifications?categoryId=" + selectedCategory.id);
@@ -49,8 +57,6 @@ namespace DesktopApp.Pages
 
             if (categorySpecifications.Count <= 0) return;
 
-            clearProductSpecifications();
-
             for (int i = 0; i < categorySpecifications.Count; i++)
             {
                 RowDefinition rowDefinition = new RowDefinition();
@@ -59,9 +65,9 @@ namespace DesktopApp.Pages
                 SpecificationsGrid.RowDefinitions.Add(rowDefinition);
             }
 
-            int row = 0;
             int labelColumn = 0;
             int textBoxColumn = 1;
+            int row = addImages(selectedProduct, 0, labelColumn, textBoxColumn);
 
             categorySpecifications.ForEach((categorySpecification) =>
             {
@@ -119,53 +125,79 @@ namespace DesktopApp.Pages
                 return;
             }
 
-            Product product = (Product)ProductsTable.SelectedItem;
-            selectedProduct = await MainWindow.client.GetFromJsonAsync<Product>(MainWindow.API_URL + "/products/" + product.id) ?? product;
+            isLoadingProduct = true;
 
-            clearTextBoxes();
-            productNameTextBox.Text = selectedProduct.name;
-            imageURLTextBox.Text = (selectedProduct.images.Find(image => image.is_main_image == true))?.url;
-            priceTextBox.Text = selectedProduct.price_rsd.ToString();
-            salePriceTextBox.Text = selectedProduct.price_on_sale.ToString() ?? "";
-            quantityTextBox.Text = selectedProduct.stock_quantity.ToString();
-            descriptionTextBox.Text = selectedProduct?.description?.ToString();
-
-            foreach (var category in MainWindow.categories)
+            try
             {
-                if (category.id == selectedProduct?.category_id)
+                Product product = (Product)ProductsTable.SelectedItem;
+                selectedProduct = await MainWindow.client.GetFromJsonAsync<Product>(MainWindow.API_URL + "/products/" + product.id) ?? product;
+
+                if (selectedProduct == null) return;
+
+                clearTextBoxes();
+                productNameTextBox.Text = selectedProduct.name;
+                priceTextBox.Text = selectedProduct.price_rsd.ToString();
+                salePriceTextBox.Text = selectedProduct.price_on_sale.ToString() ?? "";
+                quantityTextBox.Text = selectedProduct.stock_quantity.ToString();
+                descriptionTextBox.Text = selectedProduct?.description?.ToString();
+
+                foreach (var category in MainWindow.categories)
                 {
-                    categoryComboBox.SelectedItem = category;
-                    break;
+                    if (category.id == selectedProduct?.category_id)
+                    {
+                        categoryComboBox.SelectedItem = category;
+                        await getProductDetails(product.id);
+                        break;
+                    }
                 }
             }
-
-            await getProductSpecifications(product.id);
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                isLoadingProduct = false;
+            }
         }
 
         private async Task LoadFirstProductsRow()
         {
-            if (ProductsTable.Items.Count == 0) return;
-
-            Product? product = (Product)ProductsTable.Items[0] ?? null;
-
-            if (product == null) return;
-
-            productNameTextBox.Text = product.name;
-            imageURLTextBox.Text = product.image_url;
-            priceTextBox.Text = product.price_rsd.ToString();
-            salePriceTextBox.Text = product.price_on_sale.ToString() ?? "";
-            quantityTextBox.Text = product.stock_quantity.ToString();
-            descriptionTextBox.Text = product?.description?.ToString();
-
-            foreach (var category in MainWindow.categories)
+            try
             {
-                if (category.id == product?.category_id)
+                if (ProductsTable.Items.Count == 0) return;
+
+                isLoadingProduct = true;
+
+                Product? product = (Product)ProductsTable.Items[0] ?? null;
+                selectedProduct = await MainWindow.client.GetFromJsonAsync<Product>(MainWindow.API_URL + "/products/" + product.id) ?? product;
+
+                if (selectedProduct == null) return;
+
+                productNameTextBox.Text = product.name;
+                priceTextBox.Text = product.price_rsd.ToString();
+                salePriceTextBox.Text = product.price_on_sale.ToString() ?? "";
+                quantityTextBox.Text = product.stock_quantity.ToString();
+                descriptionTextBox.Text = product?.description?.ToString();
+
+                foreach (var category in MainWindow.categories)
                 {
-                    categoryComboBox.SelectedItem = category;
+                    if (category.id == product?.category_id)
+                    {
+                        categoryComboBox.SelectedItem = category;
+                        await getProductDetails(product.id);
+                        return;
+                    }
                 }
             }
-
-            await getProductSpecifications(product.id);
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                isLoadingProduct = false;
+            }
         }
 
         private async void productAddBtn_Click(object sender, RoutedEventArgs e)
@@ -185,13 +217,13 @@ namespace DesktopApp.Pages
             if (categoryId == -1) return;
 
             newProduct.name = productNameTextBox.Text;
-            newProduct.images.Add(new Backend.Models.Image(imageURLTextBox.Text));
             newProduct.price_rsd = Convert.ToInt32(priceTextBox.Text);
             newProduct.price_on_sale = (salePriceTextBox.Text == "") ? null : Convert.ToInt32(salePriceTextBox.Text);
             newProduct.category_id = categoryId;
             newProduct.stock_quantity = Convert.ToInt32(quantityTextBox.Text);
             newProduct.description = descriptionTextBox.Text;
             newProduct.specifications = getUpdatedSpecifications(specifications);
+            newProduct.images = getUpdatedImages(images);
 
             try
             {
@@ -230,10 +262,15 @@ namespace DesktopApp.Pages
                 newProduct.stock_quantity = Convert.ToInt32(quantityTextBox.Text);
                 newProduct.description = descriptionTextBox.Text;
                 newProduct.category_id = categoryId;
-                newProduct.specifications = specifications;
                 newProduct.specifications = getUpdatedSpecifications(specifications);
+                newProduct.images = getUpdatedImages(images);
 
-                HttpResponseMessage response = await MainWindow.client.PutAsJsonAsync(MainWindow.API_URL + "/products/", selectedProduct);
+                foreach (var image in newProduct.images)
+                {
+                    MessageBox.Show($"URL: '{image.url}'");
+                }
+
+                HttpResponseMessage response = await MainWindow.client.PutAsJsonAsync(MainWindow.API_URL + "/products/", newProduct);
                 response.EnsureSuccessStatusCode();
                 await LoadProductsTable();
             }
@@ -280,9 +317,9 @@ namespace DesktopApp.Pages
             }
         }
 
-        async Task getProductSpecifications(int productId)
+        async Task getProductDetails(int productId)
         {
-            clearProductSpecifications();
+            clearProductDetails();
             Product? p;
 
             try
@@ -294,17 +331,17 @@ namespace DesktopApp.Pages
 
                 specifications = p.specifications;
 
-                int row = 0;
-                int labelColumn = 0;
-                int textBoxColumn = 1;
-
-                for(int i = 0; i < p.specifications.Count; i++)
+                for(int i = 0; i < (p.specifications.Count + p.images.Count); i++)
                 {
                     RowDefinition rowDefinition = new RowDefinition();
                     rowDefinition.Height = new GridLength(60);
 
                     SpecificationsGrid.RowDefinitions.Add(rowDefinition);
                 }
+
+                int labelColumn = 0;
+                int textBoxColumn = 1;
+                int row = addImages(p, 0, labelColumn, textBoxColumn);
 
                 p.specifications.ForEach(specification =>
                 {
@@ -337,9 +374,61 @@ namespace DesktopApp.Pages
             }
         }
 
+        int addImages(Product p, int row, int labelColumn, int textBoxColumn)
+        {
+            int? imageNumber = 1;
+            p.images.ForEach((image) =>
+            {
+                if (imageNumber == 1 && image.is_main_image == false)
+                    image.is_main_image = true;
+
+                images = p.images;
+
+                Label label = new Label();
+
+                label.Content = (imageNumber == 1) ? "Slika 1 (Glavna)" : "Slika" + ' ' + imageNumber;
+                label.Style = (Style)Application.Current.FindResource("TextBoxLabel");
+
+                labels.Add(label);
+                Grid.SetRow(label, row);
+                Grid.SetColumn(label, labelColumn);
+                SpecificationsGrid.Children.Add(label);
+
+
+                TextBox textBox = new TextBox();
+                textBox.Style = (Style)Application.Current.FindResource("TextBox");
+                textBox.Text = image.url;
+                textBoxes.Add(textBox);
+                Grid.SetRow(textBox, row);
+                Grid.SetColumn(textBox, textBoxColumn);
+                SpecificationsGrid.Children.Add(textBox);
+
+                row++;
+                imageNumber++;
+            });
+
+            return row;
+        }
+
+        List<Image> getUpdatedImages(List<Image> imageList)
+        {
+            List<Image> newImages = new List<Image>();
+            for(int i = 0; i < imageList.Count; i++)
+            {
+                imageList[i].url = textBoxes[i].Text.Trim();
+
+                if (imageList[i].url.Length > 0)
+                {
+                    newImages.Add(imageList[i]);
+                }
+            };
+
+            return newImages;
+        }
+
         List<ProductSpecification> getUpdatedSpecifications(List<ProductSpecification> specificationList)
         {
-            int i = 0;
+            int i = selectedProduct.images.Count;
             specificationList.ForEach(spec =>
             {
                 spec.value = textBoxes[i].Text;
@@ -349,7 +438,7 @@ namespace DesktopApp.Pages
             return specifications;
         }
 
-        void clearProductSpecifications()
+        void clearProductDetails()
         {
             labels.ForEach((label) =>
             {
@@ -365,6 +454,7 @@ namespace DesktopApp.Pages
             textBoxes.Clear();
 
             specifications.Clear();
+            images.Clear();
 
             SpecificationsGrid.RowDefinitions.Clear();
         }
@@ -372,7 +462,6 @@ namespace DesktopApp.Pages
         void clearTextBoxes()
         {
             productNameTextBox.Clear();
-            imageURLTextBox.Clear();
             priceTextBox.Clear();
             salePriceTextBox.Clear();
             quantityTextBox.Clear();

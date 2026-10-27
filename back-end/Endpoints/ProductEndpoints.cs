@@ -310,7 +310,17 @@ namespace Backend.Endpoints
                                     await command.ExecuteNonQueryAsync();
                                 }
 
-                                if(p.images.Count > 0)
+                                query = @"DELETE FROM images
+                                          WHERE product_id = @productId AND (image_url = '' OR image_url IS NULL)";
+
+                                using (SqlCommand command = new SqlCommand(query, connection, transaction))
+                                {
+                                    command.Parameters.AddWithValue("@productId", p?.id);
+
+                                    await command.ExecuteNonQueryAsync();
+                                }
+
+                                if (p.images.Count > 0)
                                 {
                                     query = @"UPDATE images
                                               SET image_url = @image_url, is_main_image = @is_main_image

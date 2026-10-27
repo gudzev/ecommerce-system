@@ -54,23 +54,20 @@
         <Label Content="Naziv proizvoda" Grid.Column="0" Grid.Row="0" Style="{StaticResource TextBoxLabel}"/>
         <TextBox x:Name="productNameTextBox" Grid.Column="1" Grid.Row="0" Style="{StaticResource TextBox}"/>
 
-        <Label Content="URL glavne slike" Grid.Column="0" Grid.Row="1" Style="{StaticResource TextBoxLabel}"/>
-        <TextBox x:Name="imageURLTextBox" Grid.Column="1" Grid.Row="1" Style="{StaticResource TextBox}"/>
+        <Label Content="Normalna cena" Grid.Column="0" Grid.Row="1" Style="{StaticResource TextBoxLabel}"/>
+        <TextBox x:Name="priceTextBox" Grid.Column="1" Grid.Row="1" Style="{StaticResource TextBox}"/>
 
-        <Label Content="Normalna cena" Grid.Column="0" Grid.Row="2" Style="{StaticResource TextBoxLabel}"/>
-        <TextBox x:Name="priceTextBox" Grid.Column="1" Grid.Row="2" Style="{StaticResource TextBox}"/>
+        <Label Content="Cena ako je na popustu" Grid.Column="0" Grid.Row="2" Style="{StaticResource TextBoxLabel}"/>
+        <TextBox x:Name="salePriceTextBox" Grid.Column="1" Grid.Row="2" Style="{StaticResource TextBox}"/>
 
-        <Label Content="Cena ako je na popustu" Grid.Column="0" Grid.Row="3" Style="{StaticResource TextBoxLabel}"/>
-        <TextBox x:Name="salePriceTextBox" Grid.Column="1" Grid.Row="3" Style="{StaticResource TextBox}"/>
+        <Label Content="Kategorija" Grid.Column="0" Grid.Row="3" Style="{StaticResource TextBoxLabel}"/>
+        <ComboBox x:Name="categoryComboBox" Grid.Column="1" Grid.Row="3" Style="{StaticResource ComboBox}" SelectionChanged="categoryComboBox_SelectionChanged"/>
 
-        <Label Content="Kategorija" Grid.Column="0" Grid.Row="4" Style="{StaticResource TextBoxLabel}"/>
-        <ComboBox x:Name="categoryComboBox" Grid.Column="1" Grid.Row="4" Style="{StaticResource ComboBox}" SelectionChanged="categoryComboBox_SelectionChanged"/>
+        <Label Content="Količina na stanju" Grid.Column="0" Grid.Row="4" Style="{StaticResource TextBoxLabel}"/>
+        <TextBox x:Name="quantityTextBox" Grid.Column="1" Grid.Row="4" Style="{StaticResource TextBox}"/>
 
-        <Label Content="Količina na stanju" Grid.Column="0" Grid.Row="5" Style="{StaticResource TextBoxLabel}"/>
-        <TextBox x:Name="quantityTextBox" Grid.Column="1" Grid.Row="5" Style="{StaticResource TextBox}"/>
-
-        <Label Content="Opis" Grid.Column="0" Grid.Row="6" Style="{StaticResource TextBoxLabel}"/>
-        <TextBox x:Name="descriptionTextBox" Grid.Column="1" Grid.Row="6" Grid.ColumnSpan="1" Style="{StaticResource TextBox}"/>
+        <Label Content="Opis" Grid.Column="0" Grid.Row="5" Grid.RowSpan="2" Style="{StaticResource TextBoxLabel}"/>
+        <TextBox x:Name="descriptionTextBox" Grid.Column="1" Grid.Row="5" Grid.ColumnSpan="1" Grid.RowSpan="2" Style="{StaticResource TextBox}" Height="100" TextWrapping="Wrap" AcceptsReturn="True"/>
 
         <DataGrid x:Name="ProductsTable" SelectionUnit="FullRow" AutoGenerateColumns="False" Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="7" IsReadOnly="True" SelectionMode="Single" HorizontalAlignment="Stretch" SelectionChanged="LoadProductsRow">
             <DataGrid.Columns>
